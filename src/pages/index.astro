@@ -1,0 +1,40 @@
+---
+import Layout from '../komponenten/Layout.astro'
+import Chat from '../komponenten/Chat.astro'
+import Faq from '../komponenten/Faq.astro'
+import { ALLGEMEINE_FAQ, faqStrukturiert } from '../inhalte/faq'
+
+export const prerender = false
+
+const strukturiert = [
+    {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: 'Senioren-Computer-Helfer',
+        url: 'https://senioren-computer-helfer.de',
+        inLanguage: 'de',
+        description:
+            'Kostenlose Technik-Hilfe in einfacher Sprache für Computer, Handy, Tablet, Internet und Drucker.',
+    },
+    faqStrukturiert(ALLGEMEINE_FAQ),
+]
+---
+
+<Layout
+    titel="Hilfe bei Computer, Handy und Internet · Senioren-Computer-Helfer"
+    beschreibung="Kostenlose Technik-Hilfe in einfacher Sprache. Beschreiben Sie Ihr Problem, wir gehen es Schritt für Schritt gemeinsam durch. Ohne Anmeldung."
+    pfad="/"
+>
+    <h1 class="mb-4">Brauchen Sie Hilfe mit Computer, Handy oder Internet?</h1>
+
+    <p class="lesebreite mb-8 text-gross">
+        Schreiben Sie einfach, was nicht klappt. Wir gehen es gemeinsam durch — ein
+        Schritt nach dem anderen. Kostenlos und ohne Anmeldung.
+    </p>
+
+    <Chat />
+
+    <Faq ueberschrift="Häufige Fragen" eintraege={ALLGEMEINE_FAQ} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(strukturiert)} is:inline />
+</Layout>

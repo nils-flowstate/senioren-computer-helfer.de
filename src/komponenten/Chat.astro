@@ -1,0 +1,79 @@
+---
+/*
+ * Der Chat ist das wichtigste Element der Startseite (GEO-LLM.txt §8).
+ *
+ * Die Begrüßung wird serverseitig gerendert und steht damit auch ohne
+ * JavaScript im HTML — für Menschen mit abgeschaltetem Skript, für langsame
+ * Verbindungen und für Antwortsysteme, die die Seite auslesen.
+ */
+const begruessung =
+    'Guten Tag. Beschreiben Sie mir bitte mit Ihren eigenen Worten, womit Sie Schwierigkeiten haben. Ein Satz genügt für den Anfang.'
+---
+
+<section aria-labelledby="chat-ueberschrift" class="rounded-2xl border-2 border-linie bg-flaeche p-4 shadow-sm sm:p-6">
+    <h2 id="chat-ueberschrift" class="nur-vorlesen">Hilfe-Chat</h2>
+
+    <ol id="verlauf" role="log" aria-live="polite" aria-relevant="additions" class="flex list-none flex-col gap-6 p-0">
+        <li>
+            <p class="mb-1 font-bold text-text-leise">Der Helfer</p>
+            <p class="lesebreite rounded-xl bg-akzent p-4">{begruessung}</p>
+        </li>
+    </ol>
+
+    <p id="wartet" hidden class="mt-6 rounded-xl bg-akzent p-4 text-text-leise">
+        Ich lese das gerade in Ruhe durch …
+    </p>
+
+    <div id="schaltflaechen" class="mt-6 flex flex-wrap gap-3"></div>
+
+    <form id="chatformular" class="mt-6" novalidate>
+        <label for="eingabe" class="mb-2 block font-bold">Ihre Nachricht</label>
+        <textarea
+            id="eingabe"
+            name="eingabe"
+            rows="3"
+            maxlength="2000"
+            autocomplete="off"
+            placeholder="Zum Beispiel: Mein Drucker druckt nicht mehr."
+            class="w-full rounded-xl border-2 border-linie bg-flaeche p-4 text-basis"
+        ></textarea>
+
+        <p class="mt-2 text-text-leise">Bitte geben Sie keine Passwörter, PINs oder TANs ein.</p>
+
+        <div class="mt-4 flex flex-wrap gap-3">
+            <button
+                type="submit"
+                class="tippziel rounded-xl bg-primaer px-8 font-bold text-flaeche hover:bg-primaer-aktiv"
+            >
+                Senden
+            </button>
+            <button
+                type="button"
+                id="einfacher"
+                hidden
+                class="tippziel rounded-xl border-2 border-primaer bg-flaeche px-6 font-bold text-primaer-aktiv"
+            >
+                Bitte einfacher erklären
+            </button>
+            <button
+                type="button"
+                id="neubeginn"
+                class="tippziel rounded-xl border-2 border-linie bg-flaeche px-6 text-text-leise"
+            >
+                Von vorne beginnen
+            </button>
+        </div>
+    </form>
+
+    <noscript>
+        <p class="mt-6 rounded-xl bg-warnung-flaeche p-4 text-warnung-text">
+            Für den Chat wird JavaScript benötigt. Es ist in Ihrem Browser ausgeschaltet.
+            Unsere <a href="/so-funktioniert-die-hilfe">Hilfeseiten</a> können Sie trotzdem lesen.
+        </p>
+    </noscript>
+</section>
+
+<script>
+    import { starteChat } from '../skripte/chat'
+    starteChat()
+</script>

@@ -1,0 +1,32 @@
+# Was nicht ins Image gehört. Alles hier ist entweder Entwicklungswerkzeug,
+# Zwischenergebnis oder ein Geheimnis (GEO-LLM.txt §14).
+
+.git
+.gitignore
+.github
+
+# Wird in Stufe 1 frisch installiert beziehungsweise in Stufe 2 frisch gebaut.
+node_modules
+dist
+.astro
+.npm-cache
+
+# Echte Geheimnisse bleiben draußen. Nur die Vorlage darf in den Bau-Kontext.
+.env
+.env.*
+!.env.example
+
+# Protokolle, Tests und Prüfartefakte
+*.log
+tests
+playwright-report
+vitest.config.ts
+
+# Werkzeuge, Notizen und Editor-Dateien, die zur Laufzeit nichts zu suchen haben
+.claude
+doku
+scripts
+.vscode
+.idea
+*.swp
+.DS_Store

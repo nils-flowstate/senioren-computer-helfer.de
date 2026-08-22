@@ -1,0 +1,35 @@
+# Beispiel für Caddy als Reverse Proxy (GEO-LLM.txt §11).
+#
+# Caddy besorgt und erneuert das TLS-Zertifikat selbstständig. Voraussetzung:
+# Der DNS-A-Eintrag (und gegebenenfalls AAAA) zeigt bereits auf diesen VPS,
+# und die Ports 80 und 443 sind in der Firewall offen. Port 3005 bleibt zu.
+#
+# Kopieren nach /etc/caddy/Caddyfile, dann:  sudo systemctl reload caddy
+
+senioren-computer-helfer.de {
+	# Die Anwendung ist nur über die Loopback-Adresse erreichbar.
+	# X-Forwarded-Proto setzt Caddy von sich aus. Das ist wichtig: Daran
+	# erkennt die Anwendung, dass die Verbindung verschlüsselt ist, und setzt
+	# erst dann "Secure" auf das Sitzungs-Cookie und die HSTS-Kopfzeile.
+	reverse_proxy 127.0.0.1:3005
+
+	encode zstd gzip
+
+	# Bewusst KEINE Sicherheitskopfzeilen an dieser Stelle. Sie werden
+	# ausschließlich in src/middleware.ts gesetzt. Zwei Setzorte überschreiben
+	# einander still und man sucht den Fehler an der falschen Stelle.
+
+	log {
+		output file /var/log/caddy/senioren-computer-helfer.log {
+			roll_size 10mb
+			roll_keep 5
+		}
+		# Die Anfrageadresse steht ohnehin im Protokoll. Chatinhalte kommen
+		# per POST im Rumpf und werden von Caddy nicht mitgeschrieben (§10).
+	}
+}
+
+# Die www-Variante wird dauerhaft auf die kanonische Adresse umgeleitet (§11).
+www.senioren-computer-helfer.de {
+	redir https://senioren-computer-helfer.de{uri} permanent
+}

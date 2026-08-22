@@ -1,0 +1,112 @@
+@import "./tokens.css";
+
+/*
+ * Grundlayout. Alle Werte sind an der Zielgruppe ausgerichtet: große Schrift,
+ * viel Abstand, ruhige Bewegung, immer sichtbarer Tastaturfokus.
+ */
+
+:root {
+  /*
+   * Der Schriftgrößen-Umschalter setzt diesen Faktor. Er wirkt auf alle
+   * Abstände und Schriftgrößen zugleich, damit das Layout nicht zerfällt.
+   */
+  --schrift-faktor: 1;
+  color-scheme: light;
+}
+
+html {
+  font-size: calc(100% * var(--schrift-faktor));
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-hintergrund);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: var(--text-basis);
+  line-height: 1.6;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Lesbare Zeilenlänge. Über etwa 70 Zeichen verliert das Auge die Zeile. */
+.lesebreite {
+  max-width: 34rem;
+}
+
+h1, h2, h3 {
+  line-height: 1.25;
+  text-wrap: balance;
+  font-weight: 700;
+}
+
+h1 { font-size: var(--text-titel); }
+h2 { font-size: var(--text-sehr-gross); }
+h3 { font-size: var(--text-gross); }
+
+p, li { text-wrap: pretty; }
+
+/*
+ * Fokus: 3px, deutlich abgesetzt, niemals entfernt. Für viele Menschen mit
+ * eingeschränkter Feinmotorik ist die Tastatur der Hauptzugang.
+ */
+:where(a, button, input, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--color-primaer);
+  outline-offset: 3px;
+  border-radius: 0.25rem;
+}
+
+/* Alles, was angetippt wird, ist mindestens 56px hoch und breit. */
+.tippziel {
+  min-height: var(--spacing-tippziel);
+  min-width: var(--spacing-tippziel);
+}
+
+a {
+  color: var(--color-primaer-aktiv);
+  text-underline-offset: 0.25em;
+  text-decoration-thickness: 2px;
+}
+
+a:hover { color: var(--color-primaer); }
+
+/* Sprunglink — sichtbar, sobald er den Fokus bekommt. */
+.sprunglink {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 50;
+}
+
+.sprunglink:focus {
+  left: 1rem;
+  top: 1rem;
+  padding: 1rem 1.5rem;
+  background: var(--color-flaeche);
+  border: 3px solid var(--color-primaer);
+  border-radius: 0.5rem;
+}
+
+/* Nur für Screenreader, optisch nicht vorhanden. */
+.nur-vorlesen {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/*
+ * Wer Bewegung reduziert haben möchte, bekommt keine. Das ist keine Kosmetik:
+ * Animationen können Schwindel und Übelkeit auslösen.
+ */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

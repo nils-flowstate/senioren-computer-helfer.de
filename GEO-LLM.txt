@@ -1,0 +1,425 @@
+PROJEKTVERMERK: SEO UND GEO FUER DIE TECHNIK-HILFE-WEBSITE
+
+Status
+Diese Datei ist eine verbindliche Anforderung fuer die spaetere Neuaufsetzung
+der deutschsprachigen Astro-Website.
+
+Festgelegte Domain: senioren-computer-helfer.de
+Arbeitsname der Website: Senioren-Computer-Helfer
+Erscheinungsbild: ruhig, freundlich, barrierearm und mit sanftem Gruen
+
+1. Skills beim Bauen
+- Vor der finalen Umsetzung muessen passende Skills fuer SEO
+  (Suchmaschinenoptimierung) und GEO (Optimierung fuer LLM- und
+  KI-Antwortsysteme) ausgewaehlt und angewendet werden.
+- Die Skills sollen nicht nur eine nachtraegliche Kontrolle durchfuehren,
+  sondern Seitenstruktur, Inhalte, Metadaten, interne Verlinkung und technische
+  Auslieferung bereits waehrend des Aufbaus beeinflussen.
+- Empfehlungen der Skills duerfen die Barrierefreiheit, die einfache Sprache,
+  den Datenschutz oder die Sicherheit der Nutzer nicht verschlechtern.
+- Vor dem Veroeffentlichen erfolgt eine getrennte SEO- und GEO-Pruefung.
+
+2. Zielgruppe und Wording
+- Ausschliesslich deutschsprachige Website.
+- Zielgruppe sind vor allem aeltere Menschen und Personen mit sehr geringen
+  technischen Kenntnissen.
+- Durchgehend respektvolle Anrede mit "Sie".
+- Kurze Saetze, Alltagssprache und erklaerte Begriffe.
+- Keine herablassenden Formulierungen und kein vorausgesetztes Fachwissen.
+- Wichtige Suchanfragen sollen in der Sprache der Zielgruppe aufgegriffen
+  werden, zum Beispiel "Mein Computer geht nicht an" oder
+  "Ist diese Nachricht Betrug?".
+
+3. FAQ-Bereich
+- Unterhalb des zentralen Chatbereichs befindet sich ein leicht verstaendlicher
+  FAQ-Bereich.
+- Die allgemeinen FAQ erklaeren Bedienung, Vorgehen, Datenschutz,
+  Foto-/Sprachfunktionen, Sicherheit und Kontaktmoeglichkeiten.
+- Wenn technisch und inhaltlich sinnvoll, werden zusaetzliche FAQ passend zum
+  aktuellen Problem oder Gespraech angezeigt.
+- FAQ-Antworten bleiben kurz und verlinken bei weiterem Informationsbedarf auf
+  passende Unterseiten.
+- Die Information zur Weitergabe an den KI-Dienst wird nicht als auffaelliger
+  Warnhinweis am Chat gezeigt. Sie wird ruhig und leicht verstaendlich im FAQ
+  beziehungsweise als Antwort auf eine passende Datenschutzfrage erklaert.
+- Vorgesehene FAQ-Frage: "Werden meine Gespraeche gespeichert?"
+- Vorgesehene kurze FAQ-Antwort:
+  "Wir speichern Ihr Gespraech nicht dauerhaft. Zur Beantwortung wird Ihre
+  Eingabe an unseren KI-Dienst uebermittelt. Bitte geben Sie keine Passwoerter,
+  PINs oder TANs ein."
+- Direkt am Eingabe- und Uploadbereich steht nur der kurze Sicherheitshinweis:
+  "Bitte geben Sie keine Passwoerter, PINs oder TANs ein."
+
+4. SEO-Unterseiten unterhalb der FAQ
+Es werden eigenstaendige, leicht lesbare Unterseiten angelegt. Sie sollen die
+Zielgruppe genauer ansprechen, konkrete Fragen beantworten und sinnvoll
+untereinander sowie mit dem Chat verlinkt sein. Erste vorgesehene Themen:
+
+- Computer-Hilfe
+- Handy- und Smartphone-Hilfe
+- Tablet-Hilfe
+- Internet- und WLAN-Hilfe
+- Drucker-Hilfe
+- Hilfe mit Apps
+- E-Mail-Hilfe
+- Online-Banking-Hilfe
+- Betrugsverdacht und verdaechtige Nachrichten
+- Datenschutz und Sicherheit
+- So funktioniert die Technik-Hilfe
+- Kontakt und weitere Hilfe
+
+Die endgueltigen Seitentitel, URLs, Suchintentionen und Inhaltsstrukturen werden
+mit den spaeter eingesetzten SEO- und GEO-Skills festgelegt. Jede Unterseite
+erhaelt eigenstaendigen, nuetzlichen Inhalt; reine Wiederholungen und kuenstliche
+Keyword-Texte sind zu vermeiden.
+
+5. Technische SEO-/GEO-Anforderungen fuer Astro
+- Semantische, barrierearme HTML-Struktur und nachvollziehbare Ueberschriften.
+- Eindeutige Seitentitel und Beschreibungen fuer jede Unterseite.
+- Saubere, deutschsprachige und gut lesbare URLs.
+- Interne Verlinkung zwischen Chat, FAQ und passenden Hilfeseiten.
+- Maschinenlesbare strukturierte Informationen werden dort vorgesehen, wo sie
+  fachlich passen und von den spaeteren Skills empfohlen werden.
+- Gute mobile Darstellung, schnelle Ladezeit und moeglichst wenig unnoetiger
+  clientseitiger Code.
+- Inhalte muessen auch ohne Bedienung des Chats verstaendlich auffindbar sein.
+- Eine spaetere GEO-Pruefung entscheidet, welche zusaetzlichen oeffentlichen
+  Dateien oder maschinenlesbaren Inhaltsdarstellungen angelegt werden.
+
+6. Vorrangige Produktregeln
+- Mobile First, grosse Schrift, hoher Kontrast und grosse Schaltflaechen.
+- Keine Anmeldung.
+- Texteingabe, Spracheingabe, Vorlesen und Foto-Upload.
+- Erkennbare technische Informationen werden genutzt und einfach bestaetigt;
+  fehlende Informationen werden in Alltagssprache erfragt.
+- Die KI stellt so viele gezielte Rueckfragen wie fuer eine sichere Einschaetzung
+  erforderlich, moeglichst einzeln und mit grossen Antwortschaltflaechen wie
+  "Ja", "Nein" und "Ich weiss es nicht".
+- Loesungshinweise umfassen jeweils nur einen kleinen Schritt und werden danach
+  ueberprueft.
+- Nach drei erfolglosen Loesungsversuchen beginnt die lokale Eskalationslogik.
+  Fuer Menschen aus Koeln kann nach freiwilliger Ortsbestaetigung persoenliche
+  Hilfe vor Ort und Kontakt per Telefon beziehungsweise WhatsApp angeboten
+  werden. Ausserhalb Koelns wird Kontakt per E-Mail angeboten.
+- Bei Online-Banking, Betrugsverdacht oder moeglicher Gefahr haben sofortige
+  Sicherheitshinweise Vorrang vor dem normalen Drei-Versuche-Ablauf.
+
+7. Abnahmepunkt vor Veroeffentlichung
+Die Website darf erst als inhaltlich fertig gelten, wenn Barrierefreiheit,
+einfache Sprache, Datenschutz, Sicherheit, SEO und GEO gemeinsam geprueft
+wurden. SEO- oder GEO-Massnahmen duerfen keine irrefuehrenden Aussagen erzeugen
+und keine groessere technische Kompetenz der Nutzer voraussetzen.
+
+8. Domain und Frontend-Design
+- Kanonische Website-Adresse: https://senioren-computer-helfer.de
+- Anzeigename: Senioren-Computer-Helfer
+- Hauptueberschrift der Startseite:
+  "Brauchen Sie Hilfe mit Computer, Handy oder Internet?"
+- Der Chat steht mittig und ist das klar wichtigste Element der Startseite.
+- Darunter folgen allgemeine und bei laufendem Gespraech passende FAQ.
+- Sanftes Gruen bildet die visuelle Grundlage. Helle Gruentoene werden fuer
+  Hintergruende und Flaechen verwendet; Text und wichtige Schaltflaechen nutzen
+  ein deutlich dunkleres Gruen, damit der Kontrast barrierearm bleibt.
+- Vorlaeufige Farbpalette:
+  Hintergrund: #F5FAF6
+  Flaeche: #FFFFFF
+  Sanfter Akzent: #DCEFE2
+  Primaerfarbe fuer grosse Schaltflaechen: #2F6B4F
+  Hover-/Aktivfarbe: #24563E
+  Text: #1B2A21
+  Warnhinweis: #8A3B12 auf #FFF4E8
+- Keine hellgruenen Texte auf weissem Hintergrund.
+- Sichtbarer Tastaturfokus, grosszuegige Abstaende und mindestens gut
+  erreichbare Touch-Ziele sind verpflichtend.
+- Das endgueltige Farbsystem wird beim Bauen mit einem Kontrasttest geprueft.
+
+9. Empfohlene KI-Architektur ohne n8n
+Fuer die erste Version ist n8n nicht erforderlich. Die Anwendung bindet die
+KI direkt serverseitig ueber API-Endpunkte der Astro-Anwendung ein.
+
+Vorgesehener Datenfluss:
+Browser -> Astro-Serverroute -> KI-API -> Astro-Serverroute -> Browser
+
+- Der geheime API-Schluessel darf niemals an den Browser ausgeliefert werden.
+- Text und Fotos werden ueber eine serverseitige Chat-Route verarbeitet.
+- Spracheingabe wird ueber eine serverseitige Transkriptionsroute in Text
+  umgewandelt. Eine rein lokale Browserfunktion darf als Fallback angeboten
+  werden, sofern sie im jeweiligen Browser zuverlaessig verfuegbar ist.
+- Das Vorlesen kann zunaechst die Sprachausgabe des Browsers verwenden. Fuer
+  gleichmaessigere Qualitaet kann spaeter eine serverseitige
+  Text-zu-Sprache-Route genutzt werden.
+- Bei einer KI-generierten Stimme muss deutlich erkennbar sein, dass es sich
+  um eine kuenstlich erzeugte Stimme und nicht um einen Menschen handelt.
+- Die KI-Antwort soll als kontrollierte strukturierte Antwort zurueckkommen,
+  damit Text, Vorlesetext, grosse Antwortschaltflaechen, Sicherheitshinweise
+  und der Gespraechsstatus getrennt dargestellt werden koennen.
+- API-Aufrufe verwenden eine nicht dauerhaft speichernde Konfiguration, soweit
+  der eingesetzte Anbieter und das gewaehlte Konto dies unterstuetzen.
+- n8n bleibt optional fuer spaetere externe Arbeitsablaeufe wie Support-Tickets,
+  E-Mail-Automatisierung, WhatsApp, CRM oder Benachrichtigungen. Es darf nicht
+  Voraussetzung fuer den normalen Chat werden.
+
+10. Datenschutz bei KI-Verarbeitung
+- Die Anwendung selbst legt keine dauerhaften Chatverlaeufe an.
+- Der aktuelle Verlauf bleibt nur fuer die laufende Sitzung verfuegbar und wird
+  beim Sitzungsende aus der Anwendung entfernt.
+- Server- und Proxy-Protokolle duerfen keine Chattexte, Fotos, Audiodaten,
+  Zugangsdaten oder sonstige sensible Inhalte enthalten.
+- Hochgeladene Dateien werden nur im Arbeitsspeicher oder in einem kurzlebigen
+  Temporaerbereich verarbeitet und direkt nach der Anfrage geloescht.
+- Die Benutzeroberflaeche darf nicht pauschal behaupten, dass externe
+  KI-Anbieter keinerlei Daten voruebergehend verarbeiten oder aufbewahren.
+  Vor dem Start muessen die tatsaechlichen Aufbewahrungsregeln des gewaehlten
+  API-Kontos, ein moeglicher Auftragsverarbeitungsvertrag und die
+  Datenschutzerklaerung geprueft werden.
+- Fuer die OpenAI Responses API ist ausdruecklich store=false vorzusehen.
+  Das verhindert jedoch ohne gesondert freigeschaltete Datenschutzkontrollen
+  nicht automatisch jede moegliche Aufbewahrung in Sicherheitsprotokollen.
+- Diese technischen Einzelheiten sind interne Umsetzungs- und Pruefpunkte. Sie
+  werden nicht als prominenter Warntext im Chat dargestellt, damit die
+  hilfreiche und vertrauensvolle Nutzung nicht unnoetig erschwert wird.
+- Die Datenweitergabe wird im FAQ beziehungsweise auf eine entsprechende
+  Nutzerfrage mit genau diesem kurzen Text beantwortet:
+  "Wir speichern Ihr Gespraech nicht dauerhaft. Zur Beantwortung wird Ihre
+  Eingabe an unseren KI-Dienst uebermittelt. Bitte geben Sie keine Passwoerter,
+  PINs oder TANs ein."
+- Am Chat- und Uploadbereich erscheint nur:
+  "Bitte geben Sie keine Passwoerter, PINs oder TANs ein."
+- Eine ausfuehrliche Datenschutzerklaerung beschreibt Anbieter, Zweck,
+  Rechtsgrundlage, Aufbewahrung und Betroffenenrechte vor dem Veroeffentlichen.
+  Sie bleibt ueber einen unaufdringlichen Link erreichbar, ohne den zentralen
+  Chatbereich visuell zu ueberladen.
+
+11. VPS- und Produktionsbetrieb
+- Zielsystem: eigener VPS.
+- Interner Anwendungsport: 3005.
+- Die Astro-Anwendung wird als produktiver Node-Server mit serverseitigen
+  Routen beziehungsweise SSR gebaut; ein reiner statischer Export reicht fuer
+  die geschuetzte KI-API-Anbindung nicht aus.
+- Der Astro-Prozess lauscht innerhalb des Containers auf 0.0.0.0:3005. Der
+  Docker-Port wird auf dem VPS ausschliesslich an 127.0.0.1:3005 gebunden.
+- Oeffentlich erreichbar ist die Website ueber HTTPS auf Port 443 unter
+  https://senioren-computer-helfer.de.
+- Ein Reverse Proxy, zum Beispiel Caddy oder Nginx, terminiert TLS und leitet
+  intern an 127.0.0.1:3005 weiter.
+- Port 3005 soll nicht direkt durch die oeffentliche Firewall freigegeben
+  werden. Oeffentlich benoetigt werden grundsaetzlich nur 80 fuer die
+  HTTPS-Weiterleitung und 443 fuer HTTPS.
+- DNS-A- und gegebenenfalls AAAA-Eintraege zeigen auf den VPS. Eine eventuell
+  genutzte www-Variante wird dauerhaft auf die kanonische Domain umgeleitet.
+- Der primaere Produktionsweg ist Docker Compose. Der Anwendungscontainer
+  erhaelt eine automatische Neustartrichtlinie.
+- Die fertige Codebasis enthaelt eine README mit exakten Installations-, Build-,
+  Start-, Update-, Protokoll- und Ruecksetzschritten fuer den VPS.
+- Die fertige Codebasis enthaelt eine .env.example ohne echte Geheimnisse sowie
+  eine Beispielkonfiguration fuer den Prozessmanager und den Reverse Proxy.
+- Eine Route /api/health dient der lokalen Funktionskontrolle, gibt aber keine
+  Geheimnisse oder Systemdetails aus.
+- Vor dem Start werden Rate-Limits, Upload-Grenzen, Dateityppruefung,
+  Sicherheitsheader, Fehlerseiten und ein Backup-/Rollback-Weg eingerichtet.
+
+12. Vorgesehene Umgebungsvariablen
+Die endgueltigen Namen werden beim Bauen konsistent umgesetzt und in der
+.env.example dokumentiert. Mindestens vorgesehen sind:
+
+HOST=0.0.0.0
+PORT=3005
+SITE_URL=https://senioren-computer-helfer.de
+OPENAI_API_KEY=<geheim>
+OPENAI_MODEL=<beim Bau festlegen>
+OPENAI_TRANSCRIPTION_MODEL=<beim Bau festlegen>
+OPENAI_TTS_MODEL=<beim Bau festlegen>
+SUPPORT_EMAIL=<spaeter eintragen>
+MAX_FAILED_ATTEMPTS=3
+MAX_UPLOAD_MB=<beim Bau festlegen>
+ENABLE_PHONE_SUPPORT=false
+SUPPORT_PHONE=<zunaechst leer>
+ENABLE_WHATSAPP_SUPPORT=false
+SUPPORT_WHATSAPP=<zunaechst leer>
+LOCAL_SERVICE_ENABLED=true
+LOCAL_SERVICE_CITY=Koeln
+LOCAL_SERVICE_COUNTRY=DE
+WHATSAPP_AUTOMATION_URL=<zunaechst leer>
+
+- Geheimnisse werden weder in Git noch in clientseitigen PUBLIC-Variablen
+  gespeichert.
+- Telefonnummer und WhatsApp werden nur bei aktivierter Funktion, nach der
+  festgelegten Eskalationsstufe und nach der freiwilligen Bestaetigung
+  "Ich wohne in Koeln" angezeigt.
+- Ausserhalb Koelns oder wenn keine Ortsangabe gemacht werden soll, wird nach
+  drei erfolglosen Loesungsversuchen die Support-E-Mail angeboten.
+- Menschen aus Koeln koennen E-Mail als barrierearme Alternative waehlen, wenn
+  sie WhatsApp nicht nutzen koennen oder moechten.
+- Allgemeine Kontaktinformationen duerfen in der passenden Unterseite
+  beschrieben werden, ohne den Chat visuell zu ueberlagern. Die private
+  Telefonnummer wird dort nicht allgemein veroeffentlicht.
+
+13. Bauauftrag fuer Codex auf dem VPS
+Beim spaeteren Bau soll Codex aus dieser Datei eine neue Astro-Anwendung
+erstellen und dabei:
+
+1. die aktuellen stabilen, miteinander kompatiblen Versionen auswaehlen,
+2. Astro mit produktivem Node-/SSR-Betrieb konfigurieren,
+3. die Anwendung intern auf Port 3005 starten,
+4. alle Geheimnisse ausschliesslich aus Umgebungsvariablen lesen,
+5. Chat, Spracheingabe, Vorlesen und Foto-Upload serverseitig absichern,
+6. n8n fuer die erste Version nicht voraussetzen,
+7. Dockerfile, compose.yaml, .dockerignore sowie Reverse-Proxy-Beispiele
+   bereitstellen und dokumentieren,
+8. Tests fuer Prompt-Ablauf, drei Fehlversuche, Betrugswarnungen,
+   Dateiuploads und Datenschutzverhalten anlegen,
+9. die spaeter festgelegten SEO- und GEO-Skills anwenden,
+10. vor Freigabe Build, Tests, mobile Darstellung, Barrierefreiheit,
+    Sicherheitsregeln und Erreichbarkeit pruefen.
+
+Fuer den tatsaechlichen Einsatz auf dem VPS werden noch benoetigt:
+- Linux-Distribution und Version,
+- vorhandener Reverse Proxy oder gewuenschte Wahl zwischen Caddy und Nginx,
+- Information, ob Docker und Docker Compose bereits installiert sind,
+- DNS-Zugriff fuer die Domain,
+- API-Zugang und spaeter die Support-E-Mail-Adresse.
+
+14. Verbindliche Docker-Dateien und Container-Regeln
+Die fertige Codebasis muss einen vollstaendigen, getesteten Docker-Betrieb
+enthalten. Erforderlich sind mindestens:
+
+- Dockerfile
+- compose.yaml
+- .dockerignore
+- .env.example ohne echte Geheimnisse
+- README.md mit exakten Docker-Befehlen
+- Beispiel fuer Caddy oder Nginx als Reverse Proxy
+
+Dockerfile:
+- Mehrstufiger Build fuer Installation, Astro-Build und schlanke Laufzeit.
+- Abhaengigkeiten werden reproduzierbar aus der Lockdatei installiert.
+- Der finale Container enthaelt keine Build-Werkzeuge, die zur Laufzeit nicht
+  benoetigt werden.
+- Der Node-Prozess laeuft als Benutzer ohne Root-Rechte.
+- NODE_ENV=production und Container-Port 3005 werden gesetzt.
+- Geheimnisse und die echte .env-Datei werden nie in ein Image kopiert.
+
+compose.yaml:
+- Dienstname: app oder senioren-computer-helfer.
+- Build aus dem lokalen Dockerfile.
+- Portbindung ausschliesslich 127.0.0.1:3005:3005.
+- Umgebungsvariablen werden zur Laufzeit aus einer nicht eingecheckten Datei
+  beziehungsweise einer geeigneten Secret-Loesung uebergeben.
+- Neustartrichtlinie: unless-stopped oder eine gleichwertige sichere Regel.
+- Healthcheck gegen /api/health.
+- Keine dauerhaften Volumes fuer Chattexte, Fotos oder Audiodaten.
+- Temporaere Uploadverarbeitung verwendet nach Moeglichkeit ein tmpfs und wird
+  nach jeder Anfrage bereinigt.
+- Der Docker-Socket wird niemals in den Anwendungscontainer eingebunden.
+- Ressourcenlimits und eine sinnvolle Protokollrotation werden fuer den
+  Produktionsbetrieb dokumentiert.
+
+.dockerignore:
+- Mindestens .git, node_modules, dist, lokale Caches, Protokolle, echte
+  .env-Dateien, Editor-Dateien und Testartefakte ausschliessen.
+- .env.example bleibt als Vorlage im Build-Kontext zulaessig, enthaelt aber
+  keine echten Werte.
+
+Die README dokumentiert mindestens:
+- docker compose build
+- docker compose up -d
+- docker compose ps
+- docker compose logs
+- Healthcheck auf 127.0.0.1:3005/api/health
+- Update mit neuem Build
+- kontrollierten Neustart
+- Rollback auf einen vorherigen Git-Stand beziehungsweise ein vorheriges Image
+- sichere Verwaltung der Produktionsvariablen ausserhalb von Git
+
+15. Codex auf dem VPS
+Codex ist das Entwicklungswerkzeug und nicht der dauerhaft laufende
+Webseitenprozess. Es wird nicht in den Anwendungscontainer eingebaut und nicht
+ueber einen oeffentlichen Port bereitgestellt.
+
+Empfohlener Ablauf:
+1. Einen eigenen Benutzer ohne Root-Anmeldung fuer Entwicklung und Deployment
+   verwenden.
+2. SSH ausschliesslich mit Schluesselanmeldung absichern.
+3. Das Projekt in einem eigenen Verzeichnis, zum Beispiel
+   /srv/senioren-computer-helfer, als Git-Repository anlegen.
+4. Codex CLI mit dem aktuellen offiziellen Linux-Installer installieren.
+5. Auf dem Server mit codex login --device-auth anmelden oder fuer bewusst
+   nutzungsbasierte Abrechnung einen API-Schluessel ueber stdin verwenden.
+6. Mit codex login status die Anmeldung pruefen.
+7. GEO-LLM.txt in das Repository legen.
+8. Im Repository eine kurze AGENTS.md anlegen. Sie weist Codex verbindlich an,
+   GEO-LLM.txt vor Planung und Aenderungen vollstaendig zu lesen und danach
+   Build, Tests, Docker-Healthcheck, Barrierefreiheit sowie Sicherheitsregeln
+   zu pruefen.
+9. Codex aus dem Projektverzeichnis mit schreibendem Zugriff nur auf den
+   Workspace und mit Rueckfragen fuer weitergehende Aktionen starten.
+10. Vor jedem groesseren Arbeitsschritt einen Git-Zwischenstand erstellen.
+11. Produktionsgeheimnisse ausserhalb des Repositorys aufbewahren und den
+    Codex-Dateizugriff darauf sperren. Nur .env.example wird bearbeitet.
+12. Deployment- und Firewall-Aenderungen nicht unbeaufsichtigt ausfuehren;
+    die resultierenden Befehle und Diffs werden vor dem Einsatz geprueft.
+
+Codex selbst braucht auf dem VPS keinen Daemon, keinen App-Server und keinen
+offenen Port. Die interaktive CLI laeuft in der SSH-Sitzung. Alternativ kann
+eine unterstuetzte Desktop-App ueber eine abgesicherte SSH-Verbindung auf das
+Projekt zugreifen. Codex-App-Server-Transporte duerfen nicht direkt im
+oeffentlichen Internet bereitgestellt werden.
+
+16. Lokale Vor-Ort-Hilfe in Koeln
+Ziel ist ein lokaler Test, ob persoenliche technische Hilfe bei Seniorinnen und
+Senioren in Koeln angenommen wird. Diese Moeglichkeit wird auf der Startseite,
+in allgemeinen Marketingtexten und in den normalen FAQ zunaechst nicht aktiv
+beworben. Sie erscheint nur als passende Eskalation, wenn die KI ein konkretes
+Problem nach drei ernsthaften Loesungsversuchen nicht beheben konnte.
+
+Vorgesehener Ablauf:
+1. Nach dem dritten erfolglosen Loesungsversuch sagt die KI kurz und freundlich,
+   dass sie das Problem nicht sicher loesen konnte.
+2. Danach fragt sie: "Wohnen Sie in Koeln?"
+3. Es erscheinen grosse Schaltflaechen:
+   - "Ja"
+   - "Nein"
+   - "Moechte ich nicht sagen"
+4. Bei "Ja" fragt die Website:
+   "Moechten Sie persoenliche Hilfe bei Ihnen zu Hause anfragen?"
+5. Erst nach einem weiteren "Ja" wird die freigeschaltete Telefonnummer oder
+   eine grosse WhatsApp-Schaltflaeche angezeigt. E-Mail bleibt als Alternative
+   verfuegbar.
+6. Bei "Nein" oder "Moechte ich nicht sagen" wird nur die Support-E-Mail
+   angeboten.
+
+Datensparsame Ortspruefung:
+- Keine automatische Standortabfrage im Browser.
+- Keine IP-Geolokalisierung.
+- Keine Abfrage der vollstaendigen Adresse im KI-Chat.
+- Die Angabe "Koeln" wird nur fuer die aktuelle Entscheidung verwendet und
+  nicht dauerhaft gespeichert.
+- Eine Postleitzahl oder genaue Anschrift wird erst nach bewusst gestarteter
+  Kontaktaufnahme und nur fuer eine konkrete Terminpruefung abgefragt.
+
+Telefon und WhatsApp:
+- Die private Telefonnummer steht nicht im HTML der allgemeinen Startseite und
+  wird nicht an Personen ausserhalb des Koelner Ablaufs ausgegeben.
+- Die technische Implementierung muss verhindern, dass eine nur optisch
+  versteckte Nummer bereits im initialen Seitenquelltext oder in clientseitigen
+  Konfigurationsdateien enthalten ist. Die Freigabe erfolgt serverseitig nach
+  dem vorgesehenen Ablauf.
+- Die WhatsApp-Automation ist ein spaeteres, getrennt aktivierbares Modul. Sie
+  kann mit n8n oder einem anderen geeigneten Dienst umgesetzt werden, ist aber
+  keine Voraussetzung fuer die KI-Hilfe auf der Website.
+- Ein Kontakt ueber WhatsApp bedeutet noch keine verbindliche Buchung.
+- Preis, moegliche Anfahrtsbedingungen, Termin und Leistungsumfang werden erst
+  im WhatsApp-Ablauf mitgeteilt und muessen vor einer verbindlichen Zusage klar
+  bestaetigt werden.
+- Solange WhatsApp nicht fertig und ausdruecklich aktiviert ist, bleibt
+  ENABLE_WHATSAPP_SUPPORT=false.
+
+Sicherheit bei Vor-Ort-Hilfe:
+- Auch bei einem Vor-Ort-Termin werden niemals PINs, TANs oder Passwoerter
+  verlangt oder gespeichert.
+- Die Website verspricht keinen sofortigen Termin und keine garantierte
+  Problemloesung.
+- Bei akutem Betrugsverdacht gelten weiterhin zuerst die festgelegten
+  Sicherheitshinweise. Ein moeglicher persoenlicher Kontakt ersetzt nicht die
+  sofortige Sperrung beziehungsweise Kontaktaufnahme mit dem offiziellen
+  Kreditinstitut, wenn dies erforderlich ist.

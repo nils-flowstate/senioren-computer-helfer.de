@@ -1,0 +1,64 @@
+# Produktionsbetrieb nach GEO-LLM.txt §11 und §14.
+#
+# Der Docker-Socket wird bewusst nirgends eingebunden, und es gibt kein einziges
+# dauerhaftes Volume: Diese Anwendung hat nichts, was sie aufbewahren dürfte.
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: senioren-computer-helfer:aktuell
+    container_name: senioren-computer-helfer
+
+    # Ausschließlich an die Loopback-Adresse gebunden (§11). Von außen ist die
+    # Website nur über den Reverse Proxy auf 443 erreichbar. Port 3005 wird
+    # nicht in der öffentlichen Firewall freigegeben.
+    ports:
+      - "127.0.0.1:3005:3005"
+
+    # Die echten Werte stehen in .env. Diese Datei gehört nicht nach Git und
+    # wird auch nicht ins Image kopiert — siehe .dockerignore.
+    env_file:
+      - .env
+
+    restart: unless-stopped
+
+    healthcheck:
+      # Node bringt fetch mit. So braucht das Image weder curl noch wget, und
+      # die Laufzeit bleibt so schlank wie möglich.
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3005/api/health').then((a)=>process.exit(a.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+    # Keine Chattexte, keine Fotos, keine Audiodaten auf der Platte (§10, §14).
+    # Das Dateisystem ist schreibgeschützt; der einzige beschreibbare Ort ist
+    # ein tmpfs im Arbeitsspeicher, das bei jedem Neustart leer ist.
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+    # Ressourcengrenzen, damit ein einzelner Container den VPS nicht lahmlegt.
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+
+    # Protokollrotation: ohne Grenze füllt das Protokoll irgendwann die Platte.
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"

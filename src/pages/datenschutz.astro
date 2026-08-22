@@ -1,0 +1,115 @@
+---
+import Layout from '../komponenten/Layout.astro'
+
+/*
+ * Aufbau nach Art. 13 DSGVO. Die Seite bleibt bewusst in derselben einfachen
+ * Sprache wie der Rest — Art. 12 Abs. 1 verlangt ausdrücklich eine
+ * verständliche und leicht zugängliche Form.
+ */
+---
+
+<Layout
+    titel="Datenschutz · Senioren-Computer-Helfer"
+    beschreibung="Welche Daten beim Hilfe-Chat verarbeitet werden, wie lange sie bleiben und welche Rechte Sie haben. In einfacher Sprache erklärt."
+    pfad="/datenschutz"
+>
+    <h1 class="mb-4">Datenschutz</h1>
+
+    <p class="lesebreite mb-8 text-gross">
+        Kurz gesagt: Wir speichern Ihr Gespräch nicht dauerhaft. Zur Beantwortung
+        wird Ihre Eingabe an unseren KI-Dienst übermittelt. Bitte geben Sie keine
+        Passwörter, PINs oder TANs ein.
+    </p>
+
+    <div class="lesebreite mb-8 rounded-xl bg-warnung-flaeche p-4 text-warnung-text">
+        <p class="font-bold">Diese Seite ist noch nicht vollständig.</p>
+        <p class="mt-2">
+            Vor der Veröffentlichung fehlen noch: die verantwortliche Stelle mit
+            Anschrift, der Name des tatsächlich eingesetzten KI-Anbieters und der
+            Stand des Auftragsverarbeitungsvertrags.
+        </p>
+    </div>
+
+    <h2 class="mb-4 mt-10">Was mit Ihrem Gespräch passiert</h2>
+    <p class="lesebreite mb-4">
+        Was Sie in den Chat schreiben, wird an einen KI-Dienst weitergegeben, damit
+        eine Antwort entstehen kann. Dieser Dienst wird in unserem Auftrag tätig.
+        Der Anbieter sitzt in den USA. Die Übermittlung stützt sich auf die
+        Standardvertragsklauseln der Europäischen Kommission.
+    </p>
+    <p class="lesebreite mb-4">
+        Bei der Anfrage ist eingestellt, dass der Anbieter die Eingabe nicht zur
+        späteren Abrufbarkeit ablegt. Wir können nicht ausschließen, dass Anfragen
+        beim Anbieter für kurze Zeit in Sicherheitsprotokollen erscheinen. Deshalb
+        die Bitte: keine Passwörter, PINs oder TANs eingeben.
+    </p>
+    <p class="lesebreite mb-4">
+        Rechtsgrundlage ist Art. 6 Abs. 1 Buchstabe b und f DSGVO — die Erbringung
+        der von Ihnen gewünschten Hilfe.
+    </p>
+
+    <h2 class="mb-4 mt-10">Wie lange etwas gespeichert wird</h2>
+    <ul class="lesebreite mb-4 flex list-disc flex-col gap-3 pl-6">
+        <li>
+            Der Gesprächsverlauf liegt im Zwischenspeicher Ihres Browsers und wird
+            gelöscht, sobald Sie das Fenster schließen.
+        </li>
+        <li>Auf unserem Server wird kein Gesprächsverlauf angelegt.</li>
+        <li>
+            Hochgeladene Fotos werden nur im Arbeitsspeicher verarbeitet und
+            unmittelbar nach der Anfrage verworfen.
+        </li>
+        <li>
+            In den Server-Protokollen stehen nur Zeitpunkt, aufgerufene Adresse,
+            Status und Dauer — keine Gesprächsinhalte, keine Fotos, keine
+            IP-Adressen im Klartext.
+        </li>
+    </ul>
+
+    <h2 class="mb-4 mt-10">Was auf Ihrem Gerät gespeichert wird</h2>
+    <p class="lesebreite mb-4">
+        Wir verwenden keine Werbe- oder Analysewerkzeuge und setzen deshalb auch
+        kein Einwilligungsfenster ein. Gespeichert wird nur, was für den Betrieb
+        nötig ist:
+    </p>
+    <ul class="lesebreite mb-4 flex list-disc flex-col gap-3 pl-6">
+        <li>
+            <strong>Sitzungs-Cookie:</strong> enthält nur Zähler zum Gesprächsverlauf,
+            keinen Text. Es sorgt dafür, dass die Hilfe an der richtigen Stelle
+            weitergeht. Läuft nach vier Stunden ab.
+        </li>
+        <li>
+            <strong>Schriftgrößen-Cookie:</strong> merkt sich, welche Schriftgröße Sie
+            gewählt haben. Wird nur gesetzt, wenn Sie die Größe ausdrücklich ändern.
+        </li>
+        <li>
+            <strong>Zwischenspeicher für den Gesprächsverlauf:</strong> liegt im Browser
+            und endet mit dem Schließen des Fensters.
+        </li>
+    </ul>
+    <p class="lesebreite mb-4">
+        Alle drei sind für den von Ihnen gewünschten Dienst erforderlich im Sinne
+        von § 25 Abs. 2 Nr. 2 Telekommunikation-Digitale-Dienste-Datenschutz-Gesetz.
+    </p>
+
+    <h2 class="mb-4 mt-10">Schutz vor Überlastung</h2>
+    <p class="lesebreite mb-4">
+        Damit die Hilfe für alle erreichbar bleibt, begrenzen wir die Zahl der
+        Anfragen. Dafür wird Ihre IP-Adresse sofort in einen nicht umkehrbaren
+        Zahlenwert umgerechnet. Die IP-Adresse selbst wird nicht gespeichert. Der
+        dafür verwendete Schlüssel wechselt täglich.
+    </p>
+
+    <h2 class="mb-4 mt-10">Ihre Rechte</h2>
+    <p class="lesebreite mb-4">
+        Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der
+        Verarbeitung, Datenübertragbarkeit und Widerspruch (Art. 15 bis 21 DSGVO).
+        Außerdem können Sie sich bei einer Datenschutz-Aufsichtsbehörde beschweren.
+    </p>
+    <p class="lesebreite mb-8">
+        Weil wir keine Konten führen und keine Gespräche speichern, liegen uns in
+        aller Regel keine Daten vor, die sich Ihnen zuordnen ließen.
+    </p>
+
+    <p><a href="/">Zurück zum Hilfe-Chat</a></p>
+</Layout>

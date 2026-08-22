@@ -1,0 +1,72 @@
+---
+import '../stile/basis.css'
+import Schriftgroesse from './Schriftgroesse.astro'
+
+interface Props {
+    titel: string
+    beschreibung: string
+    /** Ohne führenden Schrägstrich weglassen — wird für die kanonische Adresse gebraucht. */
+    pfad: string
+}
+
+const { titel, beschreibung, pfad } = Astro.props
+const kanonisch = new URL(pfad, Astro.site ?? 'https://senioren-computer-helfer.de').href
+
+/*
+ * Die gewählte Schriftgröße kommt aus einem Cookie und wird serverseitig
+ * eingesetzt. Damit springt die Seite beim Laden nicht — ein Skript, das die
+ * Größe erst nachträglich setzt, würde bei jedem Aufruf kurz die kleine Schrift
+ * zeigen. Das Cookie enthält nur eine Zahl und keinerlei Personenbezug.
+ */
+const faktoren: Record<string, string> = { normal: '1', gross: '1.15', 'sehr-gross': '1.3' }
+const gewaehlt = Astro.cookies.get('sch_schrift')?.value ?? 'normal'
+const faktor = faktoren[gewaehlt] ?? '1'
+---
+
+<html lang="de" style={`--schrift-faktor: ${faktor}`}>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>{titel}</title>
+        <meta name="description" content={beschreibung} />
+        <link rel="canonical" href={kanonisch} />
+        <meta property="og:title" content={titel} />
+        <meta property="og:description" content={beschreibung} />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="de_DE" />
+        <meta property="og:url" content={kanonisch} />
+        <meta name="theme-color" content="#2F6B4F" />
+        <link rel="sitemap" href="/sitemap-index.xml" />
+    </head>
+    <body class="min-h-screen flex flex-col">
+        <a class="sprunglink" href="#inhalt">Zum Inhalt springen</a>
+
+        <header class="border-b-2 border-linie bg-flaeche">
+            <div class="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-4 px-4 py-4">
+                <a href="/" class="text-gross font-bold no-underline text-primaer-aktiv">
+                    Senioren-Computer-Helfer
+                </a>
+                <Schriftgroesse aktuell={gewaehlt} />
+            </div>
+        </header>
+
+        <main id="inhalt" class="mx-auto w-full max-w-3xl flex-1 px-4 py-8">
+            <slot />
+        </main>
+
+        <footer class="border-t-2 border-linie bg-flaeche">
+            <div class="mx-auto max-w-3xl px-4 py-8">
+                <p class="mb-4 text-text-leise">
+                    Die Hilfe im Chat ist kostenlos. Sie antwortet ein Computerprogramm, kein Mensch.
+                </p>
+                <nav aria-label="Rechtliches und weitere Seiten">
+                    <ul class="flex flex-wrap gap-x-8 gap-y-3">
+                        <li><a href="/so-funktioniert-die-hilfe">So funktioniert die Hilfe</a></li>
+                        <li><a href="/datenschutz">Datenschutz</a></li>
+                        <li><a href="/impressum">Impressum</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </footer>
+    </body>
+</html>

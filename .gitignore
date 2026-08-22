@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.astro/
+.npm-cache/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+tests/artefakte/
+playwright-report/
+
+# Eigene Claude-Skills und interne Notizen bleiben außerhalb des öffentlichen
+# Repositorys. Sie gehören nicht zur Website und werden getrennt gepflegt.
+.claude/
+doku/

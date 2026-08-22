@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+/*
+ * Farb- und Maßsystem nach GEO-LLM.txt §8.
+ * Jedes Farbpaar wird von scripts/kontrast.mjs gegen WCAG 2.2 AA geprüft;
+ * der Build bricht ab, wenn ein Paar durchfällt.
+ */
+@theme {
+  /* Flächen */
+  --color-hintergrund: #F5FAF6;
+  --color-flaeche: #FFFFFF;
+  --color-akzent: #DCEFE2;
+
+  /* Handlungsfarben — bewusst dunkel, damit heller Text darauf sicher lesbar
+     bleibt. Helles Grün auf Weiß ist ausdrücklich untersagt. */
+  --color-primaer: #2F6B4F;
+  --color-primaer-aktiv: #24563E;
+
+  /* Schrift */
+  --color-text: #1B2A21;
+  --color-text-leise: #3D5147;
+
+  /* Warnhinweis */
+  --color-warnung-text: #8A3B12;
+  --color-warnung-flaeche: #FFF4E8;
+
+  /* Linien */
+  --color-linie: #6C9A7B;
+
+  /*
+   * Keine Webfonts. Systemschriften laden sofort, verursachen keinen
+   * Textsprung und keinen Request an Dritte (§ 25 TDDDG, Art. 44 DSGVO).
+   */
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+
+  /* Schriftgrößen — Grundgröße 20px statt der üblichen 16px. */
+  --text-basis: 1.25rem;
+  --text-gross: 1.5rem;
+  --text-sehr-gross: 1.875rem;
+  --text-titel: 2.25rem;
+
+  /* Kleinstes zulässiges Touch-Ziel. */
+  --spacing-tippziel: 3.5rem;
+}

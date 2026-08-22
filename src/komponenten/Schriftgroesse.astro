@@ -1,0 +1,61 @@
+---
+interface Props {
+    aktuell: string
+}
+const { aktuell } = Astro.props
+
+const stufen = [
+    { wert: 'normal', beschriftung: 'A', titel: 'Normale Schriftgröße' },
+    { wert: 'gross', beschriftung: 'A', titel: 'Große Schrift' },
+    { wert: 'sehr-gross', beschriftung: 'A', titel: 'Sehr große Schrift' },
+]
+const groessen = ['text-basis', 'text-gross', 'text-sehr-gross']
+---
+
+<fieldset class="flex items-center gap-2 border-0 p-0" data-schriftgroesse>
+    <legend class="nur-vorlesen">Schriftgröße wählen</legend>
+    {
+        stufen.map((stufe, i) => (
+            <button
+                type="button"
+                class:list={[
+                    'tippziel rounded-lg border-2 border-primaer px-3 font-bold leading-none',
+                    groessen[i],
+                    aktuell === stufe.wert ? 'bg-primaer text-flaeche' : 'bg-flaeche text-primaer-aktiv',
+                ]}
+                data-wert={stufe.wert}
+                aria-pressed={aktuell === stufe.wert}
+                title={stufe.titel}
+            >
+                {stufe.beschriftung}
+                <span class="nur-vorlesen">{stufe.titel}</span>
+            </button>
+        ))
+    }
+</fieldset>
+
+<script>
+    // Setzt die Schriftgröße sofort und merkt sie für den nächsten Besuch.
+    // Das Cookie enthält nur "normal", "gross" oder "sehr-gross".
+    const faktoren: Record<string, string> = { normal: '1', gross: '1.15', 'sehr-gross': '1.3' }
+
+    document.querySelectorAll<HTMLElement>('[data-schriftgroesse]').forEach((gruppe) => {
+        gruppe.addEventListener('click', (ereignis) => {
+            const knopf = (ereignis.target as HTMLElement).closest<HTMLButtonElement>('[data-wert]')
+            if (!knopf) return
+
+            const wert = knopf.dataset.wert ?? 'normal'
+            document.documentElement.style.setProperty('--schrift-faktor', faktoren[wert] ?? '1')
+            document.cookie = `sch_schrift=${wert}; Path=/; Max-Age=31536000; SameSite=Lax`
+
+            gruppe.querySelectorAll<HTMLButtonElement>('[data-wert]').forEach((anderer) => {
+                const aktiv = anderer === knopf
+                anderer.setAttribute('aria-pressed', String(aktiv))
+                anderer.classList.toggle('bg-primaer', aktiv)
+                anderer.classList.toggle('text-flaeche', aktiv)
+                anderer.classList.toggle('bg-flaeche', !aktiv)
+                anderer.classList.toggle('text-primaer-aktiv', !aktiv)
+            })
+        })
+    })
+</script>
