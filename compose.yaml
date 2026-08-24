@@ -17,6 +17,16 @@ services:
     ports:
       - "127.0.0.1:3005:3005"
 
+    # Der Reverse Proxy läuft als eigener Container. Über 127.0.0.1 erreicht er
+    # die Anwendung nicht — das wäre sein eigenes Loopback. Er spricht sie
+    # deshalb im gemeinsamen Docker-Netz unter ihrem Namen an. Die Portbindung
+    # oben bleibt bestehen: Sie ist der Weg für die lokalen Prüfungen aus der
+    # README und aus scripts/pruefe-auslieferung.sh.
+    networks:
+      proxy:
+        aliases:
+          - senioren-computer-helfer
+
     # Die echten Werte stehen in .env. Diese Datei gehört nicht nach Git und
     # wird auch nicht ins Image kopiert — siehe .dockerignore.
     env_file:
@@ -62,3 +72,11 @@ services:
       options:
         max-size: "10m"
         max-file: "5"
+
+# Das Netz gehört dem Reverse Proxy und wird außerhalb dieses Projekts
+# verwaltet. "external" heißt: docker compose legt es weder an noch entfernt
+# es das Netz beim Herunterfahren — sonst risse ein "down" die anderen
+# Websites auf diesem Server mit ab.
+networks:
+  proxy:
+    external: true
