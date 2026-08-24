@@ -9,15 +9,34 @@ interface Props {
 const { ueberschrift, eintraege } = Astro.props
 ---
 
-<section aria-labelledby="faq-ueberschrift" class="mt-12">
-    <h2 id="faq-ueberschrift" class="mb-6">{ueberschrift}</h2>
+<!--
+    In der Startansicht stehen die Fragen offen unter dem Chat (§8). Im
+    laufenden Gespräch treten sie hinter eine Zeile zurück, bleiben aber mit
+    einem Tipp erreichbar — der sichtbare Text und das FAQPage-Markup bleiben
+    damit dieselbe Quelle.
+-->
+<section aria-label={ueberschrift} class="mt-12">
+    <h2 class="nur-startansicht mb-6">{ueberschrift}</h2>
 
-    <div class="flex flex-col gap-3">
+    <button
+        type="button"
+        id="faq-oeffner"
+        aria-expanded="false"
+        aria-controls="faq-liste"
+        class="faq-oeffner tippziel w-full rounded-xl border-2 border-linie bg-flaeche px-4 font-bold text-primaer-aktiv"
+    >
+        Häufige Fragen anzeigen
+    </button>
+
+    <div id="faq-liste" class="faq-liste flex flex-col gap-3">
         {
             eintraege.map((eintrag) => (
                 <details class="rounded-xl border-2 border-linie bg-flaeche">
-                    <summary class="tippziel flex cursor-pointer items-center px-4 font-bold">
-                        {eintrag.frage}
+                    <summary class="tippziel flex flex-col justify-center gap-1 px-4 py-3">
+                        <span class="font-bold">{eintrag.frage}</span>
+                        <span class="klapp-hinweis" aria-hidden="true">
+                            Hier klicken für die Antwort
+                        </span>
                     </summary>
                     <div class="border-t-2 border-linie px-4 py-4">
                         <p class="lesebreite">{eintrag.antwort}</p>

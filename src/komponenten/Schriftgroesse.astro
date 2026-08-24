@@ -4,58 +4,102 @@ interface Props {
 }
 const { aktuell } = Astro.props
 
+/*
+ * Ein Knopf statt drei nebeneinander. Drei Knöpfe brauchten im Kopf der Seite
+ * eine eigene Zeile und schoben den Chat nach unten. Der Umschalter bleibt
+ * trotzdem dauerhaft sichtbar und mit einem Tipp erreichbar — wer große
+ * Schrift braucht, findet sie sonst nie.
+ *
+ * <details> statt eines eigenen Auf- und Zuklapp-Skripts: Das kann der
+ * Browser selbst, mit Tastatur und Vorlesegerät, ohne eine Zeile JavaScript.
+ */
 const stufen = [
-    { wert: 'normal', beschriftung: 'A', titel: 'Normale Schriftgröße' },
-    { wert: 'gross', beschriftung: 'A', titel: 'Große Schrift' },
-    { wert: 'sehr-gross', beschriftung: 'A', titel: 'Sehr große Schrift' },
+    { wert: 'normal', titel: 'Normale Schrift' },
+    { wert: 'gross', titel: 'Größere Schrift' },
+    { wert: 'sehr-gross', titel: 'Sehr große Schrift' },
 ]
 const groessen = ['text-basis', 'text-gross', 'text-sehr-gross']
 ---
 
-<fieldset class="flex items-center gap-2 border-0 p-0" data-schriftgroesse>
-    <legend class="nur-vorlesen">Schriftgröße wählen</legend>
-    {
-        stufen.map((stufe, i) => (
-            <button
-                type="button"
-                class:list={[
-                    'tippziel rounded-lg border-2 border-primaer px-3 font-bold leading-none',
-                    groessen[i],
-                    aktuell === stufe.wert ? 'bg-primaer text-flaeche' : 'bg-flaeche text-primaer-aktiv',
-                ]}
-                data-wert={stufe.wert}
-                aria-pressed={aktuell === stufe.wert}
-                title={stufe.titel}
-            >
-                {stufe.beschriftung}
-                <span class="nur-vorlesen">{stufe.titel}</span>
-            </button>
-        ))
-    }
-</fieldset>
+<details class="relative" data-schriftgroesse>
+    <summary
+        class="tippziel flex items-center justify-center rounded-lg border-2 border-primaer bg-flaeche px-4 text-gross font-bold leading-none text-primaer-aktiv"
+        title="Schriftgröße wählen"
+    >
+        A<span class="nur-vorlesen">Schriftgröße wählen</span>
+    </summary>
+
+    <div
+        class="absolute top-full right-0 z-40 mt-2 w-64 max-w-[calc(100vw-1.5rem)] rounded-xl border-2 border-linie bg-flaeche p-3 shadow-lg"
+    >
+        <fieldset class="flex flex-col gap-2 border-0 p-0">
+            <legend class="nur-vorlesen">Schriftgröße wählen</legend>
+            {
+                stufen.map((stufe, i) => (
+                    <button
+                        type="button"
+                        class:list={[
+                            'tippziel flex w-full items-center gap-3 rounded-lg border-2 border-primaer px-4 text-left font-bold',
+                            aktuell === stufe.wert
+                                ? 'bg-primaer text-flaeche'
+                                : 'bg-flaeche text-primaer-aktiv',
+                        ]}
+                        data-wert={stufe.wert}
+                        aria-pressed={aktuell === stufe.wert}
+                    >
+                        <span class={groessen[i]} aria-hidden="true">
+                            A
+                        </span>
+                        <span class="text-basis">{stufe.titel}</span>
+                    </button>
+                ))
+            }
+        </fieldset>
+    </div>
+</details>
 
 <script>
     // Setzt die Schriftgröße sofort und merkt sie für den nächsten Besuch.
     // Das Cookie enthält nur "normal", "gross" oder "sehr-gross".
     const faktoren: Record<string, string> = { normal: '1', gross: '1.15', 'sehr-gross': '1.3' }
 
-    document.querySelectorAll<HTMLElement>('[data-schriftgroesse]').forEach((gruppe) => {
-        gruppe.addEventListener('click', (ereignis) => {
-            const knopf = (ereignis.target as HTMLElement).closest<HTMLButtonElement>('[data-wert]')
-            if (!knopf) return
+    document.querySelectorAll<HTMLDetailsElement>('[data-schriftgroesse]').forEach((menue) => {
+        const knopf = menue.querySelector('summary')
 
-            const wert = knopf.dataset.wert ?? 'normal'
+        menue.addEventListener('click', (ereignis) => {
+            const gewaehlt = (ereignis.target as HTMLElement).closest<HTMLButtonElement>('[data-wert]')
+            if (!gewaehlt) return
+
+            const wert = gewaehlt.dataset.wert ?? 'normal'
             document.documentElement.style.setProperty('--schrift-faktor', faktoren[wert] ?? '1')
             document.cookie = `sch_schrift=${wert}; Path=/; Max-Age=31536000; SameSite=Lax`
 
-            gruppe.querySelectorAll<HTMLButtonElement>('[data-wert]').forEach((anderer) => {
-                const aktiv = anderer === knopf
+            menue.querySelectorAll<HTMLButtonElement>('[data-wert]').forEach((anderer) => {
+                const aktiv = anderer === gewaehlt
                 anderer.setAttribute('aria-pressed', String(aktiv))
                 anderer.classList.toggle('bg-primaer', aktiv)
                 anderer.classList.toggle('text-flaeche', aktiv)
                 anderer.classList.toggle('bg-flaeche', !aktiv)
                 anderer.classList.toggle('text-primaer-aktiv', !aktiv)
             })
+
+            // Nach der Wahl schließen und den Fokus zurückgeben, sonst steht das
+            // Menü offen über der Seite und verdeckt den Anfang des Textes.
+            menue.open = false
+            knopf?.focus()
+        })
+
+        // Ein Tipp neben das Menü schließt es. Das erwarten die meisten
+        // Menschen, und mit der Escape-Taste geht es ohne Zeigegerät.
+        document.addEventListener('click', (ereignis) => {
+            if (menue.open && !menue.contains(ereignis.target as Node)) menue.open = false
+        })
+
+        menue.addEventListener('keydown', (ereignis) => {
+            if (ereignis.key === 'Escape' && menue.open) {
+                menue.open = false
+                knopf?.focus()
+            }
         })
     })
 </script>

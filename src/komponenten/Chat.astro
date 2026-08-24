@@ -5,18 +5,23 @@
  * Die Begrüßung wird serverseitig gerendert und steht damit auch ohne
  * JavaScript im HTML — für Menschen mit abgeschaltetem Skript, für langsame
  * Verbindungen und für Antwortsysteme, die die Seite auslesen.
+ *
+ * Sie ist bewusst kurz: Jede Zeile hier schiebt das Eingabefeld auf dem Handy
+ * weiter nach unten.
  */
-const begruessung =
-    'Guten Tag. Beschreiben Sie mir bitte mit Ihren eigenen Worten, womit Sie Schwierigkeiten haben. Ein Satz genügt für den Anfang.'
+import { BEGRUESSUNG } from '../inhalte/texte'
 ---
 
-<section aria-labelledby="chat-ueberschrift" class="rounded-2xl border-2 border-linie bg-flaeche p-4 shadow-sm sm:p-6">
+<section
+    aria-labelledby="chat-ueberschrift"
+    class="rounded-2xl border-2 border-linie bg-flaeche p-4 shadow-sm sm:p-6"
+>
     <h2 id="chat-ueberschrift" class="nur-vorlesen">Hilfe-Chat</h2>
 
     <ol id="verlauf" role="log" aria-live="polite" aria-relevant="additions" class="flex list-none flex-col gap-6 p-0">
-        <li>
+        <li class="begruessung">
             <p class="mb-1 font-bold text-text-leise">Der Helfer</p>
-            <p class="lesebreite rounded-xl bg-akzent p-4">{begruessung}</p>
+            <p class="lesebreite rounded-xl bg-akzent p-4">{BEGRUESSUNG}</p>
         </li>
     </ol>
 
@@ -24,46 +29,67 @@ const begruessung =
         Ich lese das gerade in Ruhe durch …
     </p>
 
-    <div id="schaltflaechen" class="mt-6 flex flex-wrap gap-3"></div>
+    <!--
+        Eingabefeld und Schaltflächen stehen zusammen in einer Leiste. Im
+        laufenden Gespräch bleibt sie am unteren Rand stehen, damit sie bei
+        jeder Antwort erreichbar ist, ohne zu scrollen (siehe basis.css).
+    -->
+    <div class="eingabeleiste mt-6">
+        <div id="schaltflaechen" class="mb-3 flex flex-wrap gap-3 empty:mb-0"></div>
 
-    <form id="chatformular" class="mt-6" novalidate>
-        <label for="eingabe" class="mb-2 block font-bold">Ihre Nachricht</label>
-        <textarea
-            id="eingabe"
-            name="eingabe"
-            rows="3"
-            maxlength="2000"
-            autocomplete="off"
-            placeholder="Zum Beispiel: Mein Drucker druckt nicht mehr."
-            class="w-full rounded-xl border-2 border-linie bg-flaeche p-4 text-basis"
-        ></textarea>
+        <form id="chatformular" novalidate>
+            <label for="eingabe" class="mb-2 block font-bold">Ihre Nachricht</label>
 
-        <p class="mt-2 text-text-leise">Bitte geben Sie keine Passwörter, PINs oder TANs ein.</p>
+            <div class="flex items-start gap-3">
+                <textarea
+                    id="eingabe"
+                    name="eingabe"
+                    rows="1"
+                    maxlength="2000"
+                    autocomplete="off"
+                    placeholder="Zum Beispiel: Mein Drucker druckt nicht mehr."
+                    class="eingabefeld tippziel w-full rounded-xl border-2 border-linie bg-flaeche p-4 text-basis"
+                ></textarea>
 
-        <div class="mt-4 flex flex-wrap gap-3">
-            <button
-                type="submit"
-                class="tippziel rounded-xl bg-primaer px-8 font-bold text-flaeche hover:bg-primaer-aktiv"
-            >
-                Senden
-            </button>
-            <button
-                type="button"
-                id="einfacher"
-                hidden
-                class="tippziel rounded-xl border-2 border-primaer bg-flaeche px-6 font-bold text-primaer-aktiv"
-            >
-                Bitte einfacher erklären
-            </button>
-            <button
-                type="button"
-                id="neubeginn"
-                class="tippziel rounded-xl border-2 border-linie bg-flaeche px-6 text-text-leise"
-            >
-                Von vorne beginnen
-            </button>
-        </div>
-    </form>
+                <button
+                    type="submit"
+                    class="tippziel shrink-0 rounded-xl bg-primaer px-6 font-bold text-flaeche hover:bg-primaer-aktiv"
+                >
+                    Senden
+                </button>
+            </div>
+
+            <!--
+                Der Sicherheitshinweis steht unmittelbar am Eingabefeld und
+                bleibt dort auch im laufenden Gespräch sichtbar (§3, §10).
+                Ein Feld, das kein Mensch sieht: Wer es ausfüllt, ist keiner.
+            -->
+            <p class="mt-2 text-text-leise">Bitte geben Sie keine Passwörter, PINs oder TANs ein.</p>
+
+            <div class="nur-vorlesen" aria-hidden="true">
+                <label for="hinweisfeld">Dieses Feld bitte leer lassen</label>
+                <input id="hinweisfeld" name="hinweisfeld" type="text" tabindex="-1" autocomplete="off" />
+            </div>
+        </form>
+    </div>
+
+    <div class="mt-4 flex flex-wrap gap-3">
+        <button
+            type="button"
+            id="einfacher"
+            hidden
+            class="tippziel rounded-xl border-2 border-primaer bg-flaeche px-6 font-bold text-primaer-aktiv"
+        >
+            Bitte einfacher erklären
+        </button>
+        <button
+            type="button"
+            id="neubeginn"
+            class="tippziel rounded-xl border-2 border-linie bg-flaeche px-6 text-text-leise"
+        >
+            Von vorne beginnen
+        </button>
+    </div>
 
     <noscript>
         <p class="mt-6 rounded-xl bg-warnung-flaeche p-4 text-warnung-text">

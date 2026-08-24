@@ -5,9 +5,18 @@ import {
     pruefeBetrug,
     ZUGANGSDATEN_HINWEIS,
 } from '../../lib/sicherheit/betrugserkennung'
-import { COOKIE_NAME, cookieKopfzeile, sitzungLesen, type Sitzung } from '../../lib/sicherheit/sitzungscookie'
-import { ABLEHNUNGSTEXT, pruefeGrenzen } from '../../lib/schutz/ratelimit'
+import {
+    COOKIE_NAME,
+    cookieKopfzeile,
+    LEERE_SITZUNG,
+    sitzungLesen,
+    type Sitzung,
+} from '../../lib/sicherheit/sitzungscookie'
+import { ABLEHNUNGSTEXT, pruefeGrenzen, pruefeWiederholung } from '../../lib/schutz/ratelimit'
 import { fehlerart, protokolliere } from '../../lib/schutz/protokoll'
+import { pruefeZweck } from '../../lib/schutz/vorpruefung'
+import { fremdeHerkunft } from '../../lib/schutz/herkunft'
+import { BEGRUESSUNG } from '../../inhalte/texte'
 
 export const prerender = false
 
@@ -21,18 +30,41 @@ interface AnfrageKoerper {
     ergebnis?: unknown
     einfacherErklaeren?: unknown
     neuBeginnen?: unknown
+    /** Feld, das kein Mensch sieht. Siehe Chat.astro. */
+    hinweisfeld?: unknown
 }
+
+const WIEDERHOLUNG_TEXT =
+    'Diese Nachricht haben Sie gerade schon geschickt. Bitte beschreiben Sie mit anderen Worten, was nicht klappt — dann komme ich besser weiter.'
 
 export const POST: APIRoute = async ({ request, clientAddress, url }) => {
     const beginn = performance.now()
     let status = 200
+    let vermerk: string | undefined
 
     try {
+        // Ein Aufruf von einer fremden Seite kostet denselben Schlüsselzugriff
+        // wie ein echter — nur dass niemand davon etwas hat.
+        if (fremdeHerkunft(request, url)) {
+            status = 403
+            vermerk = 'fremde-herkunft'
+            return antwortJson(fehlerAntwort('Diese Anfrage kam nicht von unserer Website.'), status)
+        }
+
         const koerper = (await request.json()) as AnfrageKoerper
         const eingabe = typeof koerper.eingabe === 'string' ? koerper.eingabe.trim() : ''
         const verlauf = leseVerlauf(koerper.verlauf)
+        const neuBeginnen = koerper.neuBeginnen === true
 
-        if (!eingabe && verlauf.length === 0) {
+        // Das unsichtbare Feld ist ausgefüllt: Das schafft nur ein Programm,
+        // das das Formular ausliest und alles hineinschreibt, was es findet.
+        if (typeof koerper.hinweisfeld === 'string' && koerper.hinweisfeld.trim() !== '') {
+            status = 400
+            vermerk = 'hinweisfeld'
+            return antwortJson(fehlerAntwort('Bitte schreiben Sie Ihre Frage in das große Feld.'), status)
+        }
+
+        if (!neuBeginnen && !eingabe && verlauf.length === 0) {
             status = 400
             return antwortJson(fehlerAntwort('Bitte schreiben Sie kurz, womit ich Ihnen helfen kann.'), status)
         }
@@ -46,14 +78,23 @@ export const POST: APIRoute = async ({ request, clientAddress, url }) => {
         }
 
         let sitzung = sitzungLesen(leseCookie(request, COOKIE_NAME))
-        if (koerper.neuBeginnen === true) {
-            sitzung = { versuche: 0, koelnGefragt: false, koelnBestaetigt: false, hilfeAngefragt: false, nachrichten: 0, ausgestellt: 0 }
+        if (neuBeginnen) {
+            sitzung = { ...LEERE_SITZUNG }
         }
 
-        const ablehnung = pruefeGrenzen(besucherKennung(request, clientAddress), sitzung.nachrichten)
+        const kennung = besucherKennung(request, clientAddress)
+        const ablehnung = pruefeGrenzen(kennung, sitzung.nachrichten)
         if (ablehnung) {
             status = 429
+            vermerk = `grenze:${ablehnung}`
             return antwortJson(fehlerAntwort(ABLEHNUNGSTEXT[ablehnung]), status, sitzung, url)
+        }
+
+        // Ein Neubeginn braucht kein Sprachmodell: Der Text ist immer derselbe.
+        // Der Aufruf setzt nur den Zähler im Cookie zurück.
+        if (neuBeginnen) {
+            vermerk = 'neubeginn'
+            return antwortJson(ohneKi(BEGRUESSUNG), status, sitzung, url)
         }
 
         // Ein gescheiterter Lösungsschritt zählt für die Eskalation nach §16.
@@ -61,9 +102,45 @@ export const POST: APIRoute = async ({ request, clientAddress, url }) => {
         // Vermutung des Sprachmodells — sonst wäre die Eskalation nicht verlässlich.
         if (koerper.ergebnis === 'nicht-geholfen') sitzung.versuche++
         if (koerper.ergebnis === 'geholfen') sitzung.versuche = 0
-        sitzung.nachrichten++
+
+        /*
+         * Ob schon ein Gespräch läuft, entscheidet der signierte Zähler im
+         * Cookie — nicht der mitgeschickte Verlauf. Der kommt aus dem Browser
+         * und ließe sich frei behaupten, um die Zweckprüfung zu umgehen.
+         */
+        const imGespraech = sitzung.nachrichten > 0
 
         const befund = pruefeBetrug(eingabe)
+        const zugangsdaten = enthaeltZugangsdaten(eingabe)
+
+        /*
+         * Zweckprüfung vor dem Schlüssel (siehe vorpruefung.ts). Sicherheit hat
+         * Vorrang: Wer einen Betrug schildert oder versehentlich ein Passwort
+         * eintippt, wird nie an einer Themenliste abgewiesen.
+         */
+        if (!befund && !zugangsdaten) {
+            const vorbefund = pruefeZweck(eingabe, imGespraech)
+            if (vorbefund) {
+                vermerk = `vorpruefung:${vorbefund.grund}`
+                return antwortJson(ohneKi(vorbefund.antwort), status, sitzung, url)
+            }
+
+            if (pruefeWiederholung(kennung, eingabe)) {
+                vermerk = 'wiederholung'
+                return antwortJson(ohneKi(WIEDERHOLUNG_TEXT), status, sitzung, url)
+            }
+        }
+
+        /*
+         * Erst hier wird mitgezählt — nach allen Prüfungen, vor dem Aufruf.
+         *
+         * Zählte die Sitzung schon eine abgewiesene Nachricht mit, wäre die
+         * Sitzung danach "im Gespräch" und die Themenprüfung damit für immer
+         * abgeschaltet. Eine einzige abgewiesene Nachricht hätte den Zugang
+         * geöffnet. Außerdem ist der Zähler die Kostengrenze, und was den
+         * Schlüssel nie erreicht, kostet auch nichts.
+         */
+        sitzung.nachrichten++
 
         const anfrage: ChatAnfrage = {
             verlauf,
@@ -81,7 +158,7 @@ export const POST: APIRoute = async ({ request, clientAddress, url }) => {
             antwort.sicherheitshinweis = `${befund.hinweis} ${befund.naechsterSchritt}`
         }
 
-        if (enthaeltZugangsdaten(eingabe)) {
+        if (zugangsdaten) {
             antwort.antwortText = `${ZUGANGSDATEN_HINWEIS}\n\n${antwort.antwortText}`
             antwort.vorleseText = `${ZUGANGSDATEN_HINWEIS} ${antwort.vorleseText}`
         }
@@ -91,7 +168,13 @@ export const POST: APIRoute = async ({ request, clientAddress, url }) => {
         return antwortJson({ ok: true as const, antwort, betrugsverdacht: befund?.art ?? null }, status, sitzung, url)
     } catch (fehler) {
         status = fehler instanceof KiFehler && fehler.ursache === 'kein-schluessel' ? 503 : 502
-        protokolliere({ route: '/api/chat', status, dauer: performance.now() - beginn, fehlerart: fehlerart(fehler) })
+        protokolliere({
+            route: '/api/chat',
+            status,
+            dauer: performance.now() - beginn,
+            fehlerart: fehlerart(fehler),
+            vermerk,
+        })
         return antwortJson(
             fehlerAntwort(
                 'Ich konnte gerade nicht antworten. Bitte tippen Sie noch einmal auf Senden. Wenn es weiter nicht geht, versuchen Sie es in ein paar Minuten erneut.',
@@ -100,7 +183,7 @@ export const POST: APIRoute = async ({ request, clientAddress, url }) => {
         )
     } finally {
         if (status < 500) {
-            protokolliere({ route: '/api/chat', status, dauer: performance.now() - beginn })
+            protokolliere({ route: '/api/chat', status, dauer: performance.now() - beginn, vermerk })
         }
     }
 }
@@ -115,6 +198,21 @@ function fehlerAntwort(text: string) {
         status: 'frage',
     }
     return { ok: false as const, antwort, betrugsverdacht: null }
+}
+
+/**
+ * Eine vollwertige Antwort, die ohne Sprachmodell zustande kam. Für die
+ * Oberfläche sieht sie aus wie jede andere — die Person merkt keinen Bruch.
+ */
+function ohneKi(text: string) {
+    const antwort: KiAntwort = {
+        antwortText: text,
+        vorleseText: text,
+        schaltflaechen: [],
+        sicherheitshinweis: null,
+        status: 'frage',
+    }
+    return { ok: true as const, antwort, betrugsverdacht: null }
 }
 
 function antwortJson(inhalt: unknown, status: number, sitzung?: Sitzung, url?: URL): Response {

@@ -14,6 +14,12 @@ export interface Eintrag {
     dauer: number
     /** Nur die Fehlerklasse, niemals die Meldung — Meldungen enthalten Nutzereingaben. */
     fehlerart?: string
+    /**
+     * Feste Kennung dafür, warum eine Anfrage ohne KI-Aufruf beantwortet wurde,
+     * etwa "vorpruefung:ohne-technikbezug". Ausschließlich Werte aus dem Code,
+     * niemals etwas aus der Eingabe — sonst stünde Nutzertext im Protokoll.
+     */
+    vermerk?: string
 }
 
 export function protokolliere(eintrag: Eintrag): void {
@@ -23,6 +29,7 @@ export function protokolliere(eintrag: Eintrag): void {
         String(eintrag.status),
         `${Math.round(eintrag.dauer)}ms`,
         eintrag.fehlerart ?? '-',
+        eintrag.vermerk ?? '-',
     ].join(' ')
 
     if (eintrag.status >= 500) {

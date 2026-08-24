@@ -21,6 +21,9 @@ interface Eimer {
 const eimer = new Map<string, Eimer>()
 const tagesZaehler = { tag: '', anzahl: 0 }
 
+/** Fingerabdruck der zuletzt gesendeten Nachricht je Besucher — nie der Text. */
+const letzteNachricht = new Map<string, { fingerabdruck: string; anzahl: number }>()
+
 let salz = randomBytes(32)
 let salzTag = heute()
 
@@ -33,6 +36,7 @@ function kennung(ip: string): string {
         salz = randomBytes(32)
         salzTag = heute()
         eimer.clear()
+        letzteNachricht.clear()
     }
     return createHmac('sha256', salz).update(ip).digest('base64url').slice(0, 22)
 }
@@ -84,6 +88,38 @@ export function pruefeGrenzen(ip: string, nachrichtenInSitzung: number): Ablehnu
     return null
 }
 
+/**
+ * Dieselbe Nachricht mehrfach hintereinander ist das deutlichste Bot-Merkmal,
+ * das sich ohne Inhaltsanalyse erkennen lässt.
+ *
+ * Gespeichert wird nur ein HMAC über den Text, mit demselben täglich
+ * wechselnden Salz wie die Besucherkennung. Aus dem Fingerabdruck lässt sich
+ * der Satz nicht zurückgewinnen, und nach dem Tageswechsel ist er wertlos.
+ *
+ * Erst der dritte gleiche Versuch wird abgewiesen: Wer keine Antwort sieht,
+ * schickt seine Nachricht erfahrungsgemäß ein zweites Mal ab.
+ */
+export function pruefeWiederholung(ip: string, eingabe: string): boolean {
+    const schluessel = kennung(ip)
+    const fingerabdruck = createHmac('sha256', salz)
+        .update(eingabe.toLowerCase().replace(/\s+/g, ' ').trim())
+        .digest('base64url')
+        .slice(0, 22)
+
+    const vorher = letzteNachricht.get(schluessel)
+    if (vorher && vorher.fingerabdruck === fingerabdruck) {
+        vorher.anzahl++
+        return vorher.anzahl > 2
+    }
+
+    // Der Speicher wächst sonst mit jedem Besucher des Tages. Ein Leeren kostet
+    // nur die Erkennung laufender Wiederholungen, nicht die Sicherheit.
+    if (letzteNachricht.size > 10_000) letzteNachricht.clear()
+
+    letzteNachricht.set(schluessel, { fingerabdruck, anzahl: 1 })
+    return false
+}
+
 /** Meldungen in Alltagssprache — der Grund bleibt für die Person nachvollziehbar. */
 export const ABLEHNUNGSTEXT: Record<Ablehnung, string> = {
     'zu-schnell': 'Einen Moment bitte. Sie haben gerade sehr schnell hintereinander geschrieben. Versuchen Sie es in einer Minute noch einmal.',
@@ -94,6 +130,7 @@ export const ABLEHNUNGSTEXT: Record<Ablehnung, string> = {
 /** Nur für Tests. */
 export function zaehlerZuruecksetzen(): void {
     eimer.clear()
+    letzteNachricht.clear()
     tagesZaehler.tag = ''
     tagesZaehler.anzahl = 0
 }

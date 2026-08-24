@@ -44,20 +44,35 @@ export function starteChat(): void {
     const schaltflaechenBereich = document.getElementById('schaltflaechen')
     const einfacherKnopf = document.getElementById('einfacher')
     const neubeginnKnopf = document.getElementById('neubeginn')
+    const faqOeffner = document.getElementById('faq-oeffner')
+    /** Das Feld, das kein Mensch sieht. Ausgefüllt heißt: kein Mensch. */
+    const hinweisfeld = document.getElementById('hinweisfeld') as HTMLInputElement | null
 
     if (!formular || !eingabefeld || !verlaufListe || !wartet || !schaltflaechenBereich) return
+
+    /** Die serverseitig gerenderte Begrüßung. Sie überlebt einen Neubeginn. */
+    const begruessung = verlaufListe.querySelector('.begruessung')
 
     let verlauf: Nachricht[] = ladeVerlauf()
     let laeuft = false
     let letzterStatus: KiAntwort['status'] = 'frage'
 
+    /** Der Kasten, in dem die Antworten zur zuletzt gestellten Frage landen. */
+    let offenerAbschnitt: HTMLElement | null = null
+
+    const ruhig = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
     // Ein wiederhergestelltes Gespräch nach einem versehentlichen Neuladen der
     // Seite. Ohne das wäre alles weg, was schon erklärt wurde.
     if (verlauf.length > 0) {
         for (const eintrag of verlauf) {
-            zeigeNachricht(eintrag.rolle, eintrag.text)
+            if (eintrag.rolle === 'person') beginneAbschnitt(eintrag.text)
+            else zeigeAntwort(eintrag.text)
         }
+        setzeAnsicht('gespraech')
     }
+
+    eingabefeld.addEventListener('input', passeHoeheAn)
 
     formular.addEventListener('submit', (ereignis) => {
         ereignis.preventDefault()
@@ -78,30 +93,63 @@ export function starteChat(): void {
         if (!window.confirm('Möchten Sie wirklich von vorne beginnen? Das bisherige Gespräch wird dann gelöscht.')) {
             return
         }
-        verlauf = []
-        speichereVerlauf(verlauf)
-        void senden('Ich möchte von vorne beginnen.', { neuBeginnen: true })
-        verlaufListe.replaceChildren()
+        void neuBeginnen()
     })
+
+    // Im Gespräch stehen die allgemeinen Fragen hinter einer Zeile. Wer sie
+    // trotzdem braucht, holt sie mit einem Tipp zurück, ohne das Gespräch zu
+    // verlassen.
+    faqOeffner?.addEventListener('click', () => {
+        const offen = document.body.dataset.faq === 'offen'
+        if (offen) delete document.body.dataset.faq
+        else document.body.dataset.faq = 'offen'
+        faqOeffner.setAttribute('aria-expanded', String(!offen))
+        faqOeffner.textContent = offen ? 'Häufige Fragen anzeigen' : 'Häufige Fragen ausblenden'
+    })
+
+    // Die Zurück-Taste führt aus dem Gespräch zurück zur Startansicht, statt
+    // von der Website weg. Viele Menschen benutzen sie als Abbruchtaste.
+    window.addEventListener('popstate', (ereignis) => {
+        const zustand = (ereignis.state as { ansicht?: string } | null)?.ansicht
+        document.body.dataset.ansicht = zustand === 'gespraech' ? 'gespraech' : 'start'
+    })
+
+    /**
+     * Startansicht: Überschrift, Chat, FAQ. Gesprächsansicht: nur das Gespräch,
+     * die Eingabeleiste bleibt unten stehen. Das Aussehen macht basis.css —
+     * hier wird nur das Attribut gesetzt.
+     */
+    function setzeAnsicht(name: 'start' | 'gespraech'): void {
+        if (document.body.dataset.ansicht === name) return
+        document.body.dataset.ansicht = name
+        if (name === 'gespraech') history.pushState({ ansicht: 'gespraech' }, '')
+    }
 
     async function senden(
         text: string,
-        zusatz: { ergebnis?: 'geholfen' | 'nicht-geholfen'; einfacherErklaeren?: boolean; neuBeginnen?: boolean },
+        zusatz: { ergebnis?: 'geholfen' | 'nicht-geholfen'; einfacherErklaeren?: boolean },
     ): Promise<void> {
         if (laeuft) return
         laeuft = true
 
+        setzeAnsicht('gespraech')
         schaltflaechenBereich!.replaceChildren()
-        zeigeNachricht('person', text)
+        beginneAbschnitt(text)
         verlauf.push({ rolle: 'person', text })
         eingabefeld!.value = ''
+        passeHoeheAn()
         wartet!.hidden = false
 
         try {
             const antwort = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ eingabe: text, verlauf: verlauf.slice(0, -1), ...zusatz }),
+                body: JSON.stringify({
+                    eingabe: text,
+                    verlauf: verlauf.slice(0, -1),
+                    hinweisfeld: hinweisfeld?.value ?? '',
+                    ...zusatz,
+                }),
             })
 
             const daten = (await antwort.json()) as { antwort: KiAntwort }
@@ -123,9 +171,37 @@ export function starteChat(): void {
         }
     }
 
+    /** Alles zurück auf Anfang — auch der Fehlversuchszähler auf dem Server. */
+    async function neuBeginnen(): Promise<void> {
+        verlauf = []
+        speichereVerlauf(verlauf)
+        offenerAbschnitt = null
+        verlaufListe!.replaceChildren(...(begruessung ? [begruessung] : []))
+        schaltflaechenBereich!.replaceChildren()
+        if (einfacherKnopf) einfacherKnopf.hidden = true
+        eingabefeld!.value = ''
+        passeHoeheAn()
+
+        document.body.dataset.ansicht = 'start'
+        history.replaceState({ ansicht: 'start' }, '')
+        eingabefeld!.focus()
+
+        try {
+            // Ohne diesen Aufruf liefe das neue Gespräch mit den Fehlversuchen
+            // des alten weiter — der Zähler steht im Cookie, nicht im Browser.
+            await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ neuBeginnen: true }),
+            })
+        } catch {
+            /* Der Zähler bleibt dann stehen. Das Gespräch beginnt trotzdem neu. */
+        }
+    }
+
     function verarbeite(antwort: KiAntwort): void {
         letzterStatus = antwort.status
-        zeigeNachricht('assistent', antwort.antwortText, antwort.sicherheitshinweis)
+        zeigeAntwort(antwort.antwortText, antwort.sicherheitshinweis)
         verlauf.push({ rolle: 'assistent', text: antwort.antwortText })
         speichereVerlauf(verlauf)
 
@@ -169,10 +245,7 @@ export function starteChat(): void {
             })
             zeigeAngebot((await antwort.json()) as KontaktAngebot)
         } catch {
-            zeigeNachricht(
-                'assistent',
-                'Die Verbindung hat gerade nicht geklappt. Bitte versuchen Sie es noch einmal.',
-            )
+            zeigeAntwort('Die Verbindung hat gerade nicht geklappt. Bitte versuchen Sie es noch einmal.')
         } finally {
             wartet!.hidden = true
             laeuft = false
@@ -180,7 +253,7 @@ export function starteChat(): void {
     }
 
     function zeigeAngebot(angebot: KontaktAngebot): void {
-        zeigeNachricht('assistent', angebot.text)
+        zeigeAntwort(angebot.text)
 
         schaltflaechenBereich!.replaceChildren()
 
@@ -190,7 +263,7 @@ export function starteChat(): void {
                     // Die eigene Antwort bleibt im Verlauf sichtbar. Sie wandert
                     // aber nicht in den Gesprächsverlauf für die KI — der
                     // Wohnort geht das Sprachmodell nichts an (§16).
-                    zeigeNachricht('person', knopf.beschriftung)
+                    beginneAbschnitt(knopf.beschriftung)
                     void eskalation(knopf.wert)
                 }),
             )
@@ -250,35 +323,98 @@ export function starteChat(): void {
         return knopf
     }
 
-    function zeigeNachricht(rolle: Nachricht['rolle'], text: string, sicherheitshinweis?: string | null): void {
-        const eintrag = document.createElement('li')
+    /**
+     * Beginnt ein neues Frage-Antwort-Paar.
+     *
+     * Das vorherige Paar klappt dabei zu. Im laufenden Gespräch zählt die
+     * neueste Antwort; alles davor bleibt über die eigene Frage auffindbar und
+     * ist mit einem Tipp wieder da.
+     */
+    function beginneAbschnitt(frage: string): void {
+        for (const offen of verlaufListe!.querySelectorAll<HTMLDetailsElement>('details[open]')) {
+            offen.open = false
+        }
 
-        const absender = document.createElement('p')
-        absender.className = 'mb-1 font-bold text-text-leise'
-        absender.textContent = rolle === 'person' ? 'Sie' : 'Der Helfer'
-        eintrag.append(absender)
+        const eintrag = document.createElement('li')
+        eintrag.className = 'paar'
+
+        const klapp = document.createElement('details')
+        klapp.open = true
+        klapp.className = 'rounded-xl border-2 border-linie bg-flaeche'
+
+        const zeile = document.createElement('summary')
+        zeile.className = 'tippziel flex flex-col justify-center gap-1 px-4 py-3'
+
+        const fragetext = document.createElement('span')
+        fragetext.className = 'font-bold'
+        fragetext.textContent = `Sie: ${frage}`
+        zeile.append(fragetext)
+
+        // Für Vorlesegeräte überflüssig: Sie sagen von sich aus, ob ein
+        // Bereich ein- oder ausgeblendet ist.
+        const hinweis = document.createElement('span')
+        hinweis.className = 'klapp-hinweis'
+        hinweis.setAttribute('aria-hidden', 'true')
+        hinweis.textContent = 'Hier klicken für die Antwort'
+        zeile.append(hinweis)
+
+        const koerper = document.createElement('div')
+        koerper.className = 'flex flex-col gap-4 border-t-2 border-linie p-4'
+
+        klapp.append(zeile, koerper)
+        eintrag.append(klapp)
+        verlaufListe!.append(eintrag)
+
+        offenerAbschnitt = koerper
+        scrolleZumPaar(eintrag)
+    }
+
+    function zeigeAntwort(text: string, sicherheitshinweis?: string | null): void {
+        const ziel = offenerAbschnitt ?? neuerEinzelabschnitt()
 
         if (sicherheitshinweis) {
             const hinweis = document.createElement('p')
-            hinweis.className = 'lesebreite mb-3 rounded-xl bg-warnung-flaeche p-4 font-bold text-warnung-text'
+            hinweis.className = 'lesebreite rounded-xl bg-warnung-flaeche p-4 font-bold text-warnung-text'
             hinweis.textContent = sicherheitshinweis
-            eintrag.append(hinweis)
+            ziel.append(hinweis)
         }
 
         // textContent statt innerHTML: Modellantworten werden nie als Markup
         // ausgewertet. Absätze entstehen durch Aufteilen an Leerzeilen.
         for (const absatz of text.split(/\n{2,}/)) {
             const p = document.createElement('p')
-            p.className =
-                rolle === 'person'
-                    ? 'lesebreite rounded-xl border-2 border-linie p-4'
-                    : 'lesebreite rounded-xl bg-akzent p-4'
+            p.className = 'lesebreite rounded-xl bg-akzent p-4'
             p.textContent = absatz
-            eintrag.append(p)
+            ziel.append(p)
         }
 
+        const paar = ziel.closest('.paar')
+        if (paar) scrolleZumPaar(paar as HTMLElement)
+    }
+
+    /** Für Antworten ohne vorangegangene Frage — etwa eine Verbindungsstörung. */
+    function neuerEinzelabschnitt(): HTMLElement {
+        const eintrag = document.createElement('li')
+        eintrag.className = 'paar flex flex-col gap-4'
         verlaufListe!.append(eintrag)
-        eintrag.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+        offenerAbschnitt = eintrag
+        return eintrag
+    }
+
+    /**
+     * Zum Anfang der neuen Antwort, nicht zu ihrem Ende. Gelesen wird von oben,
+     * und wer die erste Zeile sucht, hat schon verloren.
+     */
+    function scrolleZumPaar(paar: HTMLElement): void {
+        paar.scrollIntoView({ block: 'start', behavior: ruhig ? 'auto' : 'smooth' })
+    }
+
+    /** Das Eingabefeld beginnt einzeilig und wächst mit dem Text. */
+    function passeHoeheAn(): void {
+        const feld = eingabefeld!
+        feld.style.height = 'auto'
+        const zeilenhoehe = parseFloat(getComputedStyle(document.documentElement).fontSize) || 20
+        feld.style.height = `${Math.min(feld.scrollHeight, zeilenhoehe * 12)}px`
     }
 
     function ladeVerlauf(): Nachricht[] {

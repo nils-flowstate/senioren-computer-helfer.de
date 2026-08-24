@@ -114,7 +114,13 @@ und keine groessere technische Kompetenz der Nutzer voraussetzen.
 - Kanonische Website-Adresse: https://senioren-computer-helfer.de
 - Anzeigename: Senioren-Computer-Helfer
 - Hauptueberschrift der Startseite:
-  "Brauchen Sie Hilfe mit Computer, Handy oder Internet?"
+  "Hilfe bei Computer, Handy und Internet"
+  Geaendert am 24. August 2026 auf ausdruecklichen Wunsch des Betreibers. Die
+  frueher vorgeschriebene Fassung "Brauchen Sie Hilfe mit Computer, Handy oder
+  Internet?" brauchte auf einem Handy vier Zeilen und schob den Chat mitsamt
+  Eingabefeld unter den sichtbaren Bereich. Nach diesem Abschnitt ist der Chat
+  das klar wichtigste Element der Startseite; die kuerzere Ueberschrift setzt
+  genau das um und behaelt die Suchbegriffe aus Abschnitt 2.
 - Der Chat steht mittig und ist das klar wichtigste Element der Startseite.
 - Darunter folgen allgemeine und bei laufendem Gespraech passende FAQ.
 - Sanftes Gruen bildet die visuelle Grundlage. Helle Gruentoene werden fuer

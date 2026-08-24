@@ -40,6 +40,16 @@ h1, h2, h3 {
 }
 
 h1 { font-size: var(--text-titel); }
+
+/*
+ * Auf dem Handy ist die volle Titelgröße teuer: Jede Zeile kostet 45 px, und
+ * darunter soll der Chat vollständig sichtbar sein. Die Längeneinheit im
+ * Media Query rechnet immer mit 16 px und bleibt vom Schriftgrößen-Umschalter
+ * unberührt — der Umschalter wirkt weiterhin auf die Überschrift selbst.
+ */
+@media (max-width: 30rem) {
+  h1 { font-size: var(--text-sehr-gross); }
+}
 h2 { font-size: var(--text-sehr-gross); }
 h3 { font-size: var(--text-gross); }
 
@@ -109,4 +119,131 @@ a:hover { color: var(--color-primaer); }
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* -------------------------------------------------------------------------
+ * Zwei Ansichten auf einer Seite
+ *
+ * Bis zur ersten Nachricht steht data-ansicht="start" am <body>: Überschrift,
+ * Chat, FAQ. Ab der ersten Nachricht steht dort "gespraech" — dann tritt
+ * alles zurück, was nicht zum laufenden Gespräch gehört.
+ *
+ * Das Umschalten macht ausschließlich diese Datei. Das Skript setzt nur das
+ * Attribut. Ohne JavaScript bleibt die Startansicht stehen und die Seite
+ * bleibt vollständig lesbar.
+ * ---------------------------------------------------------------------- */
+
+[data-ansicht="gespraech"] .nur-startansicht {
+  display: none;
+}
+
+/* Die Begrüßung ist die einzige Antwort ohne Frage davor. Sobald das Gespräch
+   läuft, ist sie nur noch Ballast über dem, was gerade zählt. */
+[data-ansicht="gespraech"] .begruessung {
+  display: none;
+}
+
+/* -------------------------------------------------------------------------
+ * Klappzeilen — im FAQ und im Gesprächsverlauf dieselbe Bedienung
+ * ---------------------------------------------------------------------- */
+
+/* Das Dreieck der Browser ist klein, grau und in jedem Browser anders. Statt
+   dessen steht in der Zeile ein Satz, der sagt, was ein Tipp bewirkt. */
+summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
+
+.klapp-hinweis {
+  display: block;
+  font-weight: 400;
+  color: var(--color-text-leise);
+}
+
+/* Ist die Antwort offen, stimmt die Aufforderung nicht mehr — ein Tipp würde
+   sie wieder schließen. */
+details[open] > summary .klapp-hinweis {
+  display: none;
+}
+
+/* -------------------------------------------------------------------------
+ * Eingabeleiste
+ *
+ * Im Gespräch bleibt sie am unteren Rand stehen, damit Eingabefeld und
+ * Schaltflächen bei jeder Antwort erreichbar sind, ohne zu scrollen.
+ * "sticky" statt "fixed": Das verträgt sich auf älteren Tablets deutlich
+ * besser mit der eingeblendeten Bildschirmtastatur.
+ * ---------------------------------------------------------------------- */
+
+[data-ansicht="gespraech"] .eingabeleiste {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  background-color: var(--color-flaeche);
+  border-top: 2px solid var(--color-linie);
+  /* Die Karte hat 1rem Innenabstand. Die Leiste zieht sich bis an deren Rand,
+     sonst scrollt Text seitlich an ihr vorbei. */
+  margin-inline: -1rem;
+  padding: 0.75rem 1rem max(0.75rem, env(safe-area-inset-bottom));
+}
+
+@media (min-width: 40rem) {
+  [data-ansicht="gespraech"] .eingabeleiste {
+    margin-inline: -1.5rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+/*
+ * Querformat oder 200 % Zoom: Dann bliebe neben der Leiste kaum Platz für die
+ * Antwort. In dem Fall scrollt sie einfach mit.
+ */
+@media (max-height: 32rem) {
+  [data-ansicht="gespraech"] .eingabeleiste {
+    position: static;
+  }
+}
+
+/* Das Eingabefeld wächst mit dem Text. Ein Ziehgriff würde jede Anpassung
+   sofort wieder überschreiben. */
+.eingabefeld {
+  resize: none;
+  overflow-y: auto;
+}
+
+/* Neue Antworten werden mit ihrem Anfang nach oben gescrollt, nicht mit ihrem
+   Ende. Gelesen wird von oben. */
+.paar {
+  scroll-margin-top: 1rem;
+}
+
+/* -------------------------------------------------------------------------
+ * Allgemeine FAQ im laufenden Gespräch
+ *
+ * Sie verschwinden nicht aus der Seite, sie rücken hinter eine Zeile. Damit
+ * bleibt der sichtbare Text deckungsgleich mit dem FAQPage-Markup, und wer
+ * mitten im Gespräch eine allgemeine Frage hat, kommt mit einem Tipp hin.
+ * ---------------------------------------------------------------------- */
+
+.faq-oeffner {
+  display: none;
+}
+
+[data-ansicht="gespraech"] .faq-oeffner {
+  display: flex;
+  align-items: center;
+}
+
+[data-ansicht="gespraech"] .faq-liste {
+  display: none;
+}
+
+[data-ansicht="gespraech"][data-faq="offen"] .faq-liste {
+  display: flex;
+  margin-top: 0.75rem;
 }
