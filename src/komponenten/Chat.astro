@@ -2,52 +2,108 @@
 /*
  * Der Chat ist das wichtigste Element der Startseite (GEO-LLM.txt §8).
  *
- * Die Begrüßung wird serverseitig gerendert und steht damit auch ohne
- * JavaScript im HTML — für Menschen mit abgeschaltetem Skript, für langsame
- * Verbindungen und für Antwortsysteme, die die Seite auslesen.
+ * Aufbau: Vorstellung, Gespräch, Antwortmöglichkeiten, Eingabeleiste. Keine
+ * Karte drumherum, kein Rahmen um jede Nachricht, keine Klappzeilen im
+ * Verlauf. Das waren zusammen rund 60 Pixel Rand auf einem 360 Pixel breiten
+ * Gerät — Platz, der der Schrift fehlte.
  *
- * Sie ist bewusst kurz: Jede Zeile hier schiebt das Eingabefeld auf dem Handy
- * weiter nach unten.
+ * Was das Gespräch teilt, sind zwei Dinge: das Bild links und die Richtung der
+ * Blase. Durchgängige Regel: volles Grün heißt antippen.
+ *
+ * Begrüßung, Beispiele und Wartezustand werden serverseitig gerendert und
+ * stehen damit auch ohne JavaScript im HTML — für Antwortsysteme, die die
+ * Seite auslesen, und für langsame Verbindungen.
  */
-import { BEGRUESSUNG } from '../inhalte/texte'
+import { BEGRUESSUNG, BEISPIELE, EINLEITUNG_BEISPIELE } from '../inhalte/texte'
+import { ALLGEMEINE_FAQ } from '../inhalte/faq'
+import Faq from './Faq.astro'
+
+/** Ein Bild, zwei Größen. Der Zuschnitt sitzt auf Augenhöhe, siehe public/. */
+const HELFER_BILD = '/images/nils-technik-helfer-rund.webp'
 ---
 
-<section
-    aria-labelledby="chat-ueberschrift"
-    class="rounded-2xl border-2 border-linie bg-flaeche p-4 shadow-sm sm:p-6"
->
+<section aria-labelledby="chat-ueberschrift">
     <h2 id="chat-ueberschrift" class="nur-vorlesen">Hilfe-Chat</h2>
 
-    <ol id="verlauf" role="log" aria-live="polite" aria-relevant="additions" class="flex list-none flex-col gap-6 p-0">
-        <li class="begruessung">
-            <p class="mb-1 font-bold text-text-leise">Der Helfer</p>
-            <p class="lesebreite rounded-xl bg-akzent p-4">{BEGRUESSUNG}</p>
+    <!--
+        Einmal ganz oben steht, wer hier antwortet — mit Gesicht und mit dem
+        Satz, dass ein Programm schreibt. Nicht über jeder Nachricht: Das wäre
+        acht Zeilen später nur noch Lärm.
+    -->
+    <div class="vorstellung">
+        <img src={HELFER_BILD} alt="" width="320" height="320" decoding="async" />
+        <p>
+            <b>Nils’ Technik-Hilfe</b>
+            <span class="zusatz">Es antwortet ein Computerprogramm.</span>
+        </p>
+    </div>
+
+    <ol id="verlauf" class="gespraech" role="log" aria-live="polite" aria-relevant="additions">
+        <!--
+            Die Begrüßung trägt kein Bild: Es stünde sonst zweimal direkt
+            untereinander. Der Platz bleibt leer, damit die Blasen in der
+            Flucht bleiben.
+        -->
+        <li class="von-ihm ohne-bild begruessung">
+            <img src={HELFER_BILD} alt="" width="320" height="320" aria-hidden="true" />
+            <div class="blase"><p>{BEGRUESSUNG}</p></div>
+        </li>
+
+        <!--
+            Der Wartezustand steht fertig im HTML und wird nur ein- und
+            ausgeblendet. Groß und mittig, weil hier zwei Fragen offen sind:
+            Ist meine Eingabe angekommen, und passiert gerade etwas?
+        -->
+        <li id="wartet" class="warten" hidden>
+            <img src={HELFER_BILD} alt="" width="320" height="320" />
+            <span class="punkte" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="satz" id="wartet-satz"></span>
         </li>
     </ol>
 
-    <p id="wartet" hidden class="mt-6 rounded-xl bg-akzent p-4 text-text-leise">
-        Ich lese das gerade in Ruhe durch …
-    </p>
+    <!--
+        Antwortmöglichkeiten. In der Startansicht stehen hier zwei Beispiele,
+        im Gespräch die Antworten auf die gestellte Frage. Immer mit einer
+        Zeile darüber, die sagt, dass man sie antippen darf — ohne sie ist für
+        einen ungeübten Menschen nicht sicher erkennbar, dass die grünen
+        Flächen Schaltflächen sind.
+    -->
+    <div id="schaltflaechen" class="wahl-bereich">
+        <p class="wahl-einleitung" id="wahl-einleitung">{EINLEITUNG_BEISPIELE}</p>
+        <div class="wahl-liste" role="group" aria-labelledby="wahl-einleitung">
+            {BEISPIELE.map((beispiel) => (
+                <button type="button" class="wahl" data-wert={beispiel}>{beispiel}</button>
+            ))}
+        </div>
+    </div>
 
     <!--
-        Eingabefeld und Schaltflächen stehen zusammen in einer Leiste. Im
-        laufenden Gespräch bleibt sie am unteren Rand stehen, damit sie bei
-        jeder Antwort erreichbar ist, ohne zu scrollen (siehe basis.css).
+        Nebenwege. Sie stehen dort, wo das Gespräch gerade endet, und nicht
+        unter der festgehefteten Leiste — dort fände sie niemand. Weiß mit
+        Rand statt gefüllt: Sie sind nicht der nächste Schritt im Gespräch.
     -->
-    <div class="eingabeleiste mt-6">
-        <div id="schaltflaechen" class="mb-3 flex flex-wrap gap-3 empty:mb-0"></div>
+    <div class="nebenknoepfe">
+        <button type="button" id="einfacher" class="neben" hidden>Bitte einfacher erklären</button>
+        <button type="button" id="neubeginn" class="neben leise">Von vorne beginnen</button>
+    </div>
 
+    <!--
+        Eingabefeld, Sicherheitshinweis und Fragenzeile stehen zusammen in
+        einer Leiste, die am unteren Rand stehen bleibt. Damit sind sie bei
+        jeder Antwort erreichbar, ohne zu scrollen (siehe basis.css).
+    -->
+    <div class="eingabeleiste">
         <form id="chatformular" novalidate>
-            <label for="eingabe" class="mb-2 block font-bold">Ihre Nachricht</label>
+            <label for="eingabe" class="nur-vorlesen">Ihre Nachricht</label>
 
-            <div class="flex items-start gap-3">
+            <div class="flex items-end gap-3">
                 <textarea
                     id="eingabe"
                     name="eingabe"
                     rows="1"
                     maxlength="2000"
                     autocomplete="off"
-                    placeholder="Zum Beispiel: Mein Drucker druckt nicht mehr."
+                    placeholder="Ihre Nachricht …"
                     class="eingabefeld tippziel w-full rounded-xl border-2 border-linie bg-flaeche p-4 text-basis"
                 ></textarea>
 
@@ -64,37 +120,24 @@ import { BEGRUESSUNG } from '../inhalte/texte'
                 bleibt dort auch im laufenden Gespräch sichtbar (§3, §10).
                 Ein Feld, das kein Mensch sieht: Wer es ausfüllt, ist keiner.
             -->
-            <p class="mt-2 text-text-leise">Bitte geben Sie keine Passwörter, PINs oder TANs ein.</p>
+            <p class="mt-2 text-[1rem] text-text-leise">
+                Bitte geben Sie keine Passwörter, PINs oder TANs ein.
+            </p>
 
             <div class="nur-vorlesen" aria-hidden="true">
                 <label for="hinweisfeld">Dieses Feld bitte leer lassen</label>
                 <input id="hinweisfeld" name="hinweisfeld" type="text" tabindex="-1" autocomplete="off" />
             </div>
         </form>
-    </div>
 
-    <div class="mt-4 flex flex-wrap gap-3">
-        <button
-            type="button"
-            id="einfacher"
-            hidden
-            class="tippziel rounded-xl border-2 border-primaer bg-flaeche px-6 font-bold text-primaer-aktiv"
-        >
-            Bitte einfacher erklären
-        </button>
-        <button
-            type="button"
-            id="neubeginn"
-            class="tippziel rounded-xl border-2 border-linie bg-flaeche px-6 text-text-leise"
-        >
-            Von vorne beginnen
-        </button>
+        <Faq ueberschrift="Fragen und Antworten" eintraege={ALLGEMEINE_FAQ} />
     </div>
 
     <noscript>
         <p class="mt-6 rounded-xl bg-warnung-flaeche p-4 text-warnung-text">
             Für den Chat wird JavaScript benötigt. Es ist in Ihrem Browser ausgeschaltet.
-            Unsere <a href="/so-funktioniert-die-hilfe">Hilfeseiten</a> können Sie trotzdem lesen.
+            Die Fragen und Antworten oben sowie unsere
+            <a href="/so-funktioniert-die-hilfe">Hilfeseiten</a> können Sie trotzdem lesen.
         </p>
     </noscript>
 </section>

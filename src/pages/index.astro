@@ -1,11 +1,16 @@
 ---
 import Layout from '../komponenten/Layout.astro'
 import Chat from '../komponenten/Chat.astro'
-import Faq from '../komponenten/Faq.astro'
 import { ALLGEMEINE_FAQ, faqStrukturiert } from '../inhalte/faq'
 
 export const prerender = false
 
+/*
+ * Die sichtbaren Fragen stehen im Aufklapper am Eingabefeld (Chat.astro →
+ * Faq.astro) und kommen aus derselben Liste wie dieses Markup. Der GEO-Skill
+ * verlangt genau diese Deckungsgleichheit; zwei getrennte Listen liefen früher
+ * oder später auseinander.
+ */
 const strukturiert = [
     {
         '@context': 'https://schema.org',
@@ -33,8 +38,6 @@ const strukturiert = [
     <h1 class="nur-startansicht mb-4">Hilfe bei Computer, Handy und Internet</h1>
 
     <Chat />
-
-    <Faq ueberschrift="Häufige Fragen" eintraege={ALLGEMEINE_FAQ} />
 
     <script type="application/ld+json" set:html={JSON.stringify(strukturiert)} is:inline />
 </Layout>

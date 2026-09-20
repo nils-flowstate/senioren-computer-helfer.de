@@ -1,4 +1,19 @@
 ---
+/*
+ * Fragen und Antworten als Aufklapper unter dem Eingabefeld.
+ *
+ * Warum dort und nicht als Liste unter dem Chat: Auf dem Handy schob die
+ * offene Liste alles Weitere aus dem Bild, und im laufenden Gespräch stand sie
+ * quer. Als Zeile am Eingabefeld ist sie in jedem Zustand mit einem Tipp
+ * erreichbar und kostet geschlossen 56 Pixel.
+ *
+ * Warum ohne JavaScript: Die Sicherheitsrichtlinie erlaubt weder eingebettete
+ * Skripte noch eingebettete Stile (src/middleware.ts). <details> kann das
+ * Auf- und Zuklappen selbst — mit Tastatur, mit Vorlesegerät und auch dann,
+ * wenn der Chat mangels JavaScript stumm bleibt. Der sichtbare Text bleibt
+ * dabei deckungsgleich mit dem FAQPage-Markup, weil beide aus derselben Liste
+ * kommen.
+ */
 import type { FaqEintrag } from '../inhalte/faq'
 
 interface Props {
@@ -9,37 +24,38 @@ interface Props {
 const { ueberschrift, eintraege } = Astro.props
 ---
 
-<!--
-    In der Startansicht stehen die Fragen offen unter dem Chat (§8). Im
-    laufenden Gespräch treten sie hinter eine Zeile zurück, bleiben aber mit
-    einem Tipp erreichbar — der sichtbare Text und das FAQPage-Markup bleiben
-    damit dieselbe Quelle.
--->
-<section aria-label={ueberschrift} class="mt-12">
-    <h2 class="nur-startansicht mb-6">{ueberschrift}</h2>
+<details class="fragen">
+    <!--
+        Die Beschriftung wechselt beim Öffnen. Ein Pfeil allein sagt einem
+        ungeübten Auge nicht, was ein Tipp bewirkt.
+    -->
+    <summary class="fragen-zeile">
+        <span>
+            <span class="fragen-auf">{ueberschrift}</span>
+            <span class="fragen-zu">{ueberschrift} schließen</span>
+        </span>
+        <span class="pfeil" aria-hidden="true">▾</span>
+    </summary>
 
-    <button
-        type="button"
-        id="faq-oeffner"
-        aria-expanded="false"
-        aria-controls="faq-liste"
-        class="faq-oeffner tippziel w-full rounded-xl border-2 border-linie bg-flaeche px-4 font-bold text-primaer-aktiv"
-    >
-        Häufige Fragen anzeigen
-    </button>
+    <!--
+        Legt sich über den Chat, statt ihn zu verschieben: Die Zeile bleibt
+        dort stehen, wo der Finger war, und das Eingabefeld springt nicht weg.
+        Die Höhe ist gedeckelt, siehe basis.css.
+    -->
+    <div class="fragen-liste">
+        <!-- Für die Gliederung und für Vorlesegeräte. Sichtbar stünde hier
+             dasselbe Wort wie auf der Zeile darunter. -->
+        <h2 class="nur-vorlesen">{ueberschrift}</h2>
 
-    <div id="faq-liste" class="faq-liste flex flex-col gap-3">
         {
             eintraege.map((eintrag) => (
-                <details class="rounded-xl border-2 border-linie bg-flaeche">
-                    <summary class="tippziel flex flex-col justify-center gap-1 px-4 py-3">
-                        <span class="font-bold">{eintrag.frage}</span>
-                        <span class="klapp-hinweis" aria-hidden="true">
-                            Hier klicken für die Antwort
-                        </span>
+                <details>
+                    <summary>
+                        <span>{eintrag.frage}</span>
+                        <span class="pfeil" aria-hidden="true">▾</span>
                     </summary>
-                    <div class="border-t-2 border-linie px-4 py-4">
-                        <p class="lesebreite">{eintrag.antwort}</p>
+                    <div class="antwort">
+                        <p>{eintrag.antwort}</p>
                         {eintrag.weiterlesen && (
                             <p class="mt-3">
                                 <a href={eintrag.weiterlesen.ziel}>{eintrag.weiterlesen.text}</a>
@@ -50,4 +66,4 @@ const { ueberschrift, eintraege } = Astro.props
             ))
         }
     </div>
-</section>
+</details>

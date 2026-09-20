@@ -124,9 +124,9 @@ a:hover { color: var(--color-primaer); }
 /* -------------------------------------------------------------------------
  * Zwei Ansichten auf einer Seite
  *
- * Bis zur ersten Nachricht steht data-ansicht="start" am <body>: Überschrift,
- * Chat, FAQ. Ab der ersten Nachricht steht dort "gespraech" — dann tritt
- * alles zurück, was nicht zum laufenden Gespräch gehört.
+ * Bis zur ersten Nachricht steht data-ansicht="start" am <body>, danach
+ * "gespraech". Dann tritt zurück, was nicht zum laufenden Gespräch gehört —
+ * derzeit nur die Hauptüberschrift, die auf dem Handy vier Zeilen kostet.
  *
  * Das Umschalten macht ausschließlich diese Datei. Das Skript setzt nur das
  * Attribut. Ohne JavaScript bleibt die Startansicht stehen und die Seite
@@ -137,18 +137,13 @@ a:hover { color: var(--color-primaer); }
   display: none;
 }
 
-/* Die Begrüßung ist die einzige Antwort ohne Frage davor. Sobald das Gespräch
-   läuft, ist sie nur noch Ballast über dem, was gerade zählt. */
-[data-ansicht="gespraech"] .begruessung {
-  display: none;
-}
-
 /* -------------------------------------------------------------------------
- * Klappzeilen — im FAQ und im Gesprächsverlauf dieselbe Bedienung
+ * Klappzeilen
+ *
+ * Das Dreieck der Browser ist klein, grau und in jedem Browser anders. Statt
+ * dessen steht rechts in der Zeile ein deutlicher grüner Pfeil.
  * ---------------------------------------------------------------------- */
 
-/* Das Dreieck der Browser ist klein, grau und in jedem Browser anders. Statt
-   dessen steht in der Zeile ein Satz, der sagt, was ein Tipp bewirkt. */
 summary {
   list-style: none;
   cursor: pointer;
@@ -158,54 +153,260 @@ summary::-webkit-details-marker {
   display: none;
 }
 
-.klapp-hinweis {
-  display: block;
-  font-weight: 400;
-  color: var(--color-text-leise);
+.pfeil {
+  flex: none;
+  color: var(--color-primaer-aktiv);
+  font-size: var(--text-gross);
+  line-height: 1;
 }
 
-/* Ist die Antwort offen, stimmt die Aufforderung nicht mehr — ein Tipp würde
-   sie wieder schließen. */
-details[open] > summary .klapp-hinweis {
-  display: none;
+details[open] > summary .pfeil {
+  transform: rotate(180deg);
+}
+
+/* -------------------------------------------------------------------------
+ * Der Chat
+ *
+ * Bewusst ohne Karte, ohne Rahmen um jede Nachricht und ohne Klappzeilen.
+ * Zwei Dinge teilen das Gespräch: das Bild links und die Richtung der Blase.
+ * Alles andere war Rand, der auf einem 360 Pixel breiten Gerät der Schrift
+ * fehlt.
+ *
+ * Durchgängige Regel: VOLLES GRÜN HEISST ANTIPPEN. Deshalb ist die eigene,
+ * schon abgeschickte Nachricht weiß mit Rand und nicht grün gefüllt.
+ * ---------------------------------------------------------------------- */
+
+/* Einmal ganz oben: wer hier antwortet. Nicht über jeder Nachricht. */
+.vorstellung {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.vorstellung img {
+  width: 4rem;
+  height: 4rem;
+  flex: none;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.vorstellung .zusatz {
+  display: block;
+  color: var(--color-text-leise);
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.gespraech {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0;
+}
+
+/* Neue Nachrichten werden mit ihrem Anfang nach oben gescrollt, nicht mit
+   ihrem Ende. Gelesen wird von oben. */
+.gespraech > li {
+  scroll-margin-top: 1rem;
+}
+
+/* Seine Nachricht: Bild links, helle Blase daneben. Das Bild steht oben — es
+   markiert den Anfang dessen, was er sagt, auch wenn ein Sicherheitshinweis
+   darüber liegt. */
+.von-ihm {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+}
+
+.von-ihm > img {
+  width: 2.75rem;
+  height: 2.75rem;
+  flex: none;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.von-ihm .blase {
+  background: var(--color-akzent);
+  border-radius: 1.25rem 1.25rem 1.25rem 0.25rem;
+  padding: 0.875rem 1rem;
+  max-width: 29ch;
+}
+
+/* Direkt unter der Vorstellung stünde das Bild zweimal übereinander. Bei der
+   Begrüßung bleibt der Platz deshalb leer — die Blasen behalten ihre Flucht,
+   das Gesicht steht nur einmal da. */
+.von-ihm.ohne-bild > img {
+  visibility: hidden;
+}
+
+.von-ihnen {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.von-ihnen .blase {
+  background: var(--color-flaeche);
+  border: 2px solid var(--color-linie);
+  border-radius: 1.25rem 1.25rem 0.25rem 1.25rem;
+  padding: 0.75rem 1rem;
+  max-width: 26ch;
+}
+
+.blase p + p {
+  margin-top: 0.75rem;
+}
+
+/* Sicherheitshinweis: gehört zu seiner Nachricht und sitzt über ihr. */
+.sicherheitshinweis {
+  background: var(--color-warnung-flaeche);
+  color: var(--color-warnung-text);
+  border-radius: 1.25rem 1.25rem 1.25rem 0.25rem;
+  padding: 0.875rem 1rem;
+  font-weight: 700;
+  max-width: 29ch;
+  margin-bottom: 0.5rem;
+}
+
+/* -------------------------------------------------------------------------
+ * Der Wartezustand
+ *
+ * Groß, mittig, mit großem Bild. Nicht als Schmuck: An dieser Stelle sind zwei
+ * Fragen offen — „Ist meine Eingabe angekommen?“ und „Passiert gerade etwas?“
+ * Beide werden hier ohne Umweg beantwortet, von einem Gesicht und einem Satz
+ * in Alltagssprache.
+ *
+ * Er nimmt die volle Breite ein und steht nicht im Blasenwechsel, damit er
+ * sich nicht als weitere Nachricht liest, sondern als Zustand.
+ * ---------------------------------------------------------------------- */
+
+.warten {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+  padding: 1.75rem 0 1rem;
+}
+
+.warten img {
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.warten .satz {
+  color: var(--color-text-leise);
+  max-width: 24ch;
+}
+
+.punkte {
+  display: inline-flex;
+  gap: 0.4rem;
+}
+
+.punkte i {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: var(--color-primaer);
+  animation: huepf 1.2s infinite ease-in-out;
+}
+
+.punkte i:nth-child(2) { animation-delay: 0.18s; }
+.punkte i:nth-child(3) { animation-delay: 0.36s; }
+
+@keyframes huepf {
+  0%, 60%, 100% { opacity: 0.25; }
+  30%           { opacity: 1; }
+}
+
+/* -------------------------------------------------------------------------
+ * Antwortmöglichkeiten
+ *
+ * Erst eine Zeile, die sagt, was zu tun ist. Dann volle, gefüllte Flächen
+ * untereinander. Ein bloßer Rahmen ist für ungeübte Augen kein Knopf, und
+ * nebeneinander umbrechende Knöpfe lassen offen, was zusammengehört.
+ * ---------------------------------------------------------------------- */
+
+.wahl-bereich:not(:empty) {
+  margin-top: 1.25rem;
+}
+
+.wahl-einleitung {
+  font-weight: 700;
+  margin-bottom: 0.625rem;
+}
+
+.wahl-liste {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+.wahl {
+  min-height: var(--spacing-tippziel);
+  padding: 0.875rem 1.25rem;
+  text-align: left;
+  border: 0;
+  border-radius: 1rem;
+  background: var(--color-primaer);
+  color: var(--color-flaeche);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.wahl:hover {
+  background: var(--color-primaer-aktiv);
+}
+
+/* Ein Kontaktweg aus der Eskalation sieht aus wie eine Antwort, ist aber ein
+   Link. Gleiches Aussehen, weil es sich gleich anfühlen soll. */
+a.wahl {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--color-flaeche);
 }
 
 /* -------------------------------------------------------------------------
  * Eingabeleiste
  *
- * Im Gespräch bleibt sie am unteren Rand stehen, damit Eingabefeld und
- * Schaltflächen bei jeder Antwort erreichbar sind, ohne zu scrollen.
- * "sticky" statt "fixed": Das verträgt sich auf älteren Tablets deutlich
- * besser mit der eingeblendeten Bildschirmtastatur.
+ * Bleibt am unteren Rand stehen, damit Eingabefeld und Fragenzeile bei jeder
+ * Antwort erreichbar sind, ohne zu scrollen. "sticky" statt "fixed": Das
+ * verträgt sich auf älteren Tablets deutlich besser mit der eingeblendeten
+ * Bildschirmtastatur.
+ *
+ * position ist zugleich der Bezugspunkt für den Fragenbereich, der sich
+ * darüber öffnet.
  * ---------------------------------------------------------------------- */
 
-[data-ansicht="gespraech"] .eingabeleiste {
+.eingabeleiste {
   position: sticky;
   bottom: 0;
   z-index: 10;
   background-color: var(--color-flaeche);
   border-top: 2px solid var(--color-linie);
-  /* Die Karte hat 1rem Innenabstand. Die Leiste zieht sich bis an deren Rand,
-     sonst scrollt Text seitlich an ihr vorbei. */
+  /* Der Inhaltsbereich hat 1rem seitlichen Abstand. Die Leiste zieht sich bis
+     an dessen Rand, sonst scrollt Text seitlich an ihr vorbei. */
   margin-inline: -1rem;
-  padding: 0.75rem 1rem max(0.75rem, env(safe-area-inset-bottom));
-}
-
-@media (min-width: 40rem) {
-  [data-ansicht="gespraech"] .eingabeleiste {
-    margin-inline: -1.5rem;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-  }
+  padding: 0.75rem 1rem max(0.5rem, env(safe-area-inset-bottom));
 }
 
 /*
  * Querformat oder 200 % Zoom: Dann bliebe neben der Leiste kaum Platz für die
- * Antwort. In dem Fall scrollt sie einfach mit.
+ * Antwort. In dem Fall scrollt sie einfach mit — der Bezugspunkt für den
+ * Fragenbereich bleibt über "relative" erhalten.
  */
 @media (max-height: 32rem) {
-  [data-ansicht="gespraech"] .eingabeleiste {
-    position: static;
+  .eingabeleiste {
+    position: relative;
   }
 }
 
@@ -216,34 +417,132 @@ details[open] > summary .klapp-hinweis {
   overflow-y: auto;
 }
 
-/* Neue Antworten werden mit ihrem Anfang nach oben gescrollt, nicht mit ihrem
-   Ende. Gelesen wird von oben. */
-.paar {
-  scroll-margin-top: 1rem;
+/* -------------------------------------------------------------------------
+ * Fragen und Antworten
+ *
+ * Eine schmale Zeile unter dem Eingabefeld, immer erreichbar. Aufgeklappt legt
+ * sich der Bereich über den Chat, statt ihn zu verschieben: Die Zeile bleibt
+ * dort stehen, wo der Finger war, und das Eingabefeld springt nicht weg.
+ *
+ * Vollständig ohne JavaScript — <details> kann das selbst, mit Tastatur und
+ * Vorlesegerät. Das ist hier kein Sparzwang, sondern Notwendigkeit: Die
+ * Sicherheitsrichtlinie verbietet eingebettete Skripte und Stile, und der
+ * sichtbare Text muss deckungsgleich mit dem FAQPage-Markup bleiben.
+ * ---------------------------------------------------------------------- */
+
+.fragen-zeile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: var(--spacing-tippziel);
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 2px solid var(--color-linie);
+  border-radius: 0.75rem;
+  background: var(--color-flaeche);
+  color: var(--color-primaer-aktiv);
+  font-weight: 700;
+  /* Kleiner als der Fließtext: Das ist Beiwerk, kein Schritt im Gespräch. */
+  font-size: 1.125rem;
+}
+
+.fragen-zeile:hover {
+  background: var(--color-akzent);
+}
+
+/* Die Beschriftung sagt beim Öffnen wie beim Schließen, was ein Tipp bewirkt.
+   Ein Pfeil allein reicht dafür nicht. */
+.fragen-zu { display: none; }
+details[open] > .fragen-zeile .fragen-auf { display: none; }
+details[open] > .fragen-zeile .fragen-zu  { display: inline; }
+
+.fragen-liste {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  margin-bottom: 2px;
+  /* Gedeckelt, damit die Leiste auch auf kleinen Geräten (etwa 667 px hoch)
+     niedriger bleibt als der Bildschirm. Sonst hält sie nicht mehr unten und
+     die Fragenzeile rutscht aus dem sichtbaren Bereich. */
+  max-height: min(50vh, 22rem);
+  overflow-y: auto;
+  background: var(--color-flaeche);
+  border: 2px solid var(--color-linie);
+  border-radius: 1rem 1rem 0 0;
+  padding: 0.75rem 1rem 0.25rem;
+}
+
+.fragen-liste > h2 {
+  font-size: var(--text-gross);
+  margin-bottom: 0.5rem;
+}
+
+.fragen-liste details {
+  border-top: 2px solid var(--color-akzent);
+}
+
+.fragen-liste details:first-of-type {
+  border-top: 0;
+}
+
+.fragen-liste summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: var(--spacing-tippziel);
+  padding: 0.5rem 0;
+  font-weight: 700;
+}
+
+.fragen-liste .antwort {
+  padding-bottom: 1rem;
+  font-size: 1.125rem;
 }
 
 /* -------------------------------------------------------------------------
- * Allgemeine FAQ im laufenden Gespräch
+ * Nebenwege
  *
- * Sie verschwinden nicht aus der Seite, sie rücken hinter eine Zeile. Damit
- * bleibt der sichtbare Text deckungsgleich mit dem FAQPage-Markup, und wer
- * mitten im Gespräch eine allgemeine Frage hat, kommt mit einem Tipp hin.
+ * „Bitte einfacher erklären“ und „Von vorne beginnen“ sind keine Schritte im
+ * Gespräch. Sie bleiben deshalb weiß mit Rand — volles Grün ist dem nächsten
+ * Schritt vorbehalten.
  * ---------------------------------------------------------------------- */
 
-.faq-oeffner {
+/* Erst im Gespräch. In der Startansicht gibt es nichts zu wiederholen und
+   nichts zu löschen — dort wäre der Knopf nur Ballast auf dem ersten Bild. */
+.nebenknoepfe {
   display: none;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
 }
 
-[data-ansicht="gespraech"] .faq-oeffner {
+[data-ansicht="gespraech"] .nebenknoepfe {
   display: flex;
-  align-items: center;
 }
 
-[data-ansicht="gespraech"] .faq-liste {
-  display: none;
+.neben {
+  min-height: var(--spacing-tippziel);
+  padding: 0.5rem 1.25rem;
+  border: 2px solid var(--color-primaer);
+  border-radius: 0.75rem;
+  background: var(--color-flaeche);
+  color: var(--color-primaer-aktiv);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
 }
 
-[data-ansicht="gespraech"][data-faq="offen"] .faq-liste {
-  display: flex;
-  margin-top: 0.75rem;
+.neben:hover {
+  background: var(--color-akzent);
+}
+
+/* Der Neubeginn löscht das Gespräch. Er tritt optisch zurück, damit ihn
+   niemand für den nächsten Schritt hält. */
+.neben.leise {
+  border-color: var(--color-linie);
+  color: var(--color-text-leise);
+  font-weight: 400;
 }
