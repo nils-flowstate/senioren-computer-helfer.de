@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entwurf 6 — Randlos</title>
+<style>
+/* ===========================================================================
+   ENTWURF 6 — „Randlos“
+
+   Grundgedanke: Auf einem Handy mit 360 Pixel Breite gehen heute rund 60
+   Pixel für Ränder verloren — Seitenabstand, Kartenrand, Karteninnenabstand,
+   Blasenabstand. Das ist ein Sechstel der Breite, und es fehlt genau dort,
+   wo große Schrift Platz bräuchte. Danach bricht jeder Satz früher um, der
+   Text wird länger, und alles wirkt eng und klobig.
+
+   Dieser Entwurf hat keine Ränder und keine runden Ecken. Seine Antworten
+   liegen auf einem hellgrünen Band, das von einer Bildschirmkante zur anderen
+   läuft. Ihre Beiträge liegen auf Weiß. Der Wechsel der Fläche ist die
+   Trennung — sie kostet keinen einzigen Pixel Breite.
+
+   Dadurch ist hier die Schrift am größten und die Zeile am längsten. Für sehr
+   schwaches Sehvermögen ist das der Entwurf mit dem größten Gewinn.
+
+   Regel wie in allen Entwürfen: VOLLES GRÜN HEISST ANTIPPEN.
+   =========================================================================== */
+
+:root{
+  --hintergrund:#FFFFFF; --flaeche:#FFFFFF; --akzent:#DCEFE2;
+  --primaer:#2F6B4F; --primaer-aktiv:#24563E;
+  --text:#1B2A21; --text-leise:#3D5147;
+  --warnung-text:#8A3B12; --warnung-flaeche:#FFF4E8;
+  --linie:#6C9A7B;
+  --schrift-faktor:1;
+  --rand:1rem;    /* der einzige waagerechte Abstand der ganzen Seite */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:calc(100% * var(--schrift-faktor))}
+body{
+  background:var(--hintergrund); color:var(--text);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  font-size:1.3125rem; line-height:1.6;
+  min-height:100dvh; display:flex; flex-direction:column;
+  -webkit-text-size-adjust:100%;
+}
+:where(a,button,input,textarea):focus-visible{
+  outline:3px solid var(--primaer); outline-offset:-3px;   /* nach innen: es gibt keinen Rand, an dem er hängen könnte */
+}
+.nur-vorlesen{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+header{
+  position:sticky; top:0; z-index:20;
+  background:var(--flaeche); border-bottom:2px solid var(--linie);
+  display:flex; align-items:center; justify-content:space-between;
+  gap:.75rem; padding:.5rem var(--rand);
+}
+header .name{font-weight:700; color:var(--primaer-aktiv); font-size:1.125rem}
+.a-knopf{
+  min-height:3.5rem; min-width:3.5rem; padding:0 1rem;
+  border:0; background:var(--primaer); color:#fff;
+  font:inherit; font-weight:700; font-size:1.5rem; line-height:1; cursor:pointer;
+}
+.a-knopf:hover{background:var(--primaer-aktiv)}
+
+main{flex:1; width:100%}
+.verlauf{list-style:none}
+
+/* Seine Antwort: hellgrünes Band von Kante zu Kante. */
+.von-ihm{background:var(--akzent); padding:1.25rem var(--rand)}
+/* Ihre Nachricht: Weiß. Mehr Unterschied braucht es nicht. */
+.von-ihnen{background:var(--flaeche); padding:1.25rem var(--rand)}
+.von-ihnen .beitrag{color:var(--text-leise)}
+
+/* Die Namenszeile trägt bei ihm das Bild und steht nur einmal je Band. */
+.wer{display:flex; align-items:center; gap:.625rem; margin-bottom:.5rem}
+.wer img{width:2.5rem;height:2.5rem;border-radius:50%;object-fit:cover;flex:none}
+.wer b{font-size:1rem; color:var(--text-leise); font-weight:700}
+
+.beitrag p+p{margin-top:.875rem}
+
+/* Der Sicherheitshinweis ist ein eigenes Band in eigener Farbe — er soll
+   sich vom Rest der Antwort deutlich abheben, ohne einen Rahmen zu brauchen. */
+.hinweis{
+  background:var(--warnung-flaeche); color:var(--warnung-text);
+  font-weight:700; padding:1.25rem var(--rand); margin:0 calc(-1 * var(--rand)) 1rem;
+}
+
+/* Wartezustand: dasselbe grüne Band. Der Bildschirm springt dadurch nicht,
+   wenn die Antwort kommt — sie erscheint einfach an derselben Stelle. */
+.warten{display:flex; align-items:center; gap:.75rem; color:var(--text-leise)}
+.punkte{display:inline-flex; gap:.35rem; flex:none}
+.punkte i{width:.6rem;height:.6rem;border-radius:50%;background:var(--primaer);animation:huepf 1.2s infinite}
+.punkte i:nth-child(2){animation-delay:.18s}
+.punkte i:nth-child(3){animation-delay:.36s}
+@keyframes huepf{0%,60%,100%{opacity:.25}30%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.punkte i{animation:none;opacity:.6}}
+
+/* --- Antwortmöglichkeiten -------------------------------------------------
+   Ebenfalls von Kante zu Kante, getrennt durch schmale weiße Fugen. Die
+   Fläche eines Knopfes ist damit so groß, wie sie auf diesem Gerät überhaupt
+   sein kann — man kann sie kaum verfehlen.
+   ------------------------------------------------------------------------ */
+#knoepfe:not(:empty){padding:1.5rem 0 0}
+.knopf-einleitung{font-weight:700; padding:0 var(--rand) .75rem}
+.knopf-liste{display:flex; flex-direction:column; gap:2px}
+.wahl{
+  min-height:4rem; padding:1rem var(--rand); text-align:left;
+  border:0; background:var(--primaer); color:#fff;
+  font:inherit; font-weight:700; font-size:1.25rem; cursor:pointer;
+}
+.wahl:hover{background:var(--primaer-aktiv)}
+
+/* --- Eingabe ------------------------------------------------------------- */
+.leiste{
+  position:sticky; bottom:0; margin-top:1.5rem;
+  background:var(--flaeche); border-top:2px solid var(--linie);
+  padding:.75rem var(--rand) max(.75rem,env(safe-area-inset-bottom));
+}
+.zeile{display:flex; gap:2px; align-items:stretch}
+textarea{
+  flex:1; min-height:3.5rem; resize:none; overflow-y:auto;
+  border:2px solid var(--linie); border-radius:0;
+  padding:.75rem; font:inherit; background:var(--flaeche); color:var(--text);
+}
+.senden{
+  flex:none; min-height:3.5rem; padding:0 1.25rem; border:0;
+  background:var(--primaer); color:#fff; font:inherit; font-weight:700; cursor:pointer;
+}
+.senden:hover{background:var(--primaer-aktiv)}
+.sicherheit{margin-top:.5rem; font-size:1rem; color:var(--text-leise)}
+@media (max-height:32rem){.leiste{position:static}}
+
+/* Auf breiten Geräten bleibt die Zeile lesbar kurz — dann bekommt die Seite
+   doch einen Rand, aber erst dort, wo Breite im Überfluss vorhanden ist. */
+@media (min-width:38rem){
+  :root{--rand:2rem}
+  main, .leiste{max-width:38rem; margin-inline:auto; width:100%}
+  header{max-width:38rem; margin-inline:auto}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <span class="name">Senioren-Computer-Helfer</span>
+  <button class="a-knopf" type="button" id="a" aria-label="Schriftgröße wechseln">A</button>
+</header>
+
+<main>
+  <ol class="verlauf" id="verlauf" role="log" aria-live="polite">
+    <li class="von-ihm">
+      <p class="wer"><img src="bilder/helfer-rund-320.webp" alt=""><b>Nils’ Technik-Hilfe — es antwortet ein Computerprogramm</b></p>
+      <div class="beitrag"><p>Guten Tag. Womit haben Sie Schwierigkeiten? Ein Satz genügt.</p></div>
+    </li>
+  </ol>
+
+  <div id="knoepfe"></div>
+</main>
+
+<div class="leiste">
+  <form id="formular">
+    <div class="zeile">
+      <label for="eingabe" class="nur-vorlesen">Ihre Nachricht</label>
+      <textarea id="eingabe" rows="1" placeholder="Ihre Nachricht …"></textarea>
+      <button class="senden" type="submit">Senden</button>
+    </div>
+    <p class="sicherheit">Bitte geben Sie keine Passwörter, PINs oder TANs ein.</p>
+  </form>
+</div>
+
+<script src="demo.js"></script>
+<script>
+const verlauf = document.getElementById('verlauf')
+let warteBand = null
+
+starteDemo({
+  knoepfe: document.getElementById('knoepfe'),
+  formular: document.getElementById('formular'),
+  eingabe: document.getElementById('eingabe'),
+  aKnopf: document.getElementById('a'),
+
+  zeigeIhre(text){
+    const li = document.createElement('li')
+    li.className = 'von-ihnen'
+    li.append(werZeile('Sie', false))
+    const koerper = document.createElement('div')
+    koerper.className = 'beitrag'
+    koerper.append(absatz(text))
+    li.append(koerper)
+    verlauf.append(li)
+    return li
+  },
+
+  zeigeSeine(text, hinweis){
+    const li = document.createElement('li')
+    li.className = 'von-ihm'
+    li.append(werZeile('Nils’ Technik-Hilfe', true))
+    const koerper = document.createElement('div')
+    koerper.className = 'beitrag'
+    if (hinweis){
+      const h = document.createElement('p')
+      h.className = 'hinweis'
+      h.textContent = hinweis
+      koerper.append(h)
+    }
+    for (const teil of text.split('\n\n')) koerper.append(absatz(teil))
+    li.append(koerper)
+    verlauf.append(li)
+    return li
+  },
+
+  warteAn(text){
+    warteBand = document.createElement('li')
+    warteBand.className = 'von-ihm'
+    warteBand.append(werZeile('Nils’ Technik-Hilfe', true))
+    const zeile = document.createElement('p')
+    zeile.className = 'warten'
+    const punkte = document.createElement('span')
+    punkte.className = 'punkte'
+    punkte.innerHTML = '<i></i><i></i><i></i>'
+    const wort = document.createElement('span')
+    wort.textContent = text
+    zeile.append(punkte, wort)
+    warteBand.append(zeile)
+    verlauf.append(warteBand)
+    warteBand.scrollIntoView({block:'end', behavior:'smooth'})
+  },
+  warteText(text){
+    if (warteBand) warteBand.querySelector('.warten span:last-child').textContent = text
+  },
+  warteAus(){ warteBand?.remove(); warteBand = null },
+})
+
+function werZeile(name, mitBild){
+  const p = document.createElement('p')
+  p.className = 'wer'
+  if (mitBild){
+    const img = document.createElement('img')
+    img.src = 'bilder/helfer-rund-320.webp'
+    img.alt = ''
+    p.append(img)
+  }
+  const b = document.createElement('b')
+  b.textContent = name
+  p.append(b)
+  return p
+}
+function absatz(text){ const p = document.createElement('p'); p.textContent = text; return p }
+</script>
+</body>
+</html>

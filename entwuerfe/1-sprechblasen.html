@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entwurf 1 — Sprechblasen (gewählt)</title>
+<style>
+/* ===========================================================================
+   ENTWURF 1 — „Sprechblasen“  ·  GEWÄHLTE FASSUNG
+
+   Grundgedanke: Die einzige Chat-Oberfläche, die viele in der Zielgruppe schon
+   kennen, ist WhatsApp. Dieser Entwurf übernimmt diese vertraute Form — und
+   lässt alles weg, was WhatsApp nicht hat.
+
+   Weggelassen gegenüber der bisherigen Seite: die Karte um den Chat, die
+   Rahmen um jede Nachricht, die Klappzeilen „Hier klicken für die Antwort“,
+   die Zeile „Der Helfer“ über jeder Antwort.
+
+   Zwei Dinge teilen den Chat: das Bild links und die Richtung der Blase.
+
+   Zwei Änderungen gegenüber der ersten Fassung:
+   1. Der Wartezustand ist nicht mehr eine kleine Blase im Verlauf, sondern
+      groß und mittig — mit großem Bild, Punkten und einem Satz. Er soll
+      unübersehbar sagen, dass die Eingabe angekommen ist und jemand
+      gerade etwas für Sie nachsieht. (Übernommen aus Entwurf 3.)
+   2. Unter dem Eingabefeld sitzt eine schmale Zeile, die den Bereich
+      „Fragen und Antworten“ aufklappt. Er öffnet sich über dem Eingabefeld,
+      damit der Chat sichtbar bleibt und die Zeile dort stehen bleibt, wo
+      getippt wurde.
+
+   Durchgängige Regel: VOLLES GRÜN HEISST ANTIPPEN.
+   Ausnahme mit Absicht: die Zeile „Fragen und Antworten“. Sie ist Beiwerk,
+   kein Schritt im Gespräch, und würde in Vollgrün mit den Antwortknöpfen
+   um Aufmerksamkeit streiten. Sie trägt statt dessen Rand, grüne Schrift
+   und einen Pfeil.
+   =========================================================================== */
+
+:root{
+  --hintergrund:#F5FAF6; --flaeche:#FFFFFF; --akzent:#DCEFE2;
+  --primaer:#2F6B4F; --primaer-aktiv:#24563E;
+  --text:#1B2A21; --text-leise:#3D5147;
+  --warnung-text:#8A3B12; --warnung-flaeche:#FFF4E8;
+  --linie:#6C9A7B;
+  --schrift-faktor:1;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:calc(100% * var(--schrift-faktor))}
+body{
+  background:var(--hintergrund); color:var(--text);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  font-size:1.25rem; line-height:1.6;
+  min-height:100dvh; display:flex; flex-direction:column;
+  -webkit-text-size-adjust:100%;
+}
+:where(a,button,input,textarea,summary):focus-visible{
+  outline:3px solid var(--primaer); outline-offset:3px; border-radius:.25rem;
+}
+.nur-vorlesen{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+/* Kopf: eine Zeile. Jede weitere Zeile hier schiebt den Chat nach unten. */
+header{
+  background:var(--flaeche); border-bottom:2px solid var(--linie);
+  display:flex; align-items:center; justify-content:space-between;
+  gap:.75rem; padding:.5rem .75rem; position:sticky; top:0; z-index:20;
+}
+header .name{font-weight:700;color:var(--primaer-aktiv)}
+.a-knopf{
+  min-height:3.5rem; min-width:3.5rem; padding:0 1rem;
+  border:0; border-radius:.75rem;
+  background:var(--primaer); color:#fff;           /* grün = antippbar */
+  font:inherit; font-weight:700; font-size:1.5rem; line-height:1; cursor:pointer;
+}
+.a-knopf:hover{background:var(--primaer-aktiv)}
+
+main{flex:1; width:100%; max-width:36rem; margin-inline:auto; padding:1rem .75rem 0}
+
+/* Einmal ganz oben: wer hier antwortet. Nicht über jeder Nachricht. */
+.vorstellung{display:flex; align-items:center; gap:.75rem; margin-bottom:1.25rem}
+.vorstellung img{width:4rem;height:4rem;border-radius:50%;object-fit:cover;flex:none}
+.vorstellung b{display:block}
+.vorstellung span{display:block; color:var(--text-leise); font-size:1rem; line-height:1.35}
+
+.verlauf{list-style:none; display:flex; flex-direction:column; gap:1rem}
+
+/* Seine Nachricht: Bild links, helle Blase daneben. Das Bild steht oben —
+   es markiert den Anfang dessen, was er sagt, auch wenn ein
+   Sicherheitshinweis darüber liegt. */
+.von-ihm{display:flex; gap:.625rem; align-items:flex-start}
+.von-ihm>img{width:2.75rem;height:2.75rem;border-radius:50%;object-fit:cover;flex:none}
+.von-ihm .blase{
+  background:var(--akzent); border-radius:1.25rem 1.25rem 1.25rem .25rem;
+  padding:.875rem 1rem; max-width:29ch;
+}
+/* Direkt unter der Vorstellung stünde das Bild zweimal übereinander. Bei der
+   ersten Nachricht bleibt der Platz deshalb leer — die Blasen behalten ihre
+   Flucht, das Gesicht steht nur einmal da. */
+.von-ihm.ohne-bild>img{visibility:hidden}
+
+/* Ihre Nachricht: rechts, weiß mit Rand, ohne Bild.
+   Bewusst NICHT voll grün — voll grün ist für Dinge reserviert, die man
+   antippen kann. Eine schon gesendete Nachricht kann man nicht antippen. */
+.von-ihnen{display:flex; justify-content:flex-end}
+.von-ihnen .blase{
+  background:var(--flaeche); border:2px solid var(--linie);
+  border-radius:1.25rem 1.25rem .25rem 1.25rem;
+  padding:.75rem 1rem; max-width:26ch;
+}
+.blase p+p{margin-top:.75rem}
+
+/* Sicherheitshinweis: gehört zu seiner Nachricht, sitzt über ihr. */
+.hinweis{
+  background:var(--warnung-flaeche); color:var(--warnung-text);
+  border-radius:1.25rem 1.25rem 1.25rem .25rem;
+  padding:.875rem 1rem; font-weight:700; max-width:29ch; margin-bottom:.5rem;
+}
+
+/* --- Wartezustand ---------------------------------------------------------
+   Groß, mittig, mit großem Bild. Nicht, weil es hübsch ist, sondern weil an
+   dieser Stelle zwei Fragen offen sind: „Ist meine Eingabe angekommen?“ und
+   „Passiert gerade etwas?“ Beide werden hier ohne Umweg beantwortet — von
+   einem Gesicht und einem Satz in Alltagssprache.
+
+   Er nimmt die volle Breite ein und steht nicht als Blase im Wechsel, damit
+   er sich nicht als weitere Nachricht liest, sondern als Zustand.
+   ------------------------------------------------------------------------ */
+.warten{
+  display:flex; flex-direction:column; align-items:center;
+  gap:1rem; text-align:center; padding:1.75rem 0 1rem;
+}
+.warten img{width:6rem;height:6rem;border-radius:50%;object-fit:cover}
+.warten .satz{color:var(--text-leise); max-width:24ch}
+.punkte{display:inline-flex; gap:.4rem}
+.punkte i{
+  width:.6rem;height:.6rem;border-radius:50%;background:var(--primaer);
+  animation:huepf 1.2s infinite ease-in-out;
+}
+.punkte i:nth-child(2){animation-delay:.18s}
+.punkte i:nth-child(3){animation-delay:.36s}
+@keyframes huepf{0%,60%,100%{opacity:.25}30%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.punkte i{animation:none;opacity:.6}}
+
+/* --- Antwortmöglichkeiten -------------------------------------------------
+   Erst eine Zeile, die sagt, was zu tun ist. Dann volle, gefüllte Knöpfe
+   untereinander. Ein ausgegrauter Rahmen wäre für ungeübte Augen kein Knopf.
+   Nicht eingerückt: Der Einzug kostete rund 54 px Breite, und die
+   Antwortknöpfe sind das Letzte, dem Breite fehlen darf.
+   ------------------------------------------------------------------------ */
+#knoepfe{margin-top:1.25rem}
+.knopf-einleitung{font-weight:700; margin-bottom:.625rem}
+.knopf-liste{display:flex; flex-direction:column; gap:.625rem}
+.wahl{
+  min-height:3.5rem; padding:.875rem 1.25rem; text-align:left;
+  border:0; border-radius:1rem;
+  background:var(--primaer); color:#fff;
+  font:inherit; font-weight:700; cursor:pointer;
+}
+.wahl:hover{background:var(--primaer-aktiv)}
+
+/* --- Untere Leiste: Eingabe und Fragen ----------------------------------- */
+.leiste{
+  position:sticky; bottom:0; margin-top:1.75rem;
+  background:var(--flaeche); border-top:2px solid var(--linie);
+  padding:.75rem .75rem max(.5rem,env(safe-area-inset-bottom));
+}
+.leiste .innen{max-width:36rem; margin-inline:auto}
+.zeile{display:flex; gap:.625rem; align-items:flex-end}
+textarea{
+  flex:1; min-height:3.5rem; resize:none; overflow-y:auto;
+  border:2px solid var(--linie); border-radius:1rem;
+  padding:.75rem 1rem; font:inherit; background:var(--flaeche); color:var(--text);
+}
+.senden{
+  flex:none; min-height:3.5rem; min-width:3.5rem; padding:0 1.5rem;
+  border:0; border-radius:1rem; background:var(--primaer); color:#fff;
+  font:inherit; font-weight:700; cursor:pointer;
+}
+.senden:hover{background:var(--primaer-aktiv)}
+.sicherheit{margin-top:.5rem; font-size:1rem; color:var(--text-leise)}
+
+/* --- Fragen und Antworten -------------------------------------------------
+   Die Zeile sitzt unter dem Eingabefeld und bleibt dort immer erreichbar.
+   Aufgeklappt wächst der Bereich nach oben über das Eingabefeld: Die Zeile
+   bleibt dadurch unter dem Finger stehen, mit dem sie angetippt wurde, und
+   der Chat verschwindet nicht hinter einer Fläche, die von unten hochfährt.
+   ------------------------------------------------------------------------ */
+.faq-zeile{
+  display:flex; align-items:center; justify-content:space-between; gap:.75rem;
+  width:100%; min-height:3.5rem; margin-top:.5rem;
+  padding:.5rem 1rem;
+  border:2px solid var(--linie); border-radius:.75rem;
+  background:var(--flaeche); color:var(--primaer-aktiv);
+  font:inherit; font-size:1.125rem; font-weight:700; text-align:left; cursor:pointer;
+}
+.faq-zeile:hover{background:var(--akzent)}
+.faq-zeile .pfeil{font-size:1.25rem; line-height:1}
+
+#faq[hidden]{display:none}
+#faq{
+  /* Gedeckelt, damit die Leiste auch auf kleinen Geräten (etwa 667 px hoch)
+     niedriger bleibt als der Bildschirm. Sonst hält sie nicht mehr unten
+     und die Fragenzeile rutscht aus dem sichtbaren Bereich. */
+  max-height:min(50vh, 22rem); overflow-y:auto;
+  margin-bottom:.75rem; padding-bottom:.25rem;
+  border-bottom:2px solid var(--akzent);
+}
+#faq h2{font-size:1.25rem; margin:.25rem 0 .75rem}
+#faq details{border-top:2px solid var(--akzent)}
+#faq details:first-of-type{border-top:0}
+#faq summary{
+  display:flex; align-items:center; justify-content:space-between; gap:.75rem;
+  min-height:3.5rem; padding:.5rem 0;
+  list-style:none; cursor:pointer; font-weight:700;
+}
+#faq summary::-webkit-details-marker{display:none}
+#faq summary .pfeil{color:var(--primaer-aktiv); font-size:1.25rem; flex:none}
+#faq details[open] summary .pfeil{transform:rotate(180deg)}
+#faq .antwort{padding:0 0 1rem; font-size:1.125rem}
+#faq .antwort a{color:var(--primaer-aktiv); text-underline-offset:.25em; text-decoration-thickness:2px}
+
+@media (max-height:32rem){.leiste{position:static}}
+</style>
+</head>
+<body>
+
+<header>
+  <span class="name">Senioren-Computer-Helfer</span>
+  <button class="a-knopf" type="button" id="a" aria-label="Schriftgröße wechseln">A</button>
+</header>
+
+<main>
+  <div class="vorstellung">
+    <img src="bilder/helfer-rund-320.webp" alt="">
+    <div>
+      <b>Nils’ Technik-Hilfe</b>
+      <span>Es antwortet ein Computerprogramm.</span>
+    </div>
+  </div>
+
+  <ol class="verlauf" id="verlauf" role="log" aria-live="polite">
+    <li class="von-ihm ohne-bild">
+      <img src="bilder/helfer-rund-320.webp" alt="" aria-hidden="true">
+      <div class="blase"><p>Guten Tag. Womit haben Sie Schwierigkeiten? Ein Satz genügt.</p></div>
+    </li>
+  </ol>
+
+  <div id="knoepfe"></div>
+</main>
+
+<div class="leiste">
+  <div class="innen">
+
+    <!-- Klappt über dem Eingabefeld auf. Steht im Quelltext vor dem Formular,
+         damit die Reihenfolge für Vorlesegeräte der Darstellung entspricht. -->
+    <div id="faq" hidden>
+      <h2>Fragen und Antworten</h2>
+
+      <details>
+        <summary><span>Was kostet die Hilfe?</span><span class="pfeil" aria-hidden="true">▾</span></summary>
+        <p class="antwort">Die Hilfe im Chat ist kostenlos. Sie müssen sich nicht anmelden und nichts angeben.</p>
+      </details>
+
+      <details>
+        <summary><span>Wie benutze ich den Chat?</span><span class="pfeil" aria-hidden="true">▾</span></summary>
+        <p class="antwort">Schreiben Sie in das große Feld, womit Sie Schwierigkeiten haben — in Ihren eigenen Worten. Ein Satz genügt. Danach stelle ich Ihnen ein paar kurze Fragen und wir gehen Schritt für Schritt vor.<br><a href="/so-funktioniert-die-hilfe">So funktioniert die Hilfe</a></p>
+      </details>
+
+      <details>
+        <summary><span>Werden meine Gespräche gespeichert?</span><span class="pfeil" aria-hidden="true">▾</span></summary>
+        <p class="antwort">Wir speichern Ihr Gespräch nicht dauerhaft. Zur Beantwortung wird Ihre Eingabe an unseren KI-Dienst übermittelt. Bitte geben Sie keine Passwörter, PINs oder TANs ein.<br><a href="/datenschutz">Mehr zum Datenschutz</a></p>
+      </details>
+
+      <details>
+        <summary><span>Spricht hier ein Mensch mit mir?</span><span class="pfeil" aria-hidden="true">▾</span></summary>
+        <p class="antwort">Nein. Die Antworten kommen von einem Computerprogramm. Wenn es Ihnen nicht weiterhelfen kann, bieten wir Ihnen den Kontakt zu einem Menschen an.</p>
+      </details>
+
+      <details>
+        <summary><span>Kann ich statt tippen auch sprechen?</span><span class="pfeil" aria-hidden="true">▾</span></summary>
+        <p class="antwort">Ja, das ist vorgesehen. Sie können Ihre Frage sprechen und sich die Antwort vorlesen lassen. Sie können außerdem ein Foto von Ihrem Bildschirm schicken, wenn Sie etwas nicht beschreiben können.</p>
+      </details>
+
+      <details>
+        <summary><span>Ich habe eine merkwürdige Nachricht bekommen. Ist das Betrug?</span><span class="pfeil" aria-hidden="true">▾</span></summary>
+        <p class="antwort">Schreiben Sie mir einfach, was in der Nachricht steht. Ich sage Ihnen, worauf Sie achten sollten. Wichtig vorweg: Ihre Bank fragt Sie niemals nach PIN oder TAN, und echte Firmen rufen Sie nicht unaufgefordert wegen eines Virus an.</p>
+      </details>
+
+      <details>
+        <summary><span>Was tue ich, wenn ich schon auf einen Betrug hereingefallen bin?</span><span class="pfeil" aria-hidden="true">▾</span></summary>
+        <p class="antwort">Rufen Sie sofort den Sperr-Notruf 116 116 an, wenn es um Karten oder Konten geht. Bei einer Straftat ist die Polizei unter 110 erreichbar.</p>
+      </details>
+
+      <details>
+        <summary><span>An wen kann ich mich wenden, wenn der Chat nicht weiterhilft?</span><span class="pfeil" aria-hidden="true">▾</span></summary>
+        <p class="antwort">Wenn wir es nach mehreren Versuchen nicht gemeinsam lösen können, biete ich Ihnen von selbst an, sich an einen Menschen zu wenden.</p>
+      </details>
+    </div>
+
+    <form id="formular">
+      <div class="zeile">
+        <label for="eingabe" class="nur-vorlesen">Ihre Nachricht</label>
+        <textarea id="eingabe" rows="1" placeholder="Ihre Nachricht …"></textarea>
+        <button class="senden" type="submit">Senden</button>
+      </div>
+      <p class="sicherheit">Bitte geben Sie keine Passwörter, PINs oder TANs ein.</p>
+    </form>
+
+    <button class="faq-zeile" type="button" id="faq-zeile" aria-expanded="false" aria-controls="faq">
+      <span id="faq-beschriftung">Fragen und Antworten</span>
+      <span class="pfeil" aria-hidden="true">▾</span>
+    </button>
+
+  </div>
+</div>
+
+<script src="demo.js"></script>
+<script>
+const verlauf = document.getElementById('verlauf')
+let warteZeile = null
+
+starteDemo({
+  knoepfe: document.getElementById('knoepfe'),
+  formular: document.getElementById('formular'),
+  eingabe: document.getElementById('eingabe'),
+  aKnopf: document.getElementById('a'),
+
+  zeigeIhre(text){
+    const li = element('li','von-ihnen')
+    const blase = element('div','blase')
+    blase.append(absatz(text))
+    li.append(blase)
+    verlauf.append(li)
+    return li
+  },
+
+  zeigeSeine(text, hinweis){
+    const li = element('li','von-ihm')
+    li.append(bild())
+    const spalte = document.createElement('div')
+    if (hinweis){
+      const h = element('div','hinweis')
+      h.textContent = hinweis
+      spalte.append(h)
+    }
+    const blase = element('div','blase')
+    for (const teil of text.split('\n\n')) blase.append(absatz(teil))
+    spalte.append(blase)
+    li.append(spalte)
+    verlauf.append(li)
+    return li
+  },
+
+  /* Groß und mittig statt als kleine Blase: An dieser Stelle muss ohne
+     Nachdenken erkennbar sein, dass die Eingabe angekommen ist. */
+  warteAn(text){
+    warteZeile = element('li','warten')
+
+    const gesicht = document.createElement('img')
+    gesicht.src = 'bilder/helfer-rund-320.webp'
+    gesicht.alt = ''
+
+    const punkte = element('span','punkte')
+    punkte.innerHTML = '<i></i><i></i><i></i>'
+
+    const satz = element('span','satz')
+    satz.textContent = text
+
+    warteZeile.append(gesicht, punkte, satz)
+    verlauf.append(warteZeile)
+    /* Mittig statt an den unteren Rand: Am unteren Rand steht die Leiste mit
+       Eingabefeld und Fragenzeile, und der Wartezustand verschwände zur
+       Hälfte dahinter — ausgerechnet der Teil, der gesehen werden muss. */
+    warteZeile.scrollIntoView({block:'center', behavior:'smooth'})
+  },
+  warteText(text){
+    if (warteZeile) warteZeile.querySelector('.satz').textContent = text
+  },
+  warteAus(){
+    warteZeile?.remove()
+    warteZeile = null
+  },
+})
+
+/* --- Fragen und Antworten ------------------------------------------------
+   Die Beschriftung sagt beim Öffnen und beim Schließen, was ein Tipp bewirkt.
+   Ein Pfeil allein reicht dafür nicht.
+   ---------------------------------------------------------------------- */
+const faq = document.getElementById('faq')
+const faqZeile = document.getElementById('faq-zeile')
+const faqBeschriftung = document.getElementById('faq-beschriftung')
+const faqPfeil = faqZeile.querySelector('.pfeil')
+
+faqZeile.addEventListener('click', () => {
+  const offen = faq.hidden
+  faq.hidden = !offen
+  faqZeile.setAttribute('aria-expanded', String(offen))
+  faqBeschriftung.textContent = offen ? 'Fragen und Antworten schließen' : 'Fragen und Antworten'
+  faqPfeil.textContent = offen ? '▴' : '▾'
+})
+
+/* Vorschau-Haken, damit die Bildschirmfotos auch den offenen Bereich zeigen. */
+if (VORSCHAU === 'faq') faqZeile.click()
+
+function element(tag, klasse){ const e = document.createElement(tag); e.className = klasse; return e }
+function bild(){ const i = document.createElement('img'); i.src = 'bilder/helfer-rund-320.webp'; i.alt = ''; return i }
+function absatz(text){ const p = document.createElement('p'); p.textContent = text; return p }
+</script>
+</body>
+</html>

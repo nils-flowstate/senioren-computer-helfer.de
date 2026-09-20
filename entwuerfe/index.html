@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sechs Entwürfe für den Chat</title>
+<style>
+:root{
+  --hintergrund:#F5FAF6; --flaeche:#FFFFFF; --akzent:#DCEFE2;
+  --primaer:#2F6B4F; --primaer-aktiv:#24563E;
+  --text:#1B2A21; --text-leise:#3D5147; --linie:#6C9A7B;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--hintergrund); color:var(--text);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  font-size:1.25rem; line-height:1.6; padding:1.25rem;
+  -webkit-text-size-adjust:100%;
+}
+.seite{max-width:34rem; margin-inline:auto}
+h1{font-size:1.875rem; line-height:1.25; margin-bottom:.75rem}
+h2{font-size:1.375rem; margin:2.5rem 0 .75rem}
+p{margin-bottom:1rem}
+.regel{background:var(--akzent); border-radius:1rem; padding:1rem 1.25rem; margin-bottom:2rem}
+.regel b{display:block}
+ol{list-style:none; display:flex; flex-direction:column; gap:1rem}
+a.entwurf{
+  display:block; background:var(--flaeche); border:2px solid var(--linie);
+  border-radius:1rem; padding:1rem 1.25rem; text-decoration:none; color:inherit;
+  min-height:3.5rem;
+}
+a.entwurf:hover{background:var(--akzent)}
+a.entwurf:focus-visible{outline:3px solid var(--primaer); outline-offset:3px}
+a.entwurf b{display:block; color:var(--primaer-aktiv); font-size:1.25rem}
+a.gewaehlt{border-color:var(--primaer); border-width:3px; background:var(--akzent)}
+a.entwurf span{display:block; color:var(--text-leise); font-size:1.0625rem; margin-top:.25rem}
+.offen{color:var(--text-leise); font-size:1.0625rem}
+.offen li{margin:0 0 .75rem 1.25rem; list-style:disc}
+.offen ul{display:block}
+</style>
+</head>
+<body>
+<div class="seite">
+
+<h1>Entwürfe für den Chat</h1>
+<p><b>Entschieden: Entwurf 1.</b> Er wird umgesetzt — mit der großen
+Warte-Darstellung aus Entwurf 3 und einem Bereich „Fragen und Antworten“
+unter dem Eingabefeld.</p>
+<p>Die übrigen fünf bleiben zum Nachschlagen stehen. Ihre Bildschirmfotos
+liegen unter <code>entwuerfe/archiv/</code>.</p>
+
+<div class="regel">
+  <b>Eine Regel gilt in allen sechs Entwürfen:</b>
+  Was voll grün ist, kann man antippen. Alles andere ist nur Text.
+  Über jeder Auswahl steht außerdem eine Zeile, die das ausdrücklich sagt.
+</div>
+
+<h2>Die Entwürfe</h2>
+<ol>
+  <li><a class="entwurf gewaehlt" href="1-sprechblasen.html">
+    <b>1 — Sprechblasen · gewählt</b>
+    <span>Die vertraute WhatsApp-Form, auf das Nötigste zurückgebaut. Bild links, Blase rechts. Warten groß und mittig mit Gesicht und Punkten. Fragen und Antworten klappen über dem Eingabefeld auf.</span>
+  </a></li>
+  <li><a class="entwurf" href="2-helfer-oben.html">
+    <b>2 — Der Helfer oben</b>
+    <span>Er sitzt fest am oberen Rand wie ein Gegenüber. Darunter steht immer nur seine letzte Antwort. Kein Scrollen durch einen Stapel.</span>
+  </a></li>
+  <li><a class="entwurf" href="3-eine-frage.html">
+    <b>3 — Eine Frage pro Bildschirm</b>
+    <span>Kein Verlauf, kein Scrollen. Eine Frage, die Antwortmöglichkeiten darunter, das Eingabefeld als zweiter Weg am Fuß. Die stärkste Vereinfachung.</span>
+  </a></li>
+  <li><a class="entwurf" href="4-brief.html">
+    <b>4 — Wie ein Brief</b>
+    <span>Kein einziger Kasten. Getrennt wird durch Namenszeile, Abstand und eine feine Linie. Grün gibt es nur dort, wo man tippen darf.</span>
+  </a></li>
+  <li><a class="entwurf" href="5-statusband.html">
+    <b>5 — Er bleibt am Eingabefeld</b>
+    <span>Sein Bild sitzt dauerhaft über dem Eingabefeld und sagt in einer Zeile, was er gerade tut. Man muss nie suchen, ob etwas passiert.</span>
+  </a></li>
+  <li><a class="entwurf" href="6-randlos.html">
+    <b>6 — Randlos</b>
+    <span>Keine Ränder, keine runden Ecken. Seine Antworten liegen auf einem grünen Band von Kante zu Kante. Größte Schrift, längste Zeile.</span>
+  </a></li>
+</ol>
+
+<h2>Was noch zu entscheiden ist</h2>
+<div class="offen">
+<ul>
+  <li>Das Bild zeigt eine echte Person. Damit niemand glaubt, hier schreibe ein
+      Mensch mit, steht in jedem Entwurf einmal der Satz
+      „Es antwortet ein Computerprogramm.“ Ob die Beschriftung
+      „Nils’ Technik-Hilfe“ so bleiben soll, ist noch offen.</li>
+  <li>Foto-Upload, Spracheingabe und Vorlesen sind noch nicht dargestellt.
+      Sie brauchen einen festen Platz an der Eingabeleiste.</li>
+  <li>Die zum Gespräch passenden FAQ nach §3 fehlen noch — bisher steht dort
+      nur die allgemeine Liste.</li>
+  <li>Der Entwurf ist noch nicht in die Astro-Anwendung eingebaut. Das ist der
+      nächste Schritt.</li>
+</ul>
+</div>
+
+</div>
+</body>
+</html>

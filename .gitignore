@@ -14,3 +14,6 @@ playwright-report/
 # Repositorys. Sie gehören nicht zur Website und werden getrennt gepflegt.
 .claude/
 doku/
+
+# Bildschirmfotos der Entwürfe — jederzeit neu erzeugbar über scripts/entwuerfe-bilder.sh
+entwuerfe/bildschirmfotos/

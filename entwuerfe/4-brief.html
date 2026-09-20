@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entwurf 4 — Wie ein Brief</title>
+<style>
+/* ===========================================================================
+   ENTWURF 4 — „Wie ein Brief“
+
+   Grundgedanke: Sprechblasen, Karten und Rahmen sind Kästen. Kästen kosten
+   Rand, Radius, Schatten und Innenabstand — und auf einem schmalen Gerät
+   nehmen sie genau den Platz weg, den der Text bräuchte. Das ist der Grund
+   für den klobigen Eindruck: nicht zu wenig Design, sondern zu viel.
+
+   Dieser Entwurf hat keinen einzigen Kasten für Nachrichten. Getrennt wird
+   allein durch drei Mittel: eine Namenszeile, Abstand und eine feine Linie.
+   Die Schrift läuft über die volle Breite und bleibt dadurch am größten
+   lesbar — das ist der eigentliche Gewinn für die Zielgruppe.
+
+   Das Bild steht in der Namenszeile jeder seiner Antworten. Es ist damit die
+   Unterschrift unter dem Absatz, nicht Dekoration daneben.
+
+   Regel wie in allen Entwürfen: VOLLES GRÜN HEISST ANTIPPEN.
+   Es ist hier die einzige Farbfläche überhaupt — und dadurch unübersehbar.
+   =========================================================================== */
+
+:root{
+  --hintergrund:#F5FAF6; --flaeche:#FFFFFF; --akzent:#DCEFE2;
+  --primaer:#2F6B4F; --primaer-aktiv:#24563E;
+  --text:#1B2A21; --text-leise:#3D5147;
+  --warnung-text:#8A3B12; --warnung-flaeche:#FFF4E8;
+  --linie:#6C9A7B;
+  --schrift-faktor:1;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:calc(100% * var(--schrift-faktor))}
+body{
+  /* Weiß statt Hellgrün: Ohne Kästen ist die ganze Seite die Fläche. */
+  background:var(--flaeche); color:var(--text);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  font-size:1.25rem; line-height:1.65;
+  min-height:100dvh; display:flex; flex-direction:column;
+  -webkit-text-size-adjust:100%;
+}
+:where(a,button,input,textarea):focus-visible{
+  outline:3px solid var(--primaer); outline-offset:3px; border-radius:.25rem;
+}
+.nur-vorlesen{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+header{
+  display:flex; align-items:center; justify-content:space-between; gap:.75rem;
+  width:100%; max-width:34rem; margin-inline:auto; padding:.5rem 1.25rem;
+}
+header .name{font-weight:700; color:var(--primaer-aktiv); font-size:1.0625rem}
+.a-knopf{
+  min-height:3.5rem; min-width:3.5rem; padding:0 1rem;
+  border:0; border-radius:.75rem; background:var(--primaer); color:#fff;
+  font:inherit; font-weight:700; font-size:1.5rem; line-height:1; cursor:pointer;
+}
+.a-knopf:hover{background:var(--primaer-aktiv)}
+
+main{flex:1; width:100%; max-width:34rem; margin-inline:auto; padding:.5rem 1.25rem 0}
+
+.verlauf{list-style:none}
+/* Die einzige Trennung zwischen zwei Beiträgen: Abstand und eine feine
+   Linie. Kein Rahmen, keine Fläche, keine Ecke. */
+.verlauf>li{padding:1.5rem 0}
+.verlauf>li+li{border-top:2px solid var(--akzent)}
+
+/* Namenszeile — sagt in jedem Beitrag, wer spricht. Genau dafür ist sie da,
+   und mehr macht sie nicht. */
+.wer{display:flex; align-items:center; gap:.625rem; margin-bottom:.625rem}
+.wer img{width:2.5rem;height:2.5rem;border-radius:50%;object-fit:cover;flex:none}
+.wer b{font-size:1rem; letter-spacing:.02em; color:var(--text-leise); font-weight:700}
+/* Ihr eigener Beitrag bekommt anstelle des Bildes einen grünen Punkt gleicher
+   Größe — die Zeile bleibt dadurch in der Flucht, ohne ein zweites Motiv. */
+.wer .punkt{
+  width:2.5rem;height:2.5rem;border-radius:50%;flex:none;
+  background:var(--akzent); border:2px solid var(--linie);
+}
+
+.beitrag p+p{margin-top:.875rem}
+/* Ihr eigener Text tritt leicht zurück: Er ist schon gesagt. */
+.von-ihnen .beitrag{color:var(--text-leise)}
+
+.hinweis{
+  background:var(--warnung-flaeche); color:var(--warnung-text);
+  font-weight:700; border-radius:.75rem; padding:1rem; margin-bottom:1rem;
+}
+
+/* Wartezustand: dieselbe Namenszeile wie eine echte Antwort, nur dass unten
+   noch kein Text steht, sondern was gerade geschieht. */
+.warten{display:flex; align-items:center; gap:.625rem; color:var(--text-leise)}
+.punkte{display:inline-flex; gap:.35rem; flex:none}
+.punkte i{width:.55rem;height:.55rem;border-radius:50%;background:var(--primaer);animation:huepf 1.2s infinite}
+.punkte i:nth-child(2){animation-delay:.18s}
+.punkte i:nth-child(3){animation-delay:.36s}
+@keyframes huepf{0%,60%,100%{opacity:.25}30%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.punkte i{animation:none;opacity:.6}}
+
+/* --- Antwortmöglichkeiten ----------------------------------------------- */
+#knoepfe{margin:1.75rem 0}
+.knopf-einleitung{font-weight:700; margin-bottom:.75rem}
+.knopf-liste{display:flex; flex-direction:column; gap:.75rem}
+.wahl{
+  min-height:3.5rem; padding:.875rem 1.25rem; text-align:left;
+  border:0; border-radius:.75rem; background:var(--primaer); color:#fff;
+  font:inherit; font-weight:700; font-size:1.25rem; cursor:pointer;
+}
+.wahl:hover{background:var(--primaer-aktiv)}
+
+/* --- Eingabe -------------------------------------------------------------
+   Auch hier kein Kasten um den Kasten: Die Leiste hat oben eine Linie und
+   sonst nichts. Der Rahmen des Eingabefeldes ist der einzige Rahmen der Seite
+   — und sagt damit eindeutig: Hier wird geschrieben.
+   ------------------------------------------------------------------------ */
+.leiste{
+  position:sticky; bottom:0; margin-top:1.5rem;
+  background:var(--flaeche); border-top:2px solid var(--linie);
+  padding:.75rem 1.25rem max(.75rem,env(safe-area-inset-bottom));
+}
+.leiste .innen{max-width:34rem; margin-inline:auto}
+.zeile{display:flex; gap:.625rem; align-items:flex-end}
+textarea{
+  flex:1; min-height:3.5rem; resize:none; overflow-y:auto;
+  border:2px solid var(--linie); border-radius:.75rem;
+  padding:.75rem 1rem; font:inherit; background:var(--flaeche); color:var(--text);
+}
+.senden{
+  flex:none; min-height:3.5rem; padding:0 1.5rem; border:0; border-radius:.75rem;
+  background:var(--primaer); color:#fff; font:inherit; font-weight:700; cursor:pointer;
+}
+.senden:hover{background:var(--primaer-aktiv)}
+.sicherheit{margin-top:.5rem; font-size:1rem; color:var(--text-leise)}
+@media (max-height:32rem){.leiste{position:static}}
+</style>
+</head>
+<body>
+
+<header>
+  <span class="name">Senioren-Computer-Helfer</span>
+  <button class="a-knopf" type="button" id="a" aria-label="Schriftgröße wechseln">A</button>
+</header>
+
+<main>
+  <ol class="verlauf" id="verlauf" role="log" aria-live="polite">
+    <li>
+      <p class="wer"><img src="bilder/helfer-rund-320.webp" alt=""><b>Nils’ Technik-Hilfe — es antwortet ein Computerprogramm</b></p>
+      <div class="beitrag"><p>Guten Tag. Womit haben Sie Schwierigkeiten? Ein Satz genügt.</p></div>
+    </li>
+  </ol>
+
+  <div id="knoepfe"></div>
+</main>
+
+<div class="leiste">
+  <div class="innen">
+    <form id="formular">
+      <div class="zeile">
+        <label for="eingabe" class="nur-vorlesen">Ihre Nachricht</label>
+        <textarea id="eingabe" rows="1" placeholder="Ihre Nachricht …"></textarea>
+        <button class="senden" type="submit">Senden</button>
+      </div>
+      <p class="sicherheit">Bitte geben Sie keine Passwörter, PINs oder TANs ein.</p>
+    </form>
+  </div>
+</div>
+
+<script src="demo.js"></script>
+<script>
+const verlauf = document.getElementById('verlauf')
+let warteZeile = null
+
+starteDemo({
+  knoepfe: document.getElementById('knoepfe'),
+  formular: document.getElementById('formular'),
+  eingabe: document.getElementById('eingabe'),
+  aKnopf: document.getElementById('a'),
+
+  zeigeIhre(text){
+    const li = document.createElement('li')
+    li.className = 'von-ihnen'
+    li.append(werZeile('Sie', false))
+    const koerper = document.createElement('div')
+    koerper.className = 'beitrag'
+    koerper.append(absatz(text))
+    li.append(koerper)
+    verlauf.append(li)
+    return li
+  },
+
+  zeigeSeine(text, hinweis){
+    const li = document.createElement('li')
+    li.append(werZeile('Nils’ Technik-Hilfe', true))
+    const koerper = document.createElement('div')
+    koerper.className = 'beitrag'
+    if (hinweis){
+      const h = document.createElement('p')
+      h.className = 'hinweis'
+      h.textContent = hinweis
+      koerper.append(h)
+    }
+    for (const teil of text.split('\n\n')) koerper.append(absatz(teil))
+    li.append(koerper)
+    verlauf.append(li)
+    return li
+  },
+
+  warteAn(text){
+    warteZeile = document.createElement('li')
+    warteZeile.append(werZeile('Nils’ Technik-Hilfe', true))
+    const zeile = document.createElement('p')
+    zeile.className = 'warten'
+    const punkte = document.createElement('span')
+    punkte.className = 'punkte'
+    punkte.innerHTML = '<i></i><i></i><i></i>'
+    const wort = document.createElement('span')
+    wort.textContent = text
+    zeile.append(punkte, wort)
+    warteZeile.append(zeile)
+    verlauf.append(warteZeile)
+    warteZeile.scrollIntoView({block:'end', behavior:'smooth'})
+  },
+  warteText(text){
+    if (warteZeile) warteZeile.querySelector('.warten span:last-child').textContent = text
+  },
+  warteAus(){ warteZeile?.remove(); warteZeile = null },
+})
+
+function werZeile(name, mitBild){
+  const p = document.createElement('p')
+  p.className = 'wer'
+  if (mitBild){
+    const img = document.createElement('img')
+    img.src = 'bilder/helfer-rund-320.webp'
+    img.alt = ''
+    p.append(img)
+  } else {
+    const punkt = document.createElement('span')
+    punkt.className = 'punkt'
+    p.append(punkt)
+  }
+  const b = document.createElement('b')
+  b.textContent = name
+  p.append(b)
+  return p
+}
+function absatz(text){ const p = document.createElement('p'); p.textContent = text; return p }
+</script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entwurf 3 — Eine Frage pro Bildschirm</title>
+<style>
+/* ===========================================================================
+   ENTWURF 3 — „Eine Frage pro Bildschirm“
+
+   Grundgedanke: Der klobigste Teil der heutigen Oberfläche ist nicht ein
+   einzelnes Element, sondern die Menge. Auf dem Handy stehen Überschrift,
+   Karte, Begrüßung, Verlauf, Knöpfe, Eingabefeld, Hinweis, zwei weitere
+   Knöpfe und die FAQ gleichzeitig auf einer Fläche.
+
+   Dieser Entwurf dreht das um: Auf dem Bildschirm steht immer genau eine
+   Frage und die Antworten darauf. Nichts sonst. Kein Scrollen, kein Verlauf,
+   keine zweite Baustelle.
+
+   Das ist die stärkste Vereinfachung von allen sechs — und die größte
+   Abweichung von dem, was man „Chat“ nennt.
+
+   Regel wie in allen Entwürfen: VOLLES GRÜN HEISST ANTIPPEN.
+   =========================================================================== */
+
+:root{
+  --hintergrund:#F5FAF6; --flaeche:#FFFFFF; --akzent:#DCEFE2;
+  --primaer:#2F6B4F; --primaer-aktiv:#24563E;
+  --text:#1B2A21; --text-leise:#3D5147;
+  --warnung-text:#8A3B12; --warnung-flaeche:#FFF4E8;
+  --linie:#6C9A7B;
+  --schrift-faktor:1;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:calc(100% * var(--schrift-faktor))}
+body{
+  background:var(--hintergrund); color:var(--text);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  font-size:1.25rem; line-height:1.55;
+  min-height:100dvh; display:flex; flex-direction:column;
+  -webkit-text-size-adjust:100%;
+}
+:where(a,button,input,textarea):focus-visible{
+  outline:3px solid var(--primaer); outline-offset:3px; border-radius:.25rem;
+}
+.nur-vorlesen{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+main{
+  flex:1; width:100%; max-width:32rem; margin-inline:auto;
+  padding:1.25rem 1.25rem 2rem;
+  display:flex; flex-direction:column;
+}
+
+/* Zeile ganz oben: wer hier spricht, und der Schriftgrößen-Knopf.
+   Kein Seitenkopf mit Rand — das ist eine Trennlinie, die nichts trennt. */
+.oben{display:flex; align-items:center; gap:.75rem; margin-bottom:1.5rem}
+.oben img{width:3.5rem;height:3.5rem;border-radius:50%;object-fit:cover;flex:none}
+.oben b{display:block; line-height:1.2; font-size:1.125rem}
+.oben small{display:block; color:var(--text-leise); font-size:.9375rem; line-height:1.3}
+.a-knopf{
+  margin-left:auto; flex:none;
+  min-height:3.5rem; min-width:3.5rem; padding:0 1rem;
+  border:0; border-radius:.75rem; background:var(--primaer); color:#fff;
+  font:inherit; font-weight:700; font-size:1.5rem; line-height:1; cursor:pointer;
+}
+.a-knopf:hover{background:var(--primaer-aktiv)}
+
+/* Was Sie zuletzt gewählt haben — eine Zeile, damit der Faden nicht reißt. */
+#ihre{color:var(--text-leise); font-size:1rem; margin-bottom:.75rem}
+#ihre[hidden]{display:none}
+
+/* Die Frage. Der größte Text auf dem Bildschirm, ohne Rahmen. */
+#frage{font-size:1.5rem; line-height:1.35; font-weight:700; text-wrap:balance}
+/* Erst ab dem zweiten Absatz der Antwort tritt der Text eine Stufe zurück.
+   Der Sicherheitshinweis ist zwar auch ein Absatz, zählt hier aber nicht mit —
+   sonst verlöre die eigentliche Frage darunter ihre Größe. */
+#frage p:not(.hinweis) ~ p{margin-top:.875rem; font-size:1.25rem; font-weight:400}
+#frage .hinweis{
+  background:var(--warnung-flaeche); color:var(--warnung-text);
+  font-size:1.25rem; border-radius:1rem; padding:1rem; margin-bottom:1rem;
+}
+
+/* Der Wartezustand nimmt denselben Platz ein wie die Frage — der Bildschirm
+   springt dadurch nicht. Das Bild wird größer: Es ist gerade jemand für Sie
+   beschäftigt, und das soll man sehen. */
+#frage .warten{display:flex; flex-direction:column; align-items:center; gap:1rem; text-align:center; padding:1.5rem 0}
+#frage .warten img{width:6rem;height:6rem;border-radius:50%;object-fit:cover}
+#frage .warten span{font-weight:400; font-size:1.25rem; color:var(--text-leise); max-width:24ch}
+.punkte{display:inline-flex; gap:.4rem}
+.punkte i{width:.6rem;height:.6rem;border-radius:50%;background:var(--primaer);animation:huepf 1.2s infinite}
+.punkte i:nth-child(2){animation-delay:.18s}
+.punkte i:nth-child(3){animation-delay:.36s}
+@keyframes huepf{0%,60%,100%{opacity:.25}30%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.punkte i{animation:none;opacity:.6}}
+
+/* --- Antwortmöglichkeiten -------------------------------------------------
+   Der eigentliche Weg durch die Hilfe. Große, gefüllte Flächen untereinander;
+   die Einleitungszeile sagt ausdrücklich, dass man sie antippen darf.
+   ------------------------------------------------------------------------ */
+#knoepfe{margin-top:1.75rem}
+.knopf-einleitung{font-weight:700; margin-bottom:.75rem}
+.knopf-liste{display:flex; flex-direction:column; gap:.75rem}
+.wahl{
+  min-height:4rem; padding:1rem 1.25rem; text-align:left;
+  border:0; border-radius:1rem; background:var(--primaer); color:#fff;
+  font:inherit; font-weight:700; font-size:1.25rem; cursor:pointer;
+}
+.wahl:hover{background:var(--primaer-aktiv)}
+
+/* --- Der andere Weg: selbst schreiben ------------------------------------
+   Steht unten, hinter einer klaren Zeile. Er ist immer da, drängt sich aber
+   nicht vor die Knöpfe. Wer tippen kann, findet ihn; wer nicht, braucht ihn
+   nicht zu beachten.
+   ------------------------------------------------------------------------ */
+.selbst{margin-top:auto; padding-top:2rem}
+.selbst>p:first-child{
+  font-weight:700; padding-top:1.25rem; border-top:2px solid var(--akzent); margin-bottom:.75rem;
+}
+.zeile{display:flex; gap:.625rem; align-items:flex-end}
+textarea{
+  flex:1; min-height:3.5rem; resize:none; overflow-y:auto;
+  border:2px solid var(--linie); border-radius:1rem;
+  padding:.75rem 1rem; font:inherit; background:var(--flaeche); color:var(--text);
+}
+.senden{
+  flex:none; min-height:3.5rem; padding:0 1.5rem; border:0; border-radius:1rem;
+  background:var(--primaer); color:#fff; font:inherit; font-weight:700; cursor:pointer;
+}
+.senden:hover{background:var(--primaer-aktiv)}
+.sicherheit{margin-top:.5rem; font-size:1rem; color:var(--text-leise)}
+</style>
+</head>
+<body>
+
+<main>
+  <div class="oben">
+    <img src="bilder/helfer-rund-320.webp" alt="">
+    <span>
+      <b>Nils’ Technik-Hilfe</b>
+      <small>Es antwortet ein Computerprogramm.</small>
+    </span>
+    <button class="a-knopf" type="button" id="a" aria-label="Schriftgröße wechseln">A</button>
+  </div>
+
+  <p id="ihre" hidden></p>
+
+  <div id="frage" role="status" aria-live="polite">
+    <p>Guten Tag. Womit haben Sie Schwierigkeiten?</p>
+  </div>
+
+  <div id="knoepfe"></div>
+
+  <div class="selbst">
+    <p>Oder schreiben Sie es mit eigenen Worten:</p>
+    <form id="formular">
+      <div class="zeile">
+        <label for="eingabe" class="nur-vorlesen">Ihre Nachricht</label>
+        <textarea id="eingabe" rows="1" placeholder="Ihre Nachricht …"></textarea>
+        <button class="senden" type="submit">Senden</button>
+      </div>
+      <p class="sicherheit">Bitte geben Sie keine Passwörter, PINs oder TANs ein.</p>
+    </form>
+  </div>
+</main>
+
+<script src="demo.js"></script>
+<script>
+const ihre  = document.getElementById('ihre')
+const frage = document.getElementById('frage')
+
+starteDemo({
+  knoepfe: document.getElementById('knoepfe'),
+  formular: document.getElementById('formular'),
+  eingabe: document.getElementById('eingabe'),
+  aKnopf: document.getElementById('a'),
+
+  zeigeIhre(text){
+    ihre.textContent = 'Ihre Antwort: ' + text
+    ihre.hidden = false
+    window.scrollTo({top:0, behavior:'smooth'})
+    return null
+  },
+
+  zeigeSeine(text, hinweis){
+    frage.replaceChildren()
+    if (hinweis){
+      const h = document.createElement('p')
+      h.className = 'hinweis'
+      h.textContent = hinweis
+      frage.append(h)
+    }
+    /* Der erste Absatz ist die Frage und steht groß. Alles Weitere ist
+       Erläuterung und tritt eine Stufe zurück — das macht das CSS. */
+    for (const teil of text.split('\n\n')){
+      const p = document.createElement('p')
+      p.textContent = teil
+      frage.append(p)
+    }
+    return null
+  },
+
+  warteAn(text){
+    const block = document.createElement('div')
+    block.className = 'warten'
+
+    const bild = document.createElement('img')
+    bild.src = 'bilder/helfer-rund-320.webp'
+    bild.alt = ''
+
+    const punkte = document.createElement('span')
+    punkte.className = 'punkte'
+    punkte.innerHTML = '<i></i><i></i><i></i>'
+
+    const wort = document.createElement('span')
+    wort.textContent = text
+
+    block.append(bild, punkte, wort)
+    frage.replaceChildren(block)
+  },
+  warteText(text){
+    const wort = frage.querySelector('.warten span:last-child')
+    if (wort) wort.textContent = text
+  },
+  warteAus(){},
+})
+</script>
+</body>
+</html>

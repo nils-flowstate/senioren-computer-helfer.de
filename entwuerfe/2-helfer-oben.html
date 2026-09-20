@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entwurf 2 — Der Helfer oben</title>
+<style>
+/* ===========================================================================
+   ENTWURF 2 — „Der Helfer oben“
+
+   Grundgedanke: Ein Gesprächsverlauf ist auf einem Handy ein Stapel, durch den
+   man scrollen muss. Für jemanden, der Scrollen nicht sicher beherrscht, ist
+   das die eigentliche Hürde — nicht die Schrift.
+
+   Deshalb: kein Stapel. Er sitzt oben und bleibt dort stehen, wie ein Mensch
+   am anderen Ende des Tisches. Darunter steht immer nur das, was er gerade
+   gesagt hat, in voller Größe und ohne Rahmen.
+
+   Alles Ältere ist nicht weg — es steht am Fuß hinter einer Zeile. Man kommt
+   mit einem Tipp daran, aber es steht nicht im Weg.
+
+   Regel wie in allen Entwürfen: VOLLES GRÜN HEISST ANTIPPEN.
+   =========================================================================== */
+
+:root{
+  --hintergrund:#F5FAF6; --flaeche:#FFFFFF; --akzent:#DCEFE2;
+  --primaer:#2F6B4F; --primaer-aktiv:#24563E;
+  --text:#1B2A21; --text-leise:#3D5147;
+  --warnung-text:#8A3B12; --warnung-flaeche:#FFF4E8;
+  --linie:#6C9A7B;
+  --schrift-faktor:1;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:calc(100% * var(--schrift-faktor))}
+body{
+  background:var(--hintergrund); color:var(--text);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  font-size:1.25rem; line-height:1.6;
+  min-height:100dvh; display:flex; flex-direction:column;
+  -webkit-text-size-adjust:100%;
+}
+:where(a,button,input,textarea,summary):focus-visible{
+  outline:3px solid var(--primaer); outline-offset:3px; border-radius:.25rem;
+}
+.nur-vorlesen{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+/* --- Er sitzt oben und bleibt dort ---------------------------------------
+   Das Bild ist hier kein Schmuck, sondern die Adresse des Gesprächs: Man
+   redet immer mit demselben Gegenüber, und man sieht es die ganze Zeit.
+   ------------------------------------------------------------------------ */
+.helfer{
+  position:sticky; top:0; z-index:20;
+  background:var(--flaeche); border-bottom:2px solid var(--linie);
+  display:flex; align-items:center; gap:.875rem;
+  padding:.75rem 1rem;
+}
+.helfer .bild{position:relative; flex:none}
+.helfer img{width:4.5rem;height:4.5rem;border-radius:50%;object-fit:cover;display:block}
+.helfer b{display:block; line-height:1.25}
+/* Die Statuszeile ist der Kern dieses Entwurfs: Sie sagt jederzeit, was er
+   gerade tut — auch dann, wenn er gerade nichts sagt. */
+#status{display:block; color:var(--text-leise); font-size:1rem; line-height:1.35}
+
+/* Beim Nachdenken bekommt das Bild einen ruhigen Ring. Keine Zappelei —
+   ein langsames Atmen, das man wahrnimmt, ohne hinzusehen. */
+.helfer.denkt .bild::after{
+  content:""; position:absolute; inset:-6px; border-radius:50%;
+  border:3px solid var(--primaer); animation:atmen 1.8s ease-in-out infinite;
+}
+@keyframes atmen{0%,100%{opacity:.15;transform:scale(1)}50%{opacity:.9;transform:scale(1.06)}}
+@media (prefers-reduced-motion:reduce){
+  .helfer.denkt .bild::after{animation:none;opacity:.7}
+}
+.a-knopf{
+  margin-left:auto; flex:none;
+  min-height:3.5rem; min-width:3.5rem; padding:0 1rem;
+  border:0; border-radius:.75rem; background:var(--primaer); color:#fff;
+  font:inherit; font-weight:700; font-size:1.5rem; line-height:1; cursor:pointer;
+}
+.a-knopf:hover{background:var(--primaer-aktiv)}
+
+main{flex:1; width:100%; max-width:34rem; margin-inline:auto; padding:1.5rem 1rem 0}
+
+/* Ihre letzte Nachricht — leise, klein, als Erinnerung. Sie ist nicht mehr
+   das Wichtige, sobald die Antwort da ist. */
+#ihre{color:var(--text-leise); font-size:1rem; margin-bottom:.75rem}
+#ihre[hidden]{display:none}
+
+/* Seine Antwort — der einzige große Text auf dem Bildschirm.
+   Kein Kasten, kein Rahmen, keine Blase. Der Platz drumherum reicht. */
+#antwort{font-size:1.375rem}
+#antwort p+p{margin-top:1rem}
+#antwort .hinweis{
+  background:var(--warnung-flaeche); color:var(--warnung-text);
+  font-weight:700; border-radius:1rem; padding:1rem; margin-bottom:1rem;
+}
+#antwort .warten{display:flex; align-items:center; gap:.75rem; color:var(--text-leise)}
+.punkte{display:inline-flex; gap:.35rem; flex:none}
+.punkte i{width:.55rem;height:.55rem;border-radius:50%;background:var(--primaer);animation:huepf 1.2s infinite}
+.punkte i:nth-child(2){animation-delay:.18s}
+.punkte i:nth-child(3){animation-delay:.36s}
+@keyframes huepf{0%,60%,100%{opacity:.25}30%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.punkte i{animation:none;opacity:.6}}
+
+/* --- Antwortmöglichkeiten ----------------------------------------------- */
+#knoepfe{margin-top:1.75rem}
+.knopf-einleitung{font-weight:700; margin-bottom:.75rem}
+.knopf-liste{display:flex; flex-direction:column; gap:.75rem}
+.wahl{
+  min-height:3.5rem; padding:.875rem 1.25rem; text-align:left;
+  border:0; border-radius:1rem; background:var(--primaer); color:#fff;
+  font:inherit; font-weight:700; font-size:1.25rem; cursor:pointer;
+}
+.wahl:hover{background:var(--primaer-aktiv)}
+
+/* --- Das Ältere, hinter einer Zeile -------------------------------------- */
+#archiv{margin-top:2.5rem}
+#archiv[hidden]{display:none}
+#archiv summary{
+  min-height:3.5rem; display:flex; align-items:center;
+  list-style:none; cursor:pointer; font-weight:700; color:var(--primaer-aktiv);
+}
+#archiv summary::-webkit-details-marker{display:none}
+#archiv ol{list-style:none; margin-top:.5rem}
+#archiv li{padding:1rem 0; border-top:2px solid var(--akzent)}
+#archiv .frage{font-weight:700}
+#archiv .antwort{color:var(--text-leise); font-size:1.0625rem}
+
+/* --- Eingabe ------------------------------------------------------------- */
+.leiste{
+  position:sticky; bottom:0; margin-top:2rem;
+  background:var(--flaeche); border-top:2px solid var(--linie);
+  padding:.75rem 1rem max(.75rem,env(safe-area-inset-bottom));
+}
+.leiste .innen{max-width:34rem; margin-inline:auto}
+.zeile{display:flex; gap:.625rem; align-items:flex-end}
+textarea{
+  flex:1; min-height:3.5rem; resize:none; overflow-y:auto;
+  border:2px solid var(--linie); border-radius:1rem;
+  padding:.75rem 1rem; font:inherit; background:var(--flaeche); color:var(--text);
+}
+.senden{
+  flex:none; min-height:3.5rem; padding:0 1.5rem; border:0; border-radius:1rem;
+  background:var(--primaer); color:#fff; font:inherit; font-weight:700; cursor:pointer;
+}
+.senden:hover{background:var(--primaer-aktiv)}
+.sicherheit{margin-top:.5rem; font-size:1rem; color:var(--text-leise)}
+@media (max-height:32rem){.leiste{position:static} .helfer{position:static}}
+</style>
+</head>
+<body>
+
+<div class="helfer" id="helfer">
+  <span class="bild"><img src="bilder/helfer-rund-320.webp" alt=""></span>
+  <span>
+    <b>Nils’ Technik-Hilfe</b>
+    <span id="status">Es antwortet ein Computerprogramm.</span>
+  </span>
+  <button class="a-knopf" type="button" id="a" aria-label="Schriftgröße wechseln">A</button>
+</div>
+
+<main>
+  <p id="ihre" hidden></p>
+
+  <div id="antwort" role="status" aria-live="polite">
+    <p>Guten Tag. Womit haben Sie Schwierigkeiten? Ein Satz genügt.</p>
+  </div>
+
+  <div id="knoepfe"></div>
+
+  <details id="archiv" hidden>
+    <summary>Was wir vorher besprochen haben</summary>
+    <ol id="archivliste"></ol>
+  </details>
+</main>
+
+<div class="leiste">
+  <div class="innen">
+    <form id="formular">
+      <div class="zeile">
+        <label for="eingabe" class="nur-vorlesen">Ihre Nachricht</label>
+        <textarea id="eingabe" rows="1" placeholder="Ihre Nachricht …"></textarea>
+        <button class="senden" type="submit">Senden</button>
+      </div>
+      <p class="sicherheit">Bitte geben Sie keine Passwörter, PINs oder TANs ein.</p>
+    </form>
+  </div>
+</div>
+
+<script src="demo.js"></script>
+<script>
+const helfer  = document.getElementById('helfer')
+const status  = document.getElementById('status')
+const ihre    = document.getElementById('ihre')
+const antwort = document.getElementById('antwort')
+const archiv  = document.getElementById('archiv')
+const archivliste = document.getElementById('archivliste')
+
+/* Kurz halten: Der Kopf ist nur rund 230 Pixel breit. Ein langer Satz macht
+   ihn dreizeilig, und beim Wechsel auf den Wartetext würde er in der Höhe
+   springen. Der ausführliche Satz steht groß im Inhalt darunter. */
+const RUHE_STATUS = 'Es antwortet ein Computerprogramm.'
+const DENK_STATUS = 'Ich schaue gerade nach …'
+let letzteFrage = null
+
+starteDemo({
+  knoepfe: document.getElementById('knoepfe'),
+  formular: document.getElementById('formular'),
+  eingabe: document.getElementById('eingabe'),
+  aKnopf: document.getElementById('a'),
+
+  /* Bevor die neue Frage oben steht, wandert das vorige Paar ins Archiv.
+     Auf dem Bildschirm bleibt dadurch immer genau ein Gedanke. */
+  zeigeIhre(text){
+    archiviere()
+    letzteFrage = text
+    ihre.textContent = 'Sie: ' + text
+    ihre.hidden = false
+    window.scrollTo({top:0, behavior:'smooth'})
+    return null
+  },
+
+  zeigeSeine(text, hinweis){
+    antwort.replaceChildren()
+    if (hinweis){
+      const h = document.createElement('p')
+      h.className = 'hinweis'
+      h.textContent = hinweis
+      antwort.append(h)
+    }
+    for (const teil of text.split('\n\n')){
+      const p = document.createElement('p')
+      p.textContent = teil
+      antwort.append(p)
+    }
+    return null
+  },
+
+  /* Warten heißt hier: Er ist sichtbar beschäftigt. Die Statuszeile unter
+     seinem Namen sagt es, der Ring um das Bild zeigt es, und an der Stelle
+     der Antwort steht derselbe Satz noch einmal groß. */
+  warteAn(text){
+    helfer.classList.add('denkt')
+    status.textContent = DENK_STATUS
+    antwort.replaceChildren(warteBlock(text))
+  },
+  warteText(text){
+    const wort = antwort.querySelector('.warten span:last-child')
+    if (wort) wort.textContent = text
+  },
+  warteAus(){
+    helfer.classList.remove('denkt')
+    status.textContent = RUHE_STATUS
+  },
+})
+
+function warteBlock(text){
+  const zeile = document.createElement('p')
+  zeile.className = 'warten'
+  const punkte = document.createElement('span')
+  punkte.className = 'punkte'
+  punkte.innerHTML = '<i></i><i></i><i></i>'
+  const wort = document.createElement('span')
+  wort.textContent = text
+  zeile.append(punkte, wort)
+  return zeile
+}
+
+function archiviere(){
+  if (!letzteFrage) return
+  const li = document.createElement('li')
+  const frage = document.createElement('p')
+  frage.className = 'frage'
+  frage.textContent = 'Sie: ' + letzteFrage
+  const text = document.createElement('p')
+  text.className = 'antwort'
+  text.textContent = antwort.textContent.trim()
+  li.append(frage, text)
+  archivliste.append(li)
+  archiv.hidden = false
+}
+</script>
+</body>
+</html>

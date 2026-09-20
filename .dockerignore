@@ -25,6 +25,7 @@ vitest.config.ts
 # Werkzeuge, Notizen und Editor-Dateien, die zur Laufzeit nichts zu suchen haben
 .claude
 doku
+entwuerfe
 scripts
 .vscode
 .idea

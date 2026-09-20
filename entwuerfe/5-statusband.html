@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entwurf 5 — Er bleibt am Eingabefeld</title>
+<style>
+/* ===========================================================================
+   ENTWURF 5 — „Er bleibt am Eingabefeld“
+
+   Grundgedanke: Der Wartezustand ist heute ein Satz, der irgendwo im Verlauf
+   auftaucht und wieder verschwindet. Wer langsam liest, sieht ihn womöglich
+   nie — und hat dann den Eindruck, es passiere nichts.
+
+   Dieser Entwurf macht daraus einen festen Platz. Direkt über dem
+   Eingabefeld — dort, wo man ohnehin hinsieht, wenn man gerade etwas
+   abgeschickt hat — sitzt er dauerhaft und sagt in einer Zeile, was er tut:
+
+       „Ich höre zu.“
+       „Danke für Ihre Nachricht. Ich schaue mir das an.“
+       „Ich mache mich kurz schlau für Sie …“
+       „Ich habe etwas für Sie gefunden.“
+
+   Dadurch ist er nie weg, und man muss nirgends suchen, ob etwas passiert.
+   Im Verlauf selbst steht deshalb kein Bild: Er ist ja unten, die ganze Zeit.
+
+   Das Band ist hellgrün, nicht vollgrün — es ist eine Auskunft, kein Knopf.
+   Regel wie in allen Entwürfen: VOLLES GRÜN HEISST ANTIPPEN.
+   =========================================================================== */
+
+:root{
+  --hintergrund:#F5FAF6; --flaeche:#FFFFFF; --akzent:#DCEFE2;
+  --primaer:#2F6B4F; --primaer-aktiv:#24563E;
+  --text:#1B2A21; --text-leise:#3D5147;
+  --warnung-text:#8A3B12; --warnung-flaeche:#FFF4E8;
+  --linie:#6C9A7B;
+  --schrift-faktor:1;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:calc(100% * var(--schrift-faktor))}
+body{
+  background:var(--hintergrund); color:var(--text);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  font-size:1.25rem; line-height:1.6;
+  min-height:100dvh; display:flex; flex-direction:column;
+  -webkit-text-size-adjust:100%;
+}
+:where(a,button,input,textarea):focus-visible{
+  outline:3px solid var(--primaer); outline-offset:3px; border-radius:.25rem;
+}
+.nur-vorlesen{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+header{
+  background:var(--flaeche); border-bottom:2px solid var(--linie);
+  position:sticky; top:0; z-index:20;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:.75rem; padding:.5rem 1rem;
+}
+header .name{font-weight:700; color:var(--primaer-aktiv)}
+.a-knopf{
+  min-height:3.5rem; min-width:3.5rem; padding:0 1rem;
+  border:0; border-radius:.75rem; background:var(--primaer); color:#fff;
+  font:inherit; font-weight:700; font-size:1.5rem; line-height:1; cursor:pointer;
+}
+.a-knopf:hover{background:var(--primaer-aktiv)}
+
+main{flex:1; width:100%; max-width:34rem; margin-inline:auto; padding:1.25rem 1rem 0}
+
+/* Der Verlauf ist reiner Text. Keine Blasen, keine Kästen, keine Bilder —
+   die Zuordnung macht die kleine Zeile über jedem Beitrag. */
+.verlauf{list-style:none; display:flex; flex-direction:column; gap:1.5rem}
+.wer{font-size:1rem; color:var(--text-leise); font-weight:700; margin-bottom:.25rem}
+.beitrag p+p{margin-top:.875rem}
+.von-ihnen .beitrag{color:var(--text-leise)}
+.hinweis{
+  background:var(--warnung-flaeche); color:var(--warnung-text);
+  font-weight:700; border-radius:.75rem; padding:1rem; margin-bottom:1rem;
+}
+
+/* --- Antwortmöglichkeiten ----------------------------------------------- */
+#knoepfe{margin-top:1.75rem}
+.knopf-einleitung{font-weight:700; margin-bottom:.75rem}
+.knopf-liste{display:flex; flex-direction:column; gap:.75rem}
+.wahl{
+  min-height:3.5rem; padding:.875rem 1.25rem; text-align:left;
+  border:0; border-radius:.75rem; background:var(--primaer); color:#fff;
+  font:inherit; font-weight:700; font-size:1.25rem; cursor:pointer;
+}
+.wahl:hover{background:var(--primaer-aktiv)}
+
+/* --- Der feste Platz unten ---------------------------------------------- */
+.unten{
+  position:sticky; bottom:0; margin-top:2rem;
+  background:var(--flaeche); border-top:2px solid var(--linie);
+  padding-bottom:max(.75rem,env(safe-area-inset-bottom));
+}
+.unten .innen{max-width:34rem; margin-inline:auto; padding-inline:1rem}
+
+.band{
+  display:flex; align-items:center; gap:.75rem;
+  background:var(--akzent); border-radius:0 0 1rem 1rem;
+  padding:.625rem .875rem; margin-bottom:.75rem;
+}
+.band .bild{position:relative; flex:none}
+.band img{width:3rem;height:3rem;border-radius:50%;object-fit:cover;display:block}
+.band .zustand{line-height:1.3}
+.band .zustand b{display:block; font-size:1rem}
+.band .zustand span{display:block; font-size:1.0625rem; color:var(--text-leise)}
+
+/* Arbeitet er, bekommt das Bild einen ruhigen Ring — sichtbar aus dem
+   Augenwinkel, ohne dass man auf den Text sehen muss. */
+.band.denkt .bild::after{
+  content:""; position:absolute; inset:-5px; border-radius:50%;
+  border:3px solid var(--primaer); animation:atmen 1.8s ease-in-out infinite;
+}
+@keyframes atmen{0%,100%{opacity:.15;transform:scale(1)}50%{opacity:.9;transform:scale(1.05)}}
+@media (prefers-reduced-motion:reduce){.band.denkt .bild::after{animation:none;opacity:.7}}
+
+.zeile{display:flex; gap:.625rem; align-items:flex-end}
+textarea{
+  flex:1; min-height:3.5rem; resize:none; overflow-y:auto;
+  border:2px solid var(--linie); border-radius:.75rem;
+  padding:.75rem 1rem; font:inherit; background:var(--flaeche); color:var(--text);
+}
+.senden{
+  flex:none; min-height:3.5rem; padding:0 1.5rem; border:0; border-radius:.75rem;
+  background:var(--primaer); color:#fff; font:inherit; font-weight:700; cursor:pointer;
+}
+.senden:hover{background:var(--primaer-aktiv)}
+.sicherheit{margin-top:.5rem; font-size:1rem; color:var(--text-leise)}
+@media (max-height:32rem){.unten{position:static}}
+</style>
+</head>
+<body>
+
+<header>
+  <span class="name">Senioren-Computer-Helfer</span>
+  <button class="a-knopf" type="button" id="a" aria-label="Schriftgröße wechseln">A</button>
+</header>
+
+<main>
+  <ol class="verlauf" id="verlauf" role="log" aria-live="polite">
+    <li>
+      <p class="wer">Nils’ Technik-Hilfe — es antwortet ein Computerprogramm</p>
+      <div class="beitrag"><p>Guten Tag. Womit haben Sie Schwierigkeiten? Ein Satz genügt.</p></div>
+    </li>
+  </ol>
+
+  <div id="knoepfe"></div>
+</main>
+
+<div class="unten">
+  <div class="innen">
+    <div class="band" id="band">
+      <span class="bild"><img src="bilder/helfer-rund-320.webp" alt=""></span>
+      <span class="zustand">
+        <b>Nils’ Technik-Hilfe</b>
+        <span id="status" role="status" aria-live="polite">Ich höre zu.</span>
+      </span>
+    </div>
+
+    <form id="formular">
+      <div class="zeile">
+        <label for="eingabe" class="nur-vorlesen">Ihre Nachricht</label>
+        <textarea id="eingabe" rows="1" placeholder="Ihre Nachricht …"></textarea>
+        <button class="senden" type="submit">Senden</button>
+      </div>
+      <p class="sicherheit">Bitte geben Sie keine Passwörter, PINs oder TANs ein.</p>
+    </form>
+  </div>
+</div>
+
+<script src="demo.js"></script>
+<script>
+const verlauf = document.getElementById('verlauf')
+const band    = document.getElementById('band')
+const status  = document.getElementById('status')
+
+const RUHE = 'Ich höre zu.'
+let zurueck = null
+
+starteDemo({
+  knoepfe: document.getElementById('knoepfe'),
+  formular: document.getElementById('formular'),
+  eingabe: document.getElementById('eingabe'),
+  aKnopf: document.getElementById('a'),
+
+  zeigeIhre(text){ return eintrag('Sie', text, null, 'von-ihnen') },
+  zeigeSeine(text, hinweis){ return eintrag('Nils’ Technik-Hilfe', text, hinweis, '') },
+
+  warteAn(text){
+    window.clearTimeout(zurueck)
+    band.classList.add('denkt')
+    status.textContent = text
+  },
+  warteText(text){ status.textContent = text },
+
+  /* Nach dem Nachdenken meldet er kurz Vollzug und geht dann in den
+     Ruhezustand zurück. Ohne diese Zwischenmeldung wirkt es, als wäre die
+     Antwort einfach so erschienen. */
+  warteAus(){
+    band.classList.remove('denkt')
+    status.textContent = 'Ich habe etwas für Sie gefunden.'
+    zurueck = window.setTimeout(() => { status.textContent = RUHE }, 3000)
+  },
+})
+
+function eintrag(name, text, hinweis, klasse){
+  const li = document.createElement('li')
+  if (klasse) li.className = klasse
+
+  const wer = document.createElement('p')
+  wer.className = 'wer'
+  wer.textContent = name
+  li.append(wer)
+
+  const koerper = document.createElement('div')
+  koerper.className = 'beitrag'
+  if (hinweis){
+    const h = document.createElement('p')
+    h.className = 'hinweis'
+    h.textContent = hinweis
+    koerper.append(h)
+  }
+  for (const teil of text.split('\n\n')){
+    const p = document.createElement('p')
+    p.textContent = teil
+    koerper.append(p)
+  }
+  li.append(koerper)
+  verlauf.append(li)
+  return li
+}
+</script>
+</body>
+</html>
