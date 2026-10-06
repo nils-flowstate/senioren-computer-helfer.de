@@ -1,229 +1,96 @@
-# Senioren-Computer-Helfer
+# Nils – Computerhilfe (senioren-computer-helfer.de)
 
-Technik-Hilfe in einfacher Sprache für Computer, Handy, Tablet, Internet,
-Drucker, E-Mail und Apps. Die Website richtet sich an ältere Menschen und an
-Personen mit sehr geringen technischen Kenntnissen.
+Statische Website mit drei Seiten hinter einem Lockscreen (Frühzugang für
+Testerinnen und Tester). Die Inhalte stammen aus dem Neubau-Paket
+`neubau/Nils Computerhilfe Farbkonzepte.zip`. Die frühere Astro-Anwendung liegt
+unverändert in `_archiv/`.
 
-Verbindliche Anforderung ist `GEO-LLM.txt` im Projektstamm. Sie ist vor jeder
-Planung und jeder Änderung vollständig zu lesen. Bei Widersprüchen zwischen
-dieser README und `GEO-LLM.txt` gilt `GEO-LLM.txt`.
+Technische Einzelheiten zu Gate, Botschutz und Sperre: **CLAUDE-CODE.md**
+(Übergabe aus dem Paket). Abweichend davon läuft die Website hier hinter dem
+zentralen Caddy, siehe unten.
 
-- Kanonische Adresse: <https://senioren-computer-helfer.de>
-- Interner Anwendungsport: 3005, gebunden ausschließlich an 127.0.0.1
-- Betriebsweg: Docker Compose hinter einem Reverse Proxy
+## Aufbau
 
----
-
-## 1. Voraussetzungen auf dem VPS
-
-- Linux mit Docker und Docker Compose (Plugin `docker compose`, nicht das alte
-  `docker-compose`)
-- Ein Reverse Proxy, der TLS abschließt: Caddy oder Nginx
-- DNS-A-Eintrag (und gegebenenfalls AAAA) auf die IP des VPS
-- Öffentlich offen sind nur Port 80 und 443. **Port 3005 wird nicht
-  freigegeben.**
-
-Node muss auf dem Host nicht installiert sein. Alle npm-Befehle laufen über
-`./scripts/npm.sh` in einem Wegwerf-Container.
-
-## 2. Installation
-
-```bash
-git clone <repository-adresse> /srv/senioren-computer-helfer
-cd /srv/senioren-computer-helfer
-
-cp .env.example .env
+```
+Internet → Cloudflare → zentraler Caddy (/home/nils/caddy, TLS)
+         → web  (Caddy, Container "senioren-computer-helfer", Port 3005)
+         → gate (Node, Container "senioren-computer-helfer-gate", nur intern)
 ```
 
-Danach `.env` ausfüllen. Zwingend erforderlich sind:
-
-| Variable | Bedeutung |
+| Datei | Zweck |
 | --- | --- |
-| `SESSION_SECRET` | Signiert das Sitzungs-Cookie. Ohne diesen Wert startet die Anwendung in der Produktion nicht. Erzeugen mit `openssl rand -hex 32`. |
-| `OPENAI_API_KEY` bzw. `ANTHROPIC_API_KEY` | Zugang zum KI-Dienst, passend zu `KI_ANBIETER`. |
-| `SUPPORT_EMAIL` | Der Kontaktweg, der nach erfolgloser Hilfe immer angeboten wird. |
+| `Caddyfile` | Routing, `forward_auth` ans Gate, Sicherheitskopfzeilen, Besucher-IP |
+| `Dockerfile` | `caddy:2-alpine` mit `site/`, ohne Root, ohne Zusatzrechte |
+| `compose.yaml` | `web` + `gate`, Volume `gate_data`, Netz `proxy` |
+| `gate/` | Passwortprüfung, Rechenaufgabe, Sperre nach 5 Fehlversuchen (48 h) |
+| `site/` | Seiten, Laufzeit `support.js`, React lokal, Schriften lokal |
 
-Rechte einschränken, damit die Datei nur dem Dienstbenutzer gehört:
+**Besucher-IP:** Der zentrale Caddy vertraut Cloudflare nicht und reicht die
+Cloudflare-Adresse weiter. Der `Caddyfile` übernimmt deshalb `CF-Connecting-IP`,
+aber nur, wenn die Anfrage nachweislich aus einem Cloudflare-Adressbereich kam.
+Sonst gilt der tatsächliche Absender. Ändert Cloudflare seine Bereiche
+(https://www.cloudflare.com/ips-v4 und `ips-v6`), den Block `(cloudflare)` im
+`Caddyfile` nachziehen.
 
-```bash
-chmod 600 .env
-```
-
-## 3. Bauen und starten
-
-```bash
-docker compose build
-docker compose up -d
-```
-
-Zustand ansehen:
+## Befehle
 
 ```bash
-docker compose ps
+cd /home/nils/apps/senioren-helfer
+
+docker compose build                 # Images bauen
+docker compose up -d                 # starten bzw. nach Änderungen neu starten
+docker compose ps                    # Zustand (web muss "healthy" sein)
+docker compose logs -f               # Protokolle
+curl -s http://127.0.0.1:3005/health # lokale Funktionskontrolle → ok
 ```
 
-In der Spalte `STATUS` muss nach etwa 15 Sekunden `(healthy)` stehen.
+**Update:** Dateien in `site/` oder `Caddyfile` ändern, dann
+`docker compose up -d --build`.
 
-## 4. Funktionskontrolle
+**Passwort ändern:** `printf %s 'NEU' | sha256sum` → Wert als
+`GATE_PASSWORD_SHA256` in `.env` → `docker compose up -d`.
+
+**IP entsperren:**
 
 ```bash
-curl -s http://127.0.0.1:3005/api/health
+docker compose stop gate
+docker run --rm -v senioren-helfer_gate_data:/data alpine \
+  sh -c 'printf "{\"fails\":{},\"bans\":{}}" > /data/gate.json && chown 1000:1000 /data/gate.json'
+docker compose start gate
 ```
 
-Erwartete Ausgabe:
+(Das löscht alle Fehlversuche und Sperren. Einzelne Einträge: Datei vorher mit
+`cat` ansehen und gezielt bearbeiten.)
 
-```json
-{"status":"ok"}
-```
+## Geheimnisse
 
-Die Route gibt bewusst keine Versionen, Pfade oder Anbieternamen aus (§11).
+`.env` enthält `GATE_PASSWORD_SHA256` und `GATE_SECRET`. Sie gehört nicht nach
+Git und nicht ins Image (`.dockerignore` lässt nur `Caddyfile` und `site/` in
+den Build-Kontext). Die übrigen Variablen in `.env` stammen von der alten
+Anwendung und werden von der neuen nicht gelesen. Sie bleiben für die spätere
+Chat-Anbindung erhalten. `GATE_SECRET` zu ändern beendet alle offenen Sitzungen.
 
-Von außen darf Port 3005 **nicht** erreichbar sein. Gegenprobe von einem
-anderen Rechner aus:
+## Rückweg zur alten Website
+
+Das alte Image `senioren-computer-helfer:aktuell` ist noch vorhanden.
 
 ```bash
-curl --max-time 5 http://<ip-des-vps>:3005/api/health   # muss scheitern
+cd /home/nils/apps/senioren-helfer
+docker compose down                                    # neue Website stoppen
+cd _archiv && docker compose -p senioren-alt up -d     # alte Anwendung starten
 ```
 
-## 5. Protokolle
+Die alte Anwendung bringt keine Anmeldung mit. Wer die Sperre zurück will, setzt
+im zentralen Caddy den `basic_auth`-Block wieder ein (Sicherung:
+`/home/nils/caddy/Caddyfile.sicherung-20261006-205024`).
+
+## Zentraler Caddy
+
+`/home/nils/caddy/Caddyfile` ist als einzelne Datei in den Container
+eingebunden. Editoren ersetzen beim Speichern oft die Datei, und der Container
+sieht dann weiter die alte. Nach einer Änderung deshalb:
 
 ```bash
-docker compose logs -f app          # laufend mitlesen
-docker compose logs --tail=100 app  # die letzten 100 Zeilen
+docker exec -i caddy sh -c 'cat > /etc/caddyfile' < /home/nils/caddy/Caddyfile
+docker exec caddy caddy reload --config /etc/caddyfile --adapter caddyfile
 ```
-
-Im Protokoll stehen ausschließlich Zeitpunkt, Route, Statuscode, Dauer und im
-Fehlerfall die Fehlerklasse. Chattexte, Fotos, Audiodaten und Klartext-IPs
-kommen dort nicht vor (§10). Die einzige erlaubte Ausgabestelle ist
-`src/lib/schutz/protokoll.ts`.
-
-Die Rotation ist in `compose.yaml` festgelegt: höchstens fünf Dateien zu je
-10 MB, also maximal 50 MB je Container.
-
-## 6. Aktualisieren
-
-```bash
-cd /srv/senioren-computer-helfer
-git pull
-docker compose build
-docker compose up -d
-docker compose ps
-curl -s http://127.0.0.1:3005/api/health
-```
-
-`docker compose up -d` tauscht den Container nur aus, wenn sich das Image
-geändert hat. Ein laufendes Gespräch bricht dabei ab — die Sitzung steckt im
-Cookie, das Gespräch selbst im Browser der Person.
-
-## 7. Kontrollierter Neustart
-
-```bash
-docker compose restart app     # Container neu starten, Image bleibt
-docker compose down            # anhalten und entfernen
-docker compose up -d           # wieder starten
-```
-
-Nach jedem Neustart sind die Zähler für die Anfragebegrenzung leer. Das ist
-beabsichtigt: Sie hängen an personenbezogenen Merkmalen und gehören nicht auf
-die Platte.
-
-## 8. Rücksetzen (Rollback)
-
-**Weg A — auf einen früheren Git-Stand:**
-
-```bash
-git log --oneline -10        # den letzten funktionierenden Stand heraussuchen
-git checkout <commit>
-docker compose build
-docker compose up -d
-```
-
-**Weg B — auf ein früheres Image, ohne neu zu bauen:**
-
-Vor jedem Update ein Sicherungsetikett vergeben:
-
-```bash
-docker tag senioren-computer-helfer:aktuell senioren-computer-helfer:vorher
-```
-
-Zurückgehen:
-
-```bash
-docker tag senioren-computer-helfer:vorher senioren-computer-helfer:aktuell
-docker compose up -d --no-build
-```
-
-Weg B ist der schnellere und braucht keinen funktionierenden Bau.
-
-## 9. Produktionsgeheimnisse
-
-- Geheimnisse stehen ausschließlich in `.env` auf dem Server.
-- `.env` ist in `.gitignore` und in `.dockerignore` ausgeschlossen. Sie landet
-  weder in Git noch in einem Image.
-- Keine Variable trägt das Präfix `PUBLIC_`. Damit erreicht kein Geheimnis den
-  Browser.
-- Im Repository wird ausschließlich `.env.example` gepflegt — ohne echte Werte.
-- Nach einer Änderung an `.env` genügt `docker compose up -d`; die Werte werden
-  beim Start des Containers gelesen.
-
-## 10. Sicherheitseinstellungen des Containers
-
-Festgelegt in `compose.yaml`, jeweils mit Begründung im Kommentar:
-
-- Portbindung ausschließlich an `127.0.0.1:3005`
-- Prozess ohne Root-Rechte, `no-new-privileges`, alle Capabilities entfernt
-- Schreibgeschütztes Dateisystem; beschreibbar ist nur ein tmpfs unter `/tmp`
-  im Arbeitsspeicher — Fotos und Sprachaufnahmen berühren die Platte nie
-- Keine dauerhaften Volumes
-- Der Docker-Socket wird nicht eingebunden
-- Ressourcengrenzen: 1 CPU, 512 MB Arbeitsspeicher
-
-## 11. Reverse Proxy
-
-Beispiele liegen bereit:
-
-- `docker/Caddyfile.beispiel`
-- `docker/nginx.beispiel.conf`
-
-Beide setzen **keine** Sicherheitskopfzeilen. Diese kommen ausschließlich aus
-`src/middleware.ts`. Zwei Setzorte überschreiben einander still, und der Fehler
-wird dann an der falschen Stelle gesucht.
-
-Wichtig bei Nginx: `proxy_set_header X-Forwarded-Proto $scheme;` ist nicht
-optional. Fehlt die Zeile, hält sich die Anwendung für unverschlüsselt
-erreichbar, setzt `Secure` nicht auf das Sitzungs-Cookie und sendet keine
-HSTS-Kopfzeile — ohne jede Fehlermeldung. Caddy setzt die Kopfzeile von selbst.
-
-## 12. Entwicklung
-
-```bash
-./scripts/npm.sh install       # Abhängigkeiten
-./scripts/dev.sh               # Entwicklungsserver auf 127.0.0.1:4325
-```
-
-Nach jeder Änderung zu prüfen:
-
-```bash
-./scripts/npm.sh run check      # TypeScript und Astro
-./scripts/npm.sh run kontrast   # WCAG-Kontrast aller Farbpaare
-./scripts/npm.sh test           # Vitest
-docker compose build && docker compose up -d
-curl -s http://127.0.0.1:3005/api/health
-./scripts/pruefe-auslieferung.sh
-```
-
-`./scripts/pruefe-auslieferung.sh` prüft am laufenden Container das, was sich
-beim Bauen still verletzen lässt: eingebettete Skripte, die von der
-Sicherheitsrichtlinie blockiert würden, fehlende Sicherheitskopfzeilen, die
-Telefonnummer im ausgelieferten HTML und die Freigabe über `/api/kontakt` ohne
-den Ablauf aus §16.
-
-Den Eskalationsweg mit Telefonnummer prüft das Skript nur, wenn `SUPPORT_PHONE`
-gefüllt ist. Zum Testen vorübergehend `ENABLE_PHONE_SUPPORT=true` und eine
-Platzhalternummer eintragen, `docker compose up -d` ausführen und danach wieder
-auf `false` und leer zurücksetzen — so bleibt der Auslieferungszustand der, den
-§16 vorschreibt.
-
-Zusätzlich vor jeder Freigabe: getrennte SEO- und GEO-Prüfung über die Skills
-in `.claude/skills/`, Bedienung nur mit der Tastatur, Darstellung bei 200 %
-Zoom und auf einem schmalen Mobilgerät.

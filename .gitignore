@@ -7,7 +7,7 @@ dist/
 !.env.example
 *.log
 .DS_Store
-tests/artefakte/
+_archiv/tests/artefakte/
 playwright-report/
 
 # Eigene Claude-Skills und interne Notizen bleiben außerhalb des öffentlichen
@@ -15,5 +15,8 @@ playwright-report/
 .claude/
 doku/
 
-# Bildschirmfotos der Entwürfe — jederzeit neu erzeugbar über scripts/entwuerfe-bilder.sh
-entwuerfe/bildschirmfotos/
+# Bildschirmfotos der alten Entwürfe — neu erzeugbar über _archiv/scripts/entwuerfe-bilder.sh
+_archiv/entwuerfe/bildschirmfotos/
+
+# Das Neubau-Paket (Zip) ist die Quelle von site/ und gate/, nicht Teil des Repositorys.
+neubau/

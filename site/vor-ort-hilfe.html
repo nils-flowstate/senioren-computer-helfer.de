@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Nils – So läuft ein Hausbesuch ab</title>
+<meta name="theme-color" content="#4F7A5B">
+<link href="/fonts/fonts.css" rel="stylesheet">
+<style>html{-webkit-text-size-adjust:100%}body{margin:0;overflow-x:hidden;background:#F4F1E9;font-family:'Source Sans 3',system-ui,sans-serif;color:#1E241F}a{color:#4F7A5B}a:hover{color:#274536}</style>
+</helmet>
+<div style="max-width:1080px; margin:0 auto; padding:20px clamp(14px,4vw,24px) 64px">
+    <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px 14px; padding-bottom:18px; margin-bottom:30px; border-bottom:1px solid #DFDACE;">
+      <div style="display:flex; align-items:center; gap:16px; flex:none">
+        <a href="faq.html" aria-label="Zurück" style="display:flex; align-items:center; gap:6px; min-height:52px; padding:0 18px 0 12px; border-radius:14px; border:2px solid #DFDACE; background:#fff; color:#274536; font:700 19px 'Nunito',sans-serif; text-decoration:none" style-hover="border-color:#4F7A5B; color:#274536"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>Zurück</a>
+        <a href="index.html" aria-label="Zur Startseite" style="display:flex; align-items:center; gap:12px; text-decoration:none"><img src="nils.webp" alt="Nils" style="width:48px; height:48px; border-radius:50%; object-fit:cover; object-position:50% 18%"><span style="font:800 24px 'Nunito',sans-serif; color:#274536">Nils</span></a>
+      </div>
+      <nav style="display:flex; flex-wrap:nowrap; gap:6px; align-items:center; flex:1 1 auto; justify-content:flex-end; min-width:0; overflow-x:auto; white-space:nowrap; -webkit-overflow-scrolling:touch; scrollbar-width:none">
+        <a href="faq.html" style="padding:10px 14px; font:600 18px 'Source Sans 3',sans-serif; text-decoration:none">Plattform &amp; FAQ</a>
+        <a href="vor-ort-hilfe.html" style="padding:10px 14px; font:600 18px 'Source Sans 3',sans-serif; text-decoration:none">Vor-Ort-Hilfe</a>
+        <a href="index.html" style="padding:10px 18px; border-radius:12px; background:#4F7A5B; color:#fff; font:700 18px 'Nunito',sans-serif; text-decoration:none">Nils fragen</a>
+      </nav>
+    </div>
+
+  <div style="display:flex; flex-wrap:wrap; align-items:center; gap:10px; font:700 14px 'Source Sans 3',sans-serif; letter-spacing:.08em; text-transform:uppercase; color:#6B7268">
+    <span style="padding:4px 10px; border-radius:999px; background:#E9E2D2; color:#5A5448">Intern</span>
+    <span>Prozesskonzept · Vor-Ort-Hilfe über InStaff</span>
+  </div>
+  <h1 style="font:800 clamp(30px,7.5vw,44px)/1.1 'Nunito',sans-serif; color:#274536; margin:14px 0 12px; text-wrap:pretty">Vom „Ich weiß es nicht“ bis zum Helfer an der Haustür</h1>
+  <p style="font-size:20px; line-height:1.55; max-width:760px; margin:0; color:#3C4239; text-wrap:pretty">Nils ist eine Plattform gegen Betrug. Deshalb muss gerade der Hausbesuch der sicherste Teil des ganzen Angebots sein. Er darf niemals selbst zum Einfallstor werden.</p>
+
+  <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr)); gap:14px; margin-top:30px">
+    <div style="background:#4F7A5B; color:#fff; border-radius:18px; padding:20px 22px">
+      <div style="font:800 19px 'Nunito',sans-serif">Nils ist der Auftraggeber</div>
+      <div style="font-size:17px; line-height:1.5; margin-top:6px; opacity:.95">Auf InStaff bucht Nils. Der Senior hat nie direkt mit InStaff zu tun und muss sich dort weder anmelden noch etwas bezahlen.</div>
+    </div>
+    <div style="background:#4F7A5B; color:#fff; border-radius:18px; padding:20px 22px">
+      <div style="font:800 19px 'Nunito',sans-serif">Adresse erst zum Schluss</div>
+      <div style="font-size:17px; line-height:1.5; margin-top:6px; opacity:.95">Im Job steht nur der Stadtteil. Die volle Adresse bekommt nur der freigegebene Helfer, und zwar erst nach der Bestätigung.</div>
+    </div>
+    <div style="background:#4F7A5B; color:#fff; border-radius:18px; padding:20px 22px">
+      <div style="font:800 19px 'Nunito',sans-serif">Ein fester Helfer-Pool</div>
+      <div style="font-size:17px; line-height:1.5; margin-top:6px; opacity:.95">Helfer werden vorab einmal geprüft und nicht erst bei jedem Auftrag neu. So bleibt die Freigabe schnell, und die Prüfung bleibt streng.</div>
+    </div>
+  </div>
+
+  <div style="display:flex; flex-wrap:wrap; gap:10px; margin:40px 0 18px">
+    <sc-for list="{{ actors }}" as="a" hint-placeholder-count="4">
+      <span style="display:flex; align-items:center; gap:8px; padding:6px 14px 6px 8px; border-radius:999px; background:#fff; border:1px solid #DFDACE; font:600 15px 'Source Sans 3',sans-serif">
+        <span style="width:14px; height:14px; border-radius:50%; background:{{ a.color }}"></span>{{ a.name }}
+      </span>
+    </sc-for>
+  </div>
+
+  <div style="display:flex; flex-direction:column; gap:14px">
+    <sc-for list="{{ phases }}" as="p" hint-placeholder-count="7">
+      <div style="display:grid; grid-template-columns:64px minmax(0,1fr); gap:18px; background:#fff; border:1px solid #DFDACE; border-radius:20px; padding:22px">
+        <div style="width:56px; height:56px; border-radius:16px; background:#E4EDE4; color:#274536; display:flex; align-items:center; justify-content:center; font:800 24px 'Nunito',sans-serif">{{ p.n }}</div>
+        <div style="min-width:0">
+          <div style="display:flex; flex-wrap:wrap; align-items:center; gap:10px">
+            <span style="font:800 23px 'Nunito',sans-serif; color:#274536">{{ p.title }}</span>
+            <sc-for list="{{ p.who }}" as="w" hint-placeholder-count="1">
+              <span style="padding:3px 10px; border-radius:999px; font:600 13px 'Source Sans 3',sans-serif; color:#fff; background:{{ w.color }}">{{ w.name }}</span>
+            </sc-for>
+          </div>
+          <div style="font-size:18px; line-height:1.55; margin-top:8px; color:#3C4239; text-wrap:pretty">{{ p.what }}</div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr)); gap:12px; margin-top:14px">
+            <div style="background:#FBF3E8; border-radius:14px; padding:14px 16px">
+              <div style="font:700 13px 'Source Sans 3',sans-serif; letter-spacing:.08em; text-transform:uppercase; color:#8A5A1E">Hürde</div>
+              <div style="font-size:17px; line-height:1.5; margin-top:4px; color:#3F3424; text-wrap:pretty">{{ p.hurdle }}</div>
+            </div>
+            <div style="background:#EEF4EC; border-radius:14px; padding:14px 16px">
+              <div style="font:700 13px 'Source Sans 3',sans-serif; letter-spacing:.08em; text-transform:uppercase; color:#4F7A5B">Lösung</div>
+              <div style="font-size:17px; line-height:1.5; margin-top:4px; color:#1E3325; text-wrap:pretty">{{ p.fix }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <h2 style="font:800 clamp(24px,6vw,30px) 'Nunito',sans-serif; color:#274536; margin:48px 0 8px">Freigabe der Helfer in vier Stufen</h2>
+  <p style="font-size:18px; line-height:1.55; color:#3C4239; margin:0 0 18px; max-width:720px">Erst wer alle vier Stufen bestanden hat, kommt in den Nils-Pool. Nur Helfer aus diesem Pool können Aufträge annehmen.</p>
+  <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr)); gap:12px">
+    <sc-for list="{{ gates }}" as="g" hint-placeholder-count="4">
+      <div style="background:#fff; border:1px solid #DFDACE; border-radius:18px; padding:18px 20px">
+        <div style="font:800 15px 'Nunito',sans-serif; color:#6B7268">Stufe {{ g.n }}</div>
+        <div style="font:800 20px 'Nunito',sans-serif; color:#274536; margin-top:4px">{{ g.title }}</div>
+        <div style="font-size:16px; line-height:1.5; margin-top:6px; color:#3C4239">{{ g.text }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <h2 style="font:800 clamp(24px,6vw,30px) 'Nunito',sans-serif; color:#274536; margin:48px 0 18px">Noch zu klären</h2>
+  <div style="display:flex; flex-direction:column; gap:10px">
+    <sc-for list="{{ open }}" as="o" hint-placeholder-count="5">
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr)); gap:16px; background:#fff; border:1px solid #DFDACE; border-radius:16px; padding:16px 20px">
+        <div style="font:800 18px 'Nunito',sans-serif; color:#274536">{{ o.title }}</div>
+        <div style="font-size:17px; line-height:1.5; color:#3C4239">{{ o.text }}</div>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const A = {
+  senior:{name:'Senior', color:'#8A5A1E'},
+  nils:{name:'Nils (Chat)', color:'#4F7A5B'},
+  team:{name:'Nils-Team', color:'#1F4D63'},
+  helfer:{name:'Helfer via InStaff', color:'#6A4C7A'}
+};
+const PHASES = [
+  {title:'Nils erkennt: Hier braucht es einen Menschen', who:['senior','nils'],
+   what:'Nach dreimal „Ich weiß es nicht“ oder „Bitte einfacher erklären“ bietet Nils einen Besuch an. Gefragt wird nur nach der Stadt oder der Postleitzahl. Das Problem und der bisherige Gesprächsverlauf werden automatisch mitgegeben.',
+   hurdle:'Der Senior versteht nicht, was jetzt passiert, oder bekommt Angst, sich zu verpflichten.',
+   fix:'Nils sagt es klar: „Ein geprüfter Helfer von Nils kommt zu Ihnen. Vorher rufen wir Sie an.“ Verbindlich wird die Buchung erst mit diesem Anruf.'},
+  {title:'Rückruf und Adresse', who:['team','senior'],
+   what:'Das Nils-Team ruft unter der Nummer an, die der Senior angegeben hat. Am Telefon werden Name, Adresse und Klingelname aufgenommen, dazu Hinweise wie Hinterhaus oder Etage, und der Termin bestätigt. Dabei wird auch der Ablauf des Besuchs erklärt.',
+   hurdle:'Eine Adresse einzutippen ist schwierig und fühlt sich unsicher an. Außerdem könnte jemand für einen anderen Menschen buchen.',
+   fix:'Die Adresse wird nie im Chat abgefragt, sondern nur am Telefon. Mit dem Anruf wird zugleich geprüft, wer da bucht. Gespeichert wird die Adresse getrennt vom Chatverlauf.'},
+  {title:'Auftrag auf InStaff', who:['team','helfer'],
+   what:'Nils stellt den Auftrag ein, und zwar nur für den eigenen Helfer-Pool. Im Auftrag stehen Stadtteil, Zeitfenster, Art der Aufgabe (z. B. „Drucker einrichten“) und die geschätzte Dauer.',
+   hurdle:'Auf InStaff arbeiten sonst vor allem Aushilfen für Service, Events und Handel. Wie gut sich jemand mit Technik auskennt, sieht man dort nicht.',
+   fix:'Es gibt keinen offenen Auftrag an alle. Sichtbar ist er nur für freigegebene Nils-Helfer. Stammhelfer mit guten Bewertungen bekommen ihn zuerst angeboten.'},
+  {title:'Helfer auswählen und freigeben', who:['team','helfer'],
+   what:'Das Nils-Team wählt aus den Bewerbungen einen Helfer aus. Danach bekommt der Helfer die volle Adresse mit Klingelname, den Gesprächsverlauf und eine Checkliste für den Besuch.',
+   hurdle:'Jeder einzelne Auftrag würde zu lange dauern, wenn man den Helfer jedes Mal neu prüfen müsste.',
+   fix:'Geprüft wird einmal vorab (siehe die vier Stufen unten). Pro Auftrag geht es danach nur noch um Verfügbarkeit, Nähe und Bewertung.'},
+  {title:'Vertrauen vor dem Besuch aufbauen', who:['team','senior'],
+   what:'Der Senior bekommt einen Brief per Post mit Foto und Vornamen des Helfers, dem Termin und einem Codewort. Am Tag vorher ruft das Nils-Team noch einmal an.',
+   hurdle:'Betrüger könnten sich als „Helfer von Nils“ ausgeben. Das wäre genau die Masche, vor der Nils eigentlich schützen will.',
+   fix:'Der Helfer nennt das Codewort an der Tür von sich aus, ohne dass der Senior danach fragen muss. Im Brief steht außerdem: „Im Zweifel nicht öffnen und uns anrufen.“'},
+  {title:'Der Besuch', who:['helfer','senior'],
+   what:'Der Helfer löst das Problem mit dem Senior zusammen und erklärt dabei jeden Schritt. Am Ende hält er in der App fest, was er gemacht hat, und das Nils-Team ruft zur Bestätigung an.',
+   hurdle:'Der Helfer kommt an Passwörter, Online-Banking oder Wertsachen heran. Außerdem kann es zu Streit um Geld kommen.',
+   fix:'Es gilt ein Verhaltenskodex: kein Bargeld, keine Passwörter notieren oder mitnehmen, keine Bankgeschäfte und keine eigenen Geräte anschließen. Verstößt jemand dagegen, wird er sofort aus dem Pool genommen.'},
+  {title:'Abschluss, Bezahlung und Lernen', who:['team','nils'],
+   what:'Die Rechnung kommt per Post und wird überwiesen. Bewerten kann der Senior am Telefon oder im Chat. InStaff rechnet den Helfer ab. Die Lösung fließt in das Wissen von Nils ein.',
+   hurdle:'Viele Senioren überweisen nicht gern Geld und sind bei Rechnungen misstrauisch.',
+   fix:'Der Preis wird schon beim Anruf genannt. Die Rechnung trägt Logo, Termin und Namen des Helfers. An der Tür wird nie bezahlt.'}
+];
+const GATES = [
+  {n:1, title:'InStaff-Prüfung', text:'Die Identität wird geprüft, und es gibt das Telefoninterview von InStaff.'},
+  {n:2, title:'Führungszeugnis', text:'Ein erweitertes Führungszeugnis, das nicht älter als drei Monate ist. Es wird jährlich erneuert.'},
+  {n:3, title:'Technik und Umgang', text:'Ein kurzer Praxistest mit typischen Aufgaben und ein Gespräch darüber, wie man geduldig und in einfacher Sprache erklärt.'},
+  {n:4, title:'Kodex unterschreiben', text:'Der Verhaltenskodex wird unterschrieben, es gibt eine Schulung zu Datenschutz, und ein Foto für den Brief wird hinterlegt.'}
+];
+const OPEN = [
+  {title:'Rechtsrahmen', text:'InStaff stellt die Helfer an. Nils tritt als Entleiher auf. Zu klären sind Arbeitnehmerüberlassung, Haftung bei Schäden an Geräten und die Versicherung.'},
+  {title:'Datenschutz', text:'Mit InStaff braucht es einen Vertrag zur Auftragsverarbeitung. Außerdem muss festgelegt werden, wie lange Adresse und Chatverlauf gespeichert werden und wie sie gelöscht werden.'},
+  {title:'Kosten', text:'Zum Stundensatz von InStaff (ab etwa 21 € pro Stunde) kommen Anfahrt und Aufwand für die Koordination. Siehe Erlösmodell: 49 € für die erste Stunde oder Festpreis. Der Mindesteinsatz bei InStaff beträgt 30 Minuten.'},
+  {title:'Abdeckung', text:'Gibt es in ländlichen Regionen genug geprüfte Helfer? Falls nicht, braucht es eine Alternative, z. B. Fernhilfe per Telefon.'},
+  {title:'InStaff-Kooperation', text:'Lässt InStaff geschlossene Pools und eigene Prüfstufen zu? Das sollte früh im Gespräch geklärt werden.'}
+];
+class Component extends DCLogic {
+  renderVals(){
+    return {
+      actors: Object.values(A).map(a => ({id:a.name, name:a.name, color:a.color})),
+      phases: PHASES.map((p, i) => Object.assign({}, p, {id:i, n:i+1, who:p.who.map(k => ({id:k, name:A[k].name, color:A[k].color}))})),
+      gates: GATES.map(g => Object.assign({id:g.n}, g)),
+      open: OPEN.map(o => Object.assign({id:o.title}, o))
+    };
+  }
+}
+</script>
+</body>
+</html>

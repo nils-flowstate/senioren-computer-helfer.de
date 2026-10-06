@@ -1,82 +1,96 @@
-# Produktionsbetrieb nach GEO-LLM.txt §11 und §14.
+# Nils – Computerhilfe: statische Seiten (Caddy) hinter einem Lockscreen (Gate).
 #
-# Der Docker-Socket wird bewusst nirgends eingebunden, und es gibt kein einziges
-# dauerhaftes Volume: Diese Anwendung hat nichts, was sie aufbewahren dürfte.
+# Öffentlich erreichbar ist nur der zentrale Caddy (/home/nils/caddy). Er leitet
+# senioren-computer-helfer.de an "senioren-computer-helfer:3005" im Netz
+# "proxy" weiter. Das Gate hängt nicht in diesem Netz: Nur "web" spricht es an.
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: senioren-computer-helfer:aktuell
+  web:
+    build: .
+    image: senioren-computer-helfer-web:aktuell
     container_name: senioren-computer-helfer
 
-    # Ausschließlich an die Loopback-Adresse gebunden (§11). Von außen ist die
-    # Website nur über den Reverse Proxy auf 443 erreichbar. Port 3005 wird
-    # nicht in der öffentlichen Firewall freigegeben.
+    # Ausschließlich an die Loopback-Adresse gebunden — für lokale Prüfungen.
     ports:
       - "127.0.0.1:3005:3005"
 
-    # Der Reverse Proxy läuft als eigener Container. Über 127.0.0.1 erreicht er
-    # die Anwendung nicht — das wäre sein eigenes Loopback. Er spricht sie
-    # deshalb im gemeinsamen Docker-Netz unter ihrem Namen an. Die Portbindung
-    # oben bleibt bestehen: Sie ist der Weg für die lokalen Prüfungen aus der
-    # README und aus scripts/pruefe-auslieferung.sh.
     networks:
+      default:
       proxy:
         aliases:
           - senioren-computer-helfer
 
-    # Die echten Werte stehen in .env. Diese Datei gehört nicht nach Git und
-    # wird auch nicht ins Image kopiert — siehe .dockerignore.
-    env_file:
-      - .env
-
     restart: unless-stopped
+    depends_on:
+      - gate
 
     healthcheck:
-      # Node bringt fetch mit. So braucht das Image weder curl noch wget, und
-      # die Laufzeit bleibt so schlank wie möglich.
-      test:
-        - CMD
-        - node
-        - -e
-        - "fetch('http://127.0.0.1:3005/api/health').then((a)=>process.exit(a.ok?0:1)).catch(()=>process.exit(1))"
+      test: ["CMD", "wget", "--quiet", "--spider", "http://127.0.0.1:3005/health"]
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 15s
+      start_period: 10s
 
-    # Keine Chattexte, keine Fotos, keine Audiodaten auf der Platte (§10, §14).
-    # Das Dateisystem ist schreibgeschützt; der einzige beschreibbare Ort ist
-    # ein tmpfs im Arbeitsspeicher, das bei jedem Neustart leer ist.
     read_only: true
     tmpfs:
-      - /tmp:rw,noexec,nosuid,size=64m
-
+      - /tmp:rw,noexec,nosuid,size=16m
     security_opt:
       - no-new-privileges:true
     cap_drop:
       - ALL
 
-    # Ressourcengrenzen, damit ein einzelner Container den VPS nicht lahmlegt.
     deploy:
       resources:
         limits:
-          cpus: "1.0"
-          memory: 512M
+          cpus: "0.5"
+          memory: 128M
 
-    # Protokollrotation: ohne Grenze füllt das Protokoll irgendwann die Platte.
     logging:
       driver: json-file
       options:
         max-size: "10m"
-        max-file: "5"
+        max-file: "3"
 
-# Das Netz gehört dem Reverse Proxy und wird außerhalb dieses Projekts
-# verwaltet. "external" heißt: docker compose legt es weder an noch entfernt
-# es das Netz beim Herunterfahren — sonst risse ein "down" die anderen
-# Websites auf diesem Server mit ab.
+  gate:
+    build: ./gate
+    image: senioren-computer-helfer-gate:aktuell
+    container_name: senioren-computer-helfer-gate
+    restart: unless-stopped
+
+    # Werte stehen in .env (nicht in Git, nicht im Image).
+    environment:
+      GATE_SECRET: ${GATE_SECRET:?GATE_SECRET in .env setzen}
+      GATE_PASSWORD_SHA256: ${GATE_PASSWORD_SHA256:?GATE_PASSWORD_SHA256 in .env setzen}
+
+    # Einziger dauerhafter Speicher: Adresse → Zeitpunkte der Fehlversuche und
+    # Sperren. Das Gate löscht abgelaufene Einträge selbst.
+    volumes:
+      - gate_data:/data
+    # kein Port nach außen – nur Caddy spricht mit dem Gate
+
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 128M
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  gate_data:
+
+# Das Netz gehört dem zentralen Caddy und wird außerhalb dieses Projekts
+# verwaltet. "external": docker compose legt es weder an noch entfernt es.
 networks:
   proxy:
     external: true

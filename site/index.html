@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics="">
+<title>Nils – Computerhilfe für Senioren</title>
+<link href="/fonts/fonts.css" rel="stylesheet">
+<style>
+html{-webkit-text-size-adjust:100%}body{margin:0;overflow-x:hidden;background:#EFEDE6;font-family:'Source Sans 3',system-ui,sans-serif}
+a{color:#4F7A5B}a:hover{color:#274536}
+@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+</style>
+</helmet>
+<div style="min-height:100vh; background:#F4F1E9; color:#1E241F; padding:0 0 60px; --accent:#4F7A5B; --accentD:#274536; --bg:#F4F1E9; --bgSoft:#FBF9F4; --surface:#FFFFFF; --soft:#E4EDE4; --line:#DFDACE; --muted:#6B7268; --ink:#1E241F">
+
+  <div style="display:flex; flex-wrap:wrap; gap:clamp(14px,3vw,26px); justify-content:center; align-items:flex-start; padding:clamp(0px,3vw,26px) clamp(0px,3vw,22px)">
+
+    <div style="flex:1 1 min(100%,640px); max-width:780px; min-width:0; background:var(--surface,#fff); border:1px solid var(--line,#DFDACE); border-radius:clamp(0px,3vw,26px); overflow:hidden; box-shadow:0 10px 30px rgba(20,40,25,.07)">
+
+      <div style="display:flex; align-items:center; gap:clamp(12px,3vw,20px); padding:clamp(14px,3.5vw,22px) clamp(14px,4vw,26px); background:var(--accent,#4F7A5B); color:#fff">
+        <div style="position:relative; flex:none">
+          <img src="nils.webp" alt="Nils" style="width:clamp(58px,15vw,82px); height:clamp(58px,15vw,82px); border-radius:50%; object-fit:cover; object-position:50% 18%; border:3px solid rgba(255,255,255,.85); display:block">
+          <span style="position:absolute; right:2px; bottom:4px; width:18px; height:18px; border-radius:50%; background:#5FD08A; border:3px solid var(--accent,#4F7A5B)"></span>
+        </div>
+        <div style="min-width:0">
+          <div style="font:800 clamp(24px,6vw,30px) 'Nunito',sans-serif; line-height:1.1">Nils</div>
+          <div style="font-size:20px; opacity:.92; margin-top:4px">Ihr persönlicher Computerhelfer · jetzt für Sie da</div>
+        </div>
+        <a href="faq.html" aria-label="Hilfe und häufige Fragen" title="Hilfe und häufige Fragen" style="margin-left:auto; flex:none; width:60px; height:60px; border-radius:50%; background:#fff; color:var(--accentD,#274536); display:flex; align-items:center; justify-content:center; font:800 clamp(24px,6vw,32px) 'Nunito',sans-serif; text-decoration:none" style-hover="background:var(--soft,#E4EDE4); color:var(--accentD,#274536)">?</a>
+      </div>
+
+      <div style="padding:12px clamp(14px,4vw,26px); background:var(--soft,#E4EDE4); font-size:18px; color:var(--accentD,#274536); border-bottom:1px solid var(--line,#DFDACE)">
+        Sie können alles fragen. Es gibt keine dummen Fragen – wir gehen das in Ruhe zusammen durch.
+      </div>
+
+      <div style="padding:26px; display:flex; flex-direction:column; gap:16px; min-height:{{ chatMinH }}px">
+        <sc-for list="{{ msgs }}" as="m" hint-placeholder-count="2">
+          <div style="display:flex; gap:12px; align-items:flex-end; justify-content:{{ m.justify }}; animation:rise .25s ease-out">
+            <sc-if value="{{ m.isNils }}" hint-placeholder-val="{{ true }}">
+              <img src="nils.webp" alt="" style="width:clamp(34px,9vw,44px); height:clamp(34px,9vw,44px); border-radius:50%; object-fit:cover; object-position:50% 18%; flex:none">
+            </sc-if>
+            <div style="max-width:86%; padding:14px clamp(14px,3.5vw,22px); font-size:clamp(19px,4.8vw,22px); line-height:1.55; background:{{ m.bg }}; color:{{ m.fg }}; border:1px solid {{ m.bd }}; border-radius:{{ m.radius }}">{{ m.text }}</div>
+          </div>
+        </sc-for>
+
+        <sc-if value="{{ typing }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; gap:12px; align-items:center">
+            <img src="nils.webp" alt="" style="width:44px; height:44px; border-radius:50%; object-fit:cover; object-position:50% 18%">
+            <div style="display:flex; gap:6px; padding:18px 22px; background:var(--soft,#E4EDE4); border-radius:20px 20px 20px 6px">
+              <span style="width:10px; height:10px; border-radius:50%; background:var(--accent,#4F7A5B); animation:blink 1.2s infinite"></span>
+              <span style="width:10px; height:10px; border-radius:50%; background:var(--accent,#4F7A5B); animation:blink 1.2s infinite .2s"></span>
+              <span style="width:10px; height:10px; border-radius:50%; background:var(--accent,#4F7A5B); animation:blink 1.2s infinite .4s"></span>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="padding:clamp(14px,4vw,22px) clamp(12px,4vw,26px) clamp(18px,4vw,26px); border-top:1px solid var(--line,#DFDACE); background:var(--bgSoft,#FBF9F4)">
+
+        <sc-if value="{{ showTopics }}" hint-placeholder-val="{{ true }}">
+          <div>
+            <sc-if value="{{ notFreeOpen }}" hint-placeholder-val="{{ true }}">
+            <div ref="{{ topicsRef }}">
+            <div style="font-size:19px; color:var(--muted,#6B7268); margin-bottom:14px">Womit darf ich Ihnen helfen? Bitte tippen Sie auf einen Satz.</div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr)); gap:14px">
+              <sc-for list="{{ topics }}" as="t" hint-placeholder-count="4">
+                <button onClick="{{ t.pick }}" style="text-align:left; cursor:pointer; padding:20px 22px; min-height:88px; border-radius:18px; background:#fff; border:2px solid var(--line,#DFDACE); font-family:'Source Sans 3',sans-serif" style-hover="border-color:var(--accent,#4F7A5B); background:var(--soft,#E4EDE4)">
+                  <div style="font:700 22px 'Nunito',sans-serif; color:var(--accentD,#274536)">{{ t.label }}</div>
+                  <div style="font-size:17px; color:var(--muted,#6B7268); margin-top:4px">{{ t.hint }}</div>
+                </button>
+              </sc-for>
+            </div>
+            </div>
+
+            <button onClick="{{ onOpenFree }}" style="margin-top:14px; width:100%; cursor:pointer; padding:20px; min-height:82px; border-radius:18px; background:var(--accentD,#274536); border:none; color:#fff; font:700 22px 'Nunito',sans-serif" style-hover="background:#335A46">Etwas anderes</button>
+            </sc-if>
+
+            <sc-if value="{{ freeOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex; align-items:flex-end; gap:12px">
+                <textarea id="frage" aria-label="Ihr Problem in eigenen Worten" value="{{ freeText }}" onChange="{{ onFreeText }}" rows="1" autoFocus="{{ true }}" placeholder="Zum Beispiel: Mein Bildschirm ist plötzlich ganz dunkel." style="flex:1 1 auto; min-width:0; box-sizing:border-box; min-height:82px; padding:24px 20px; font-size:22px; line-height:1.5; font-family:'Source Sans 3',sans-serif; border:2px solid var(--accentD,#274536); border-radius:18px; background:#fff; color:var(--ink,#1E241F); resize:none; overflow:hidden"></textarea>
+                <button onClick="{{ onFreeSend }}" aria-label="Absenden" style="flex:0 0 clamp(64px,16vw,82px); width:clamp(64px,16vw,82px); height:clamp(64px,16vw,82px); cursor:pointer; border-radius:50%; border:none; background:var(--accentD,#274536); color:#fff; display:flex; align-items:center; justify-content:center" style-hover="background:#335A46">
+                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"></path><path d="M22 2 15 22l-4-9-9-4z"></path></svg>
+                </button>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showIntake }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr)); gap:14px">
+            <sc-for list="{{ intakeOpts }}" as="o" hint-placeholder-count="4">
+              <button onClick="{{ o.pick }}" style="text-align:left; cursor:pointer; padding:20px 22px; min-height:82px; border-radius:18px; background:#fff; border:2px solid var(--line,#DFDACE); font-family:'Source Sans 3',sans-serif" style-hover="border-color:var(--accent,#4F7A5B); background:var(--soft,#E4EDE4)">
+                <div style="font:700 22px 'Nunito',sans-serif; color:var(--accentD,#274536)">{{ o.label }}</div>
+                <div style="font-size:17px; color:var(--muted,#6B7268); margin-top:4px">{{ o.hint }}</div>
+              </button>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showAnswers }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px">
+              <button onClick="{{ onYes }}" style="cursor:pointer; min-height:82px; border-radius:18px; border:none; background:var(--accent,#4F7A5B); color:#fff; font:700 26px 'Nunito',sans-serif" style-hover="filter:brightness(1.08)">Ja</button>
+              <button onClick="{{ onNo }}" style="cursor:pointer; min-height:82px; border-radius:18px; border:2px solid var(--accent,#4F7A5B); background:#fff; color:var(--accentD,#274536); font:700 26px 'Nunito',sans-serif" style-hover="background:var(--soft,#E4EDE4)">Nein</button>
+              <button onClick="{{ onUnsure }}" style="cursor:pointer; min-height:82px; border-radius:18px; border:2px solid var(--line,#DFDACE); background:#fff; color:var(--ink,#1E241F); font:600 22px 'Source Sans 3',sans-serif" style-hover="border-color:var(--accent,#4F7A5B)">Ich weiß es nicht</button>
+              <button onClick="{{ onSimpler }}" style="cursor:pointer; min-height:82px; border-radius:18px; border:2px solid var(--line,#DFDACE); background:#fff; color:var(--ink,#1E241F); font:600 22px 'Source Sans 3',sans-serif" style-hover="border-color:var(--accent,#4F7A5B)">Bitte einfacher erklären</button>
+            </div>
+            <button onClick="{{ onEscalate }}" style="margin-top:14px; width:100%; cursor:pointer; padding:14px; border-radius:14px; border:none; background:transparent; color:var(--muted,#6B7268); font:600 18px 'Source Sans 3',sans-serif; text-decoration:underline" style-hover="color:var(--accentD,#274536)">Ich möchte lieber, dass jemand vorbeikommt</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showOffer }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px">
+            <button onClick="{{ onEscalate }}" style="cursor:pointer; min-height:82px; border-radius:18px; border:none; background:var(--accent,#4F7A5B); color:#fff; font:700 24px 'Nunito',sans-serif" style-hover="filter:brightness(1.08)">Ja, gerne einen Termin</button>
+            <button onClick="{{ onRestart }}" style="cursor:pointer; min-height:82px; border-radius:18px; border:2px solid var(--line,#DFDACE); background:#fff; color:var(--ink,#1E241F); font:600 22px 'Source Sans 3',sans-serif" style-hover="border-color:var(--accent,#4F7A5B)">Nein, ich versuche es weiter</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showDone }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px">
+            <button onClick="{{ onRestart }}" style="cursor:pointer; min-height:82px; border-radius:18px; border:none; background:var(--accent,#4F7A5B); color:#fff; font:700 24px 'Nunito',sans-serif" style-hover="filter:brightness(1.08)">Ich habe noch eine Frage</button>
+            <button onClick="{{ onBye }}" style="cursor:pointer; min-height:82px; border-radius:18px; border:2px solid var(--line,#DFDACE); background:#fff; color:var(--ink,#1E241F); font:600 22px 'Source Sans 3',sans-serif" style-hover="border-color:var(--accent,#4F7A5B)">Vielen Dank, das war alles</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showCity }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <label for="city" style="display:block; font-size:20px; color:var(--muted,#6B7268); margin-bottom:10px">In welcher Stadt wohnen Sie?</label>
+            <div style="display:flex; flex-wrap:wrap; gap:12px">
+              <input id="city" value="{{ city }}" onChange="{{ onCity }}" placeholder="zum Beispiel: Köln" style="flex:1 1 260px; min-width:0; padding:18px 20px; font-size:24px; font-family:'Source Sans 3',sans-serif; border:2px solid var(--line,#DFDACE); border-radius:16px; background:#fff; color:var(--ink,#1E241F)">
+              <button onClick="{{ onCitySubmit }}" style="cursor:pointer; padding:0 30px; min-height:70px; border-radius:16px; border:none; background:var(--accent,#4F7A5B); color:#fff; font:700 24px 'Nunito',sans-serif" style-hover="filter:brightness(1.08)">Weiter</button>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+
+    <div style="flex:1 1 300px; max-width:780px; min-width:0; padding:0 clamp(12px,3vw,0px); box-sizing:border-box; display:flex; flex-direction:column; gap:18px">
+      <div style="background:var(--surface,#fff); border:1px solid var(--line,#DFDACE); border-radius:22px; padding:22px">
+        <div style="font:800 21px 'Nunito',sans-serif; color:var(--accentD,#274536)">Nils merkt sich das</div>
+        <div style="font-size:16px; color:var(--muted,#6B7268); margin-top:6px; line-height:1.45">Beim nächsten Mal weiß ich schon Bescheid – Sie müssen nichts wiederholen.</div>
+        <div style="display:flex; flex-direction:column; gap:10px; margin-top:16px">
+          <sc-for list="{{ memory }}" as="k" hint-placeholder-count="2">
+            <div style="display:flex; gap:10px; align-items:flex-start; padding:12px 14px; border-radius:14px; background:var(--soft,#E4EDE4); font-size:17px; line-height:1.4; color:var(--accentD,#274536)">
+              <span style="flex:none; width:9px; height:9px; margin-top:7px; border-radius:50%; background:var(--accent,#4F7A5B)"></span>
+              {{ k.text }}
+            </div>
+          </sc-for>
+          <sc-if value="{{ memoryEmpty }}" hint-placeholder-val="{{ true }}">
+            <div style="font-size:17px; color:var(--muted,#6B7268); font-style:italic">Noch nichts – wir fangen gerade erst an.</div>
+          </sc-if>
+        </div>
+      </div>
+
+      <div style="background:var(--surface,#fff); border:1px solid var(--line,#DFDACE); border-radius:22px; padding:22px">
+        <div style="font:800 21px 'Nunito',sans-serif; color:var(--accentD,#274536)">Schutz vor Betrug</div>
+        <div style="font-size:18px; color:var(--ink,#1E241F); margin-top:8px; line-height:1.45">So erkennen Sie falsche Anrufe und Nachrichten.</div>
+        <a href="faq.html" style="display:block; margin-top:12px; font:700 19px 'Nunito',sans-serif">Mehr erfahren</a>
+      </div>
+    </div>
+  </div>
+
+  <sc-if value="{{ showBooking }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed; inset:0; background:rgba(22,35,25,.55); display:flex; align-items:flex-end; justify-content:center; padding:clamp(0px,3vw,20px); z-index:50">
+      <div style="width:100%; max-width:640px; max-height:94vh; overflow:auto; background:var(--surface,#fff); border-radius:26px 26px clamp(0px,3vw,26px) clamp(0px,3vw,26px); padding:clamp(20px,5vw,30px); box-sizing:border-box">
+        <div style="font:800 clamp(24px,6vw,32px) 'Nunito',sans-serif; color:var(--accentD,#274536); line-height:1.15">Hausbesuch in {{ city }}</div>
+        <div style="font-size:21px; line-height:1.5; margin-top:10px; color:var(--ink,#1E241F)">Ein geprüfter Helfer von Nils kommt zu Ihnen und schaut sich alles in Ruhe an. Bitte wählen Sie zuerst, wie Sie bezahlen möchten.</div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr)); gap:12px; margin-top:20px">
+          <button onClick="{{ pickHourly }}" style="text-align:left; cursor:pointer; padding:18px 20px; border-radius:16px; background:{{ hourlyBg }}; border:2px solid {{ hourlyBd }}; font-family:'Source Sans 3',sans-serif">
+            <span style="display:block; font:700 15px 'Source Sans 3',sans-serif; letter-spacing:.06em; text-transform:uppercase; color:var(--muted,#6B7268)">Nach Zeit</span>
+            <span style="display:block; font:800 26px 'Nunito',sans-serif; color:var(--accentD,#274536); margin-top:4px">49 € erste Stunde</span>
+            <span style="display:block; font-size:18px; line-height:1.45; color:var(--ink,#1E241F); margin-top:6px">Danach 12 € je Viertelstunde. Sie zahlen aber höchstens {{ cap }} €.</span>
+          </button>
+          <button onClick="{{ pickFixed }}" disabled="{{ fixedDisabled }}" style="text-align:left; cursor:pointer; padding:18px 20px; border-radius:16px; background:{{ fixedBg }}; border:2px solid {{ fixedBd }}; font-family:'Source Sans 3',sans-serif; opacity:{{ fixedOpacity }}">
+            <span style="display:block; font:700 15px 'Source Sans 3',sans-serif; letter-spacing:.06em; text-transform:uppercase; color:var(--muted,#6B7268)">Festpreis</span>
+            <span style="display:block; font:800 26px 'Nunito',sans-serif; color:var(--accentD,#274536); margin-top:4px">{{ fixedLabel }}</span>
+            <span style="display:block; font-size:18px; line-height:1.45; color:var(--ink,#1E241F); margin-top:6px">{{ fixedNote }}</span>
+          </button>
+        </div>
+
+        <label for="phone" style="display:block; font:700 20px 'Nunito',sans-serif; color:var(--accentD,#274536); margin-top:24px">Unter welcher Nummer erreichen wir Sie?</label>
+        <input id="phone" type="tel" inputmode="tel" value="{{ phone }}" onChange="{{ onPhone }}" placeholder="zum Beispiel: 0221 123456" style="margin-top:10px; width:100%; box-sizing:border-box; padding:18px 20px; font-size:24px; font-family:'Source Sans 3',sans-serif; border:2px solid var(--line,#DFDACE); border-radius:16px; background:#fff; color:var(--ink,#1E241F)">
+        <div style="font-size:17px; color:var(--muted,#6B7268); margin-top:6px">Nils ruft Sie gleich unter dieser Nummer zurück.</div>
+        <div style="font:700 20px 'Nunito',sans-serif; color:var(--accentD,#274536); margin-top:24px">Wann passt es Ihnen?</div>
+
+        <div style="display:flex; flex-direction:column; gap:12px; margin:12px 0 22px">
+          <sc-for list="{{ slots }}" as="s" hint-placeholder-count="3">
+            <button onClick="{{ s.pick }}" style="display:flex; align-items:center; justify-content:space-between; gap:14px; text-align:left; cursor:pointer; padding:18px 20px; border-radius:16px; background:{{ s.bg }}; border:2px solid {{ s.bd }}; font-family:'Source Sans 3',sans-serif" style-hover="border-color:var(--accent,#4F7A5B)">
+              <span>
+                <span style="display:block; font:700 23px 'Nunito',sans-serif; color:var(--accentD,#274536)">{{ s.day }}</span>
+                <span style="display:block; font-size:19px; color:var(--muted,#6B7268); margin-top:2px">{{ s.kind }}</span>
+              </span>
+              <span style="font:700 23px 'Nunito',sans-serif; color:var(--accent,#4F7A5B)">{{ s.time }}</span>
+            </button>
+          </sc-for>
+        </div>
+
+        <div style="font-size:17px; color:var(--muted,#6B7268); line-height:1.5">Sie bekommen vorher einen Brief mit einer Zahl. Rufen Sie uns an und nennen Sie die Zahl, dann ist der Termin bestätigt. Bezahlt wird erst danach per Rechnung, niemals an der Tür.</div>
+
+        <div style="display:flex; flex-wrap:wrap; gap:12px; margin-top:20px">
+          <button onClick="{{ onBook }}" disabled="{{ bookDisabled }}" style="flex:1 1 260px; cursor:pointer; min-height:78px; border-radius:18px; border:none; background:{{ bookBg }}; color:#fff; font:700 24px 'Nunito',sans-serif">Termin verbindlich buchen</button>
+          <button onClick="{{ onCloseBooking }}" style="flex:0 1 160px; cursor:pointer; min-height:78px; border-radius:18px; border:2px solid var(--line,#DFDACE); background:#fff; color:var(--ink,#1E241F); font:600 20px 'Source Sans 3',sans-serif">Abbrechen</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1200,&quot;height&quot;:900}}">
+const TH = {accent:'#4F7A5B', accentD:'#274536', soft:'#E4EDE4', line:'#DFDACE'};
+// Schätzung je Thema: Minuten + Sicherheit. Festpreis nur ab 0,75 Sicherheit.
+const ESTIMATE = {drucker:{min:45, conf:.85}, internet:{min:60, conf:.7}, email:{min:45, conf:.8}, langsam:{min:75, conf:.6}, sonstiges:{min:60, conf:.4}};
+const hourly = m => 49 + Math.max(0, Math.ceil((m - 60) / 15)) * 12;
+const ceil5 = x => Math.ceil(x / 5) * 5;
+
+const TOPICS = [
+  {id:'drucker', label:'Der Drucker druckt nicht', hint:'Papier, Strom, Verbindung'},
+  {id:'internet', label:'Das Internet geht nicht', hint:'WLAN, Router, Verbindung'},
+  {id:'email', label:'Ich komme nicht an meine E-Mails', hint:'Anmeldung, Passwort, Posteingang'},
+  {id:'langsam', label:'Der Computer ist sehr langsam', hint:'Hängt, wartet, reagiert kaum'}
+];
+
+const FLOWS = {
+  drucker: [
+    {t:'Schauen wir uns das ganz in Ruhe zusammen an. Gehen Sie bitte zum Drucker: Leuchtet dort irgendwo ein kleines Licht?',
+     simple:'Ganz einfach gesagt: Stehen Sie vor dem Drucker. Brennt dort ein kleines Lämpchen? Ja oder nein – mehr brauche ich nicht.',
+     unsure:'Das ist überhaupt kein Problem. Die Lämpchen sind meist vorne am Gerät, ganz klein, oft grün oder blau. Schauen Sie in Ruhe nach, ich warte hier auf Sie.', yes:1, no:4},
+    {t:'Sehr gut, dann hat der Drucker Strom. Liegt Papier im Fach unten am Drucker?',
+     simple:'Ziehen Sie das Fach unten am Drucker heraus. Ist dort weißes Papier drin?',
+     unsure:'Kein Stress. Das Papierfach ist die flache Schublade unten am Drucker. Ziehen Sie sie einfach vorsichtig heraus und schauen hinein.', yes:2, no:5},
+    {t:'Dann probieren wir etwas, das fast immer hilft: Schalten Sie den Drucker aus, zählen Sie langsam bis zehn, und schalten Sie ihn wieder ein. Hat er danach gedruckt?',
+     simple:'Drucker aus. Bis zehn zählen. Drucker wieder an. Kommt jetzt ein Blatt heraus?',
+     unsure:'Der Schalter ist meistens vorne oder an der Seite und hat einen Kreis mit einem Strich darin. Lassen Sie sich Zeit.', yes:3, no:6},
+    {t:'Wunderbar, das freut mich sehr! Sie haben das selbst hinbekommen. Wenn wieder etwas ist, bin ich hier.', done:true},
+    {t:'Dann bekommt der Drucker wahrscheinlich keinen Strom. Drücken Sie bitte das dicke Kabel hinten am Drucker fest hinein und stecken Sie den Stecker in die Steckdose. Leuchtet jetzt ein Licht?',
+     simple:'Kabel hinten am Drucker fest reindrücken. Stecker in die Steckdose. Leuchtet jetzt etwas?',
+     unsure:'Das dicke Kabel ist das schwarze, das vom Drucker zur Wand geht. Nur dieses eine meine ich.', yes:1, no:6},
+    {t:'Kein Problem, das passiert oft. Legen Sie bitte einen kleinen Stapel Papier in das Fach und schieben Sie es wieder zu. Druckt er jetzt?',
+     simple:'Papier ins Fach legen. Fach zuschieben. Kommt jetzt ein Blatt?',
+     unsure:'Nehmen Sie einfach ein paar Blatt normales weißes Papier und legen Sie sie flach hinein.', yes:3, no:2},
+    {t:'Damit möchte ich Sie nicht allein lassen. Ich schaue mir das gern persönlich bei Ihnen an – ganz in Ruhe und ohne Eile.', offer:true}
+  ],
+  internet: [
+    {t:'Das bekommen wir hin. Bei Ihnen steht ein kleiner Kasten mit Lämpchen, meist vom Telefonanbieter. Leuchten dort Lichter?',
+     simple:'Suchen Sie den kleinen Kasten mit den Lämpchen. Brennt dort Licht?',
+     unsure:'Der Kasten steht oft im Flur oder neben dem Telefon, ist weiß oder grau und hat mehrere kleine Lichter. Schauen Sie ruhig nach.', yes:1, no:2},
+    {t:'Gut. Sehen Sie auf Ihrem Bildschirm unten rechts das kleine Zeichen für WLAN – die kleinen Bögen übereinander?',
+     simple:'Schauen Sie unten rechts am Bildschirm. Sehen Sie dort ein Zeichen wie kleine Wellen?',
+     unsure:'Es ist ganz klein, neben der Uhrzeit unten rechts. Sie dürfen ruhig ganz nah an den Bildschirm gehen.', yes:3, no:4},
+    {t:'Dann ziehen Sie bitte den Stecker dieses Kastens aus der Steckdose, warten eine Minute und stecken ihn wieder ein. Leuchten nach zwei Minuten wieder Lichter?',
+     simple:'Stecker raus. Eine Minute warten. Stecker rein. Leuchtet es wieder?',
+     unsure:'Das ist der Stecker, der vom Kasten zur Steckdose geht. Sie können nichts kaputt machen.', yes:1, no:5},
+    {t:'Dann schließen Sie bitte das Fenster im Internet ganz und öffnen es neu. Geht das Internet jetzt wieder?',
+     simple:'Oben rechts auf das kleine Kreuz klicken. Danach das Internet neu öffnen. Geht es?',
+     unsure:'Das Kreuz ist ganz oben rechts in der Ecke des Fensters. Danach klicken Sie unten wieder auf Ihr Internet-Zeichen.', yes:6, no:2},
+    {t:'Dann klicken Sie bitte unten rechts auf das kleine Zeichen und wählen Ihren WLAN-Namen aus der Liste. Sind Sie jetzt verbunden?',
+     simple:'Unten rechts anklicken. Ihren WLAN-Namen anklicken. Steht dort "verbunden"?',
+     unsure:'Ihr WLAN-Name steht oft auf einem Aufkleber am Kasten. Vergleichen Sie ihn in Ruhe mit der Liste.', yes:6, no:5},
+    {t:'Damit möchte ich Sie nicht allein lassen. Das schaue ich mir gern persönlich bei Ihnen an.', offer:true},
+    {t:'Sehr schön, Sie sind wieder online! Das haben Sie gut gemacht.', done:true}
+  ],
+  email: [
+    {t:'Wenn Sie Ihre E-Mails öffnen: Erscheint dann eine Meldung in einem kleinen Kästchen?',
+     simple:'Kommt beim Öffnen ein Fenster mit Text darin?',
+     unsure:'Ein solches Kästchen erscheint mitten auf dem Bildschirm und hat meist einen Knopf mit "OK". Schauen Sie einmal nach.', yes:1, no:2},
+    {t:'Steht in dieser Meldung irgendwo das Wort "Passwort"?',
+     simple:'Lesen Sie den Text langsam durch. Kommt darin das Wort "Passwort" vor?',
+     unsure:'Lesen Sie einfach Wort für Wort. Wenn Sie unsicher sind, lesen Sie mir den Text später gern am Telefon vor.', yes:3, no:5},
+    {t:'Gut. Sehen Sie in der Liste noch Ihre alten E-Mails?',
+     simple:'Stehen in der Liste Nachrichten von früher?',
+     unsure:'Die Liste ist der große Bereich in der Mitte. Dort stehen Absender und Betreff untereinander.', yes:4, no:5},
+    {t:'Dann setzen wir das Passwort in Ruhe neu. Auf der Anmeldeseite steht ein Satz: "Passwort vergessen?". Sehen Sie diesen Satz?',
+     simple:'Suchen Sie den Satz "Passwort vergessen?" und klicken Sie darauf. Haben Sie ihn gefunden?',
+     unsure:'Der Satz steht meist klein unter den zwei Feldern zum Anmelden. Lassen Sie sich Zeit beim Suchen.', yes:6, no:5},
+    {t:'Dann ist Ihr Postfach in Ordnung, es sind nur keine neuen Nachrichten da. Klicken Sie bitte oben auf "Senden und Empfangen". Kommen jetzt neue E-Mails?',
+     simple:'Oben auf den Knopf "Senden und Empfangen" klicken. Kommt etwas Neues?',
+     unsure:'Der Knopf ist oben in der Leiste. Manchmal heißt er auch nur "Aktualisieren".', yes:6, no:5},
+    {t:'Damit möchte ich Sie nicht allein lassen. E-Mails sind wichtig – das richten wir gemeinsam persönlich ein.', offer:true},
+    {t:'Sehr gut! Dann sind Sie wieder an Ihren Nachrichten dran. Schön, dass es geklappt hat.', done:true}
+  ],
+  langsam: [
+    {t:'Das kennen viele, Sie machen nichts falsch. Läuft Ihr Computer schon seit mehreren Tagen ohne Ausschalten?',
+     simple:'Haben Sie den Computer in den letzten Tagen einmal ganz ausgeschaltet?',
+     unsure:'Wenn Sie es nicht mehr wissen, ist das völlig in Ordnung. Dann probieren wir einfach den Neustart.', yes:1, no:2},
+    {t:'Dann starten wir ihn einmal neu: unten links auf das Startzeichen, dann auf "Ein/Aus", dann auf "Neu starten". Läuft er danach besser?',
+     simple:'Unten links klicken. "Ein/Aus" klicken. "Neu starten" klicken. Warten. Ist er schneller?',
+     unsure:'Das Startzeichen ist ganz unten in der linken Ecke. Es sieht aus wie ein kleines Fenster aus vier Teilen.', yes:4, no:2},
+    {t:'Haben Sie gerade viele Fenster gleichzeitig offen, zum Beispiel mehrere Internetseiten?',
+     simple:'Sind viele Fenster gleichzeitig auf dem Bildschirm offen?',
+     unsure:'Schauen Sie unten in der Leiste: Je mehr kleine Bilder dort stehen, desto mehr ist offen.', yes:3, no:5},
+    {t:'Dann schließen wir die meisten davon: Klicken Sie bei jedem Fenster oben rechts auf das kleine Kreuz, bis nur noch eines übrig ist. Ist er jetzt flotter?',
+     simple:'Oben rechts auf das Kreuz klicken. Das für jedes Fenster. Ist er schneller?',
+     unsure:'Das Kreuz ist ganz oben rechts in der Ecke. Sie können nichts kaputt machen, nur Fenster schließen.', yes:4, no:5},
+    {t:'Wunderbar, das war es schon. Sie haben das prima gemacht.', done:true},
+    {t:'Damit möchte ich Sie nicht allein lassen. Ich schaue mir Ihren Computer gern persönlich an.', offer:true}
+  ]
+};
+
+FLOWS.sonstiges = [
+  {t:'Danke, dass Sie mir das so beschreiben – das hilft mir sehr. Damit ich Sie richtig verstehe: Passiert das jedes Mal, wenn Sie es versuchen?',
+   simple:'Kurz gefragt: Geht es nie? Oder klappt es manchmal doch?',
+   unsure:'Das ist gar nicht schlimm. Probieren Sie es ruhig gleich noch einmal aus – ich warte hier auf Sie.', yes:1, no:2},
+  {t:'Danke. Dann probieren wir zuerst das Einfachste, das erstaunlich oft hilft: Schalten Sie das Gerät ganz aus, warten Sie eine Minute und schalten Sie es wieder ein. Ist es danach besser?',
+   simple:'Gerät aus. Eine Minute warten. Gerät wieder an. Ist es jetzt besser?',
+   unsure:'Sie können dabei nichts kaputt machen. Lassen Sie sich Zeit, ich bleibe hier.', yes:3, no:4},
+  {t:'Gut zu wissen. Erscheint dabei ein Text oder ein kleines Fenster auf dem Bildschirm?',
+   simple:'Steht irgendwo auf dem Bildschirm eine Meldung?',
+   unsure:'Schauen Sie einfach in die Mitte des Bildschirms. Steht dort etwas, das vorher nicht da war?', yes:4, no:1},
+  {t:'Wunderbar, dann ist es gelöst. Sie haben das sehr gut gemacht.', done:true},
+  {t:'Damit möchte ich Sie nicht allein lassen. So etwas sehe ich mir am liebsten selbst an – in Ruhe bei Ihnen zu Hause.', offer:true}
+];
+
+// Plattform-spezifische Texte. Fehlt eine Variante, gilt der Standardtext (Windows).
+const MOB_CLOSE = {t:'Dann schließen wir die Internet-App einmal ganz und öffnen sie neu. Geht das Internet jetzt wieder?', simple:'App schließen. App wieder öffnen. Geht es?'};
+const MOB_APPS = {t:'Dann schließen wir die offenen Apps: Wischen Sie vom unteren Rand langsam nach oben und schieben Sie die kleinen Fenster nach oben weg. Ist es jetzt flotter?', simple:'Von unten nach oben wischen. Die kleinen Fenster nach oben wegschieben. Ist es schneller?'};
+const ALT = {
+  internet: {
+    1: {mac:{t:'Gut. Sehen Sie oben rechts am Bildschirm das kleine Zeichen für WLAN – die kleinen Bögen übereinander?', simple:'Schauen Sie oben rechts am Bildschirm. Sehen Sie dort ein Zeichen wie kleine Wellen?'},
+        ios:{t:'Gut. Sehen Sie ganz oben am Bildschirm, neben der Akku-Anzeige, das kleine Zeichen für WLAN – die Bögen übereinander?', simple:'Schauen Sie ganz oben am Rand. Sehen Sie dort kleine Wellen?'},
+        android:{t:'Gut. Sehen Sie oben rechts am Bildschirm, neben der Akku-Anzeige, das kleine Zeichen für WLAN – die Bögen übereinander?', simple:'Schauen Sie oben rechts am Rand. Sehen Sie dort kleine Wellen?'}},
+    3: {mac:{t:'Dann beenden Sie bitte das Internet-Programm: oben links auf den Programmnamen klicken, dann auf „Beenden“. Danach öffnen Sie es neu. Geht es jetzt?', simple:'Oben links auf den Namen klicken. „Beenden“ klicken. Neu öffnen. Geht es?'}, ios:MOB_CLOSE, android:MOB_CLOSE},
+    4: {mac:{t:'Dann klicken Sie bitte oben rechts auf das kleine WLAN-Zeichen und wählen Ihren WLAN-Namen aus der Liste. Sind Sie jetzt verbunden?', simple:'Oben rechts auf die Wellen klicken. Ihren WLAN-Namen anklicken. Hat es geklappt?'},
+        ios:{t:'Dann öffnen Sie bitte die „Einstellungen“ – das graue Zahnrad – und tippen auf „WLAN“. Tippen Sie dort auf Ihren WLAN-Namen. Sind Sie jetzt verbunden?', simple:'Zahnrad antippen. „WLAN“ antippen. Ihren Namen antippen. Hat es geklappt?'},
+        android:{t:'Dann öffnen Sie bitte die „Einstellungen“ – das Zahnrad – und tippen auf „Verbindungen“ und dann auf „WLAN“. Tippen Sie auf Ihren WLAN-Namen. Sind Sie jetzt verbunden?', simple:'Zahnrad antippen. „WLAN“ antippen. Ihren Namen antippen. Hat es geklappt?'}}
+  },
+  langsam: {
+    1: {mac:{t:'Dann starten wir ihn einmal neu: oben links auf das Apfel-Zeichen, dann auf „Neustart …“. Läuft er danach besser?', simple:'Oben links auf den Apfel klicken. „Neustart“ klicken. Warten. Ist er schneller?', unsure:'Der Apfel ist ganz oben links in der Ecke des Bildschirms.'},
+        ios:{t:'Dann starten wir es einmal neu: Halten Sie die Taste an der Seite gedrückt, bis „Ausschalten“ erscheint, und schieben Sie den Regler. Danach drücken Sie die Taste wieder lange. Läuft es danach besser?', simple:'Seitentaste lange drücken. Regler schieben. Wieder einschalten. Ist es schneller?'},
+        android:{t:'Dann starten wir es einmal neu: Halten Sie die Taste an der Seite lange gedrückt und tippen Sie auf „Neu starten“. Läuft es danach besser?', simple:'Seitentaste lange drücken. „Neu starten“ antippen. Ist es schneller?'}},
+    2: {ios:{t:'Haben Sie gerade viele Apps gleichzeitig offen?'}, android:{t:'Haben Sie gerade viele Apps gleichzeitig offen?'}},
+    3: {ios:MOB_APPS, android:MOB_APPS}
+  }
+};
+
+const DEVICES = [
+  {val:'win', label:'Computer mit Windows', hint:'Unten links ist ein Startzeichen', name:'Windows-Computer'},
+  {val:'mac', label:'Apple-Computer (Mac)', hint:'Oben links ist ein kleiner Apfel', name:'Apple-Computer (Mac)'},
+  {val:'ios', label:'iPhone oder iPad', hint:'Ein Apfel auf der Rückseite', name:'iPhone oder iPad'},
+  {val:'android', label:'Android-Handy oder Tablet', hint:'Zum Beispiel Samsung oder Motorola', name:'Android-Gerät'},
+  {val:'unknown', label:'Ich weiß es nicht', hint:'Wir finden es zusammen heraus'}
+];
+const UNSURE = {val:'?', label:'Ich weiß es nicht', hint:''};
+const INTAKE = {
+  device: t => ({q: t === 'drucker' ? 'Damit ich Ihnen genau die richtigen Schritte zeige: Von welchem Gerät aus möchten Sie drucken?'
+                 : t === 'email' ? 'Damit ich Ihnen genau die richtigen Schritte zeige: Auf welchem Gerät lesen Sie Ihre E-Mails?'
+                 : 'Damit ich Ihnen genau die richtigen Schritte zeige: Um welches Gerät geht es?', opts:DEVICES}),
+  apple: () => ({q:'Kein Problem. Sehen Sie auf dem Gerät irgendwo einen kleinen Apfel, bei dem ein Stück abgebissen ist?',
+                 opts:[{val:'yes', label:'Ja, da ist ein Apfel', hint:''}, {val:'no', label:'Nein, kein Apfel', hint:''}, {val:'?', label:'Ich sehe nichts', hint:''}]}),
+  kind: () => ({q:'Und tippen Sie mit dem Finger auf den Bildschirm, oder hat das Gerät eine Tastatur zum Schreiben?',
+                opts:[{val:'mobile', label:'Ich tippe auf den Bildschirm', hint:'Handy oder Tablet'}, {val:'computer', label:'Es hat eine Tastatur', hint:'Computer oder Laptop'}]}),
+  conn: () => ({q:'Ist der Drucker mit einem Kabel mit dem Gerät verbunden?',
+                opts:[{val:'cable', label:'Ja, mit einem Kabel', hint:''}, {val:'wifi', label:'Nein, ohne Kabel', hint:'Über WLAN'}, UNSURE]}),
+  since: () => ({q:'Seit wann ist das so?',
+                 opts:[{val:'today', label:'Seit heute', hint:''}, {val:'days', label:'Seit ein paar Tagen', hint:''}, {val:'long', label:'Schon länger', hint:''}, UNSURE]}),
+  change: () => ({q:'Hat sich kurz vorher etwas verändert? Zum Beispiel ein Update, ein neues Gerät oder ein neuer Vertrag.',
+                  opts:[{val:'yes', label:'Ja, da war etwas', hint:''}, {val:'no', label:'Nein, nichts', hint:''}, UNSURE]})
+};
+
+const SLOTS = [
+  {id:0, day:'Dienstag, 13. Oktober', time:'10:00', kind:'Hausbesuch bei Ihnen'},
+  {id:1, day:'Donnerstag, 15. Oktober', time:'14:30', kind:'Hausbesuch bei Ihnen'},
+  {id:2, day:'Freitag, 16. Oktober', time:'16:00', kind:'Hausbesuch bei Ihnen'}
+];
+
+class Component extends DCLogic {
+  state = {pay:null, stage:'welcome', topic:null, node:0, msgs:[], typing:false,
+           confusion:0, memory:[], city:'', slot:null, booking:false, uid:0};
+
+  componentDidMount(){
+    this.nils(['Guten Tag, schön dass Sie da sind. Ich bin Nils.',
+               'Erzählen Sie mir einfach, was gerade nicht klappt. Wir gehen das Schritt für Schritt zusammen durch – ganz ohne Eile.']);
+  }
+  componentWillUnmount(){ (this._t||[]).forEach(clearTimeout); }
+
+  later(fn, ms){ this._t = this._t || []; this._t.push(setTimeout(fn, ms)); }
+
+  push(from, text){
+    this.setState(s => ({uid:s.uid+1, msgs:s.msgs.concat([{id:s.uid+1, from, text}])}));
+  }
+  nils(list){
+    const arr = [].concat(list);
+    let delay = 0;
+    arr.forEach((text, i) => {
+      delay += i === 0 ? 450 : 900;
+      this.setState({typing:true});
+      this.later(() => {
+        this.push('nils', text);
+        if (i === arr.length - 1) this.setState({typing:false});
+      }, delay);
+    });
+  }
+  remember(text){
+    this.setState(s => s.memory.some(m => m.text === text) ? null
+      : ({memory:s.memory.concat([{id:text, text}])}));
+  }
+  nodes(){ return this.state.topic ? FLOWS[this.state.topic] : null; }
+  cur(){ const n = this.nodes(); return n ? n[this.state.node] : null; }
+
+  say(k, i){
+    const s = this.state, idx = i === undefined ? s.node : i;
+    const a = ALT[s.topic] && ALT[s.topic][idx] && ALT[s.topic][idx][s.info && s.info.plat];
+    return (a && a[k]) || FLOWS[s.topic][idx][k];
+  }
+  startIntake(topic, lead){
+    this.setState({topic, node:0, stage:'intake', step:'device', info:{}});
+    this.nils(lead.concat([INTAKE.device(topic).q]));
+  }
+  pickTopic(t){
+    this.push('user', t.label);
+    this.remember('Thema: ' + t.label);
+    this.startIntake(t.id, []);
+  }
+  answerIntake(o){
+    const s = this.state, info = Object.assign({}, s.info);
+    let next = null;
+    this.push('user', o.label);
+    if (s.step === 'device'){
+      if (o.val === 'unknown') next = 'apple';
+      else { info.plat = o.val; this.remember('Gerät: ' + o.name); }
+    } else if (s.step === 'apple'){
+      info.apple = o.val; next = 'kind';
+    } else if (s.step === 'kind'){
+      const mob = o.val === 'mobile';
+      info.plat = info.apple === 'yes' ? (mob ? 'ios' : 'mac') : info.apple === 'no' ? (mob ? 'android' : 'win') : (mob ? 'mobile' : 'computer');
+      const d = DEVICES.find(x => x.val === info.plat);
+      this.remember('Gerät: ' + (d ? d.name : (mob ? 'Handy oder Tablet' : 'Computer')));
+    } else if (s.step === 'conn'){
+      info.conn = o.val;
+      if (o.val !== '?') this.remember('Drucker: ' + (o.val === 'cable' ? 'mit Kabel' : 'über WLAN'));
+    } else if (s.step === 'since'){
+      info.since = o.val;
+      if (o.val !== '?') this.remember('Seit: ' + o.label.replace(/^Seit /, '').replace(/^Schon /, ''));
+    } else if (s.step === 'change'){
+      info.change = o.val;
+      if (o.val === 'yes') this.remember('Kurz vorher hat sich etwas verändert');
+    }
+    if (!next){
+      const order = s.topic === 'drucker' ? ['device','apple','kind','conn','since','change'] : ['device','apple','kind','since','change'];
+      const from = s.step === 'device' || s.step === 'apple' ? order.indexOf('kind') : order.indexOf(s.step);
+      next = order[from + 1] || null;
+    }
+    if (next){
+      this.setState({info, step:next});
+      this.nils([INTAKE[next](s.topic).q]);
+    } else {
+      this.setState({info, step:null, stage:'chat', node:0}, () =>
+        this.nils(['Danke, das hilft mir sehr. Jetzt kann ich Ihnen viel genauer helfen.', this.say('t', 0)]));
+    }
+  }
+  confAdj(){
+    const i = this.state.info || {};
+    let a = ['win','mac','ios','android'].includes(i.plat) ? .05 : -.1;
+    ['since','change','conn'].forEach(k => { if (i[k] && i[k] !== '?') a += .02; });
+    return a;
+  }
+  sendFree(){
+    const text = (this.state.freeText || '').trim();
+    if (!text) return;
+    this.push('user', text);
+    this.remember('Eigene Frage: ' + (text.length > 40 ? text.slice(0, 40) + '…' : text));
+    this.setState({freeOpen:false, freeText:''});
+    this.startIntake('sonstiges', ['Das habe ich gelesen, vielen Dank. Wir schauen uns das gemeinsam an.']);
+  }
+  go(i){
+    const node = FLOWS[this.state.topic][i];
+    this.setState({node:i});
+    if (node.done){
+      const t = TOPICS.find(x => x.id === this.state.topic);
+      this.remember('Gelöst: ' + (t ? t.label : 'Ihre eigene Frage'));
+    }
+    this.nils([this.say('t', i)]);
+  }
+  answer(kind){
+    const node = this.cur();
+    if (!node) return;
+    if (kind === 'yes' || kind === 'no'){
+      this.push('user', kind === 'yes' ? 'Ja' : 'Nein');
+      this.later(() => this.go(node[kind]), 250);
+      return;
+    }
+    const c = this.state.confusion + 1;
+    this.setState({confusion:c});
+    if (kind === 'unsure'){
+      this.push('user', 'Ich weiß es nicht');
+      if (c >= 3) return this.later(() => this.escalate(), 400);
+      this.nils([this.say('unsure') || 'Das ist gar nicht schlimm. Wir schauen gemeinsam noch einmal hin.']);
+    } else {
+      this.push('user', 'Bitte einfacher erklären');
+      this.remember('Erklärungen bitte in ganz einfacher Sprache');
+      if (c >= 3) return this.later(() => this.escalate(), 400);
+      this.nils([this.say('simple') || this.say('t')]);
+    }
+  }
+  escalate(){
+    this.setState({stage:'city'});
+    this.nils(['Wir haben jetzt einiges probiert, und das war gar nicht so einfach – das lag nicht an Ihnen.',
+               'Am besten schaut sich das ein Helfer von Nils bei Ihnen zu Hause an. Verraten Sie mir bitte, in welcher Stadt Sie wohnen?']);
+  }
+  submitCity(){
+    const city = (this.state.city || '').trim();
+    if (!city) return;
+    this.push('user', city);
+    this.remember('Wohnort: ' + city);
+    this.setState({stage:'chat', booking:true});
+    this.nils(['Sehr gut, in ' + city + ' haben wir Helfer in Ihrer Nähe. Bitte suchen Sie sich aus, was Ihnen passt.']);
+  }
+  book(){
+    const slot = SLOTS.find(s => s.id === this.state.slot);
+    const p = this.price();
+    if (!slot || !this.state.pay || !this.phoneOk()) return;
+    this.remember('Telefon: ' + this.state.phone.trim());
+    const payText = this.state.pay === 'fixed' ? 'Festpreis ' + p.fixed + ' €' : 'nach Zeit, höchstens ' + p.cap + ' €';
+    this.setState({booking:false, stage:'done', confusion:0});
+    this.remember('Termin: ' + slot.day + ', ' + slot.time + ' (' + payText + ')');
+    this.nils(['Vielen Dank. Ich habe Ihren Wunsch notiert: ' + slot.day + ' um ' + slot.time + ' Uhr, ' + payText + '.',
+               'Gleich ruft Sie Nils unter Ihrer Nummer an und fragt nach Ihrer Adresse. Danach bekommen Sie einen Brief mit einer Zahl. Wenn Sie uns die Zahl am Telefon sagen, ist der Termin fest.']);
+  }
+  restart(){
+    this.setState({stage:'welcome', topic:null, node:0, confusion:0, freeOpen:false, freeText:'', step:null, info:{}});
+    this.nils(['Sehr gern. Womit darf ich Ihnen noch helfen?']);
+  }
+  bye(){
+    this.setState({stage:'done', topic:null});
+    this.nils(['Das freut mich. Ich bin jeden Tag hier – kommen Sie einfach wieder vorbei, wenn etwas ist. Alles Gute für Sie!']);
+  }
+
+  phoneOk(){ return (this.state.phone || '').replace(/\D/g, '').length >= 6; }
+  price(){
+    const e0 = ESTIMATE[this.state.topic] || ESTIMATE.sonstiges;
+    const e = {min:e0.min, conf:Math.min(.95, Math.max(0, e0.conf + this.confAdj()))};
+    return {cap: hourly(e.min * 1.5), fixed: e.conf >= .75 ? (hourly(e.min * 1.3) <= 49 ? 49 : ceil5(hourly(e.min * 1.3))) : null};
+  }
+  renderVals(){
+    const s = this.state;
+    const th = TH;
+    const node = this.cur();
+    const p = this.price();
+    const sel = (k, on) => on ? (k === 'bg' ? th.soft : th.accent) : (k === 'bg' ? '#FFFFFF' : th.line);
+
+    const msgs = s.msgs.map(m => {
+      const nils = m.from === 'nils';
+      return {id:m.id, text:m.text, isNils:nils,
+        justify: nils ? 'flex-start' : 'flex-end',
+        bg: nils ? th.soft : th.accent,
+        fg: nils ? '#1E241F' : '#FFFFFF',
+        bd: nils ? th.line : th.accent,
+        radius: nils ? '22px 22px 22px 6px' : '22px 22px 6px 22px'};
+    });
+
+    const askable = s.stage === 'chat' && node && !node.done && !node.offer;
+
+    return {
+      msgs, typing:s.typing, city:s.city,
+      memory:s.memory, memoryEmpty:s.memory.length === 0,
+      cap: p.cap,
+      fixedLabel: p.fixed ? p.fixed + ' € fest' : 'Noch nicht möglich',
+      fixedNote: p.fixed ? 'Egal wie lange es dauert. Sie wissen vorher genau, was es kostet.' : 'Dafür muss ich Ihr Problem noch genauer kennen. Der Helfer nennt Ihnen vor Ort einen Preis.',
+      fixedDisabled: !p.fixed, fixedOpacity: p.fixed ? 1 : .6,
+      hourlyBg: sel('bg', s.pay === 'hourly'), hourlyBd: sel('bd', s.pay === 'hourly'),
+      fixedBg: sel('bg', s.pay === 'fixed'), fixedBd: sel('bd', s.pay === 'fixed'),
+      pickHourly: () => this.setState({pay:'hourly'}),
+      pickFixed: () => p.fixed && this.setState({pay:'fixed'}),
+      topics: TOPICS.map(t => ({id:t.id, label:t.label, hint:t.hint, pick: () => this.pickTopic(t)})),
+      showTopics: s.stage === 'welcome',
+      freeOpen: !!s.freeOpen, freeText: s.freeText || '',
+      sendBg: (s.freeText || '').trim() ? th.accent : '#B9BDB6',
+      notFreeOpen: !s.freeOpen,
+      topicsRef: this.topicsRef || (this.topicsRef = React.createRef()),
+      chatMinH: 340 + (s.freeOpen ? (s.freeSpace || 0) : 0),
+      onOpenFree: () => {
+        const h = this.topicsRef && this.topicsRef.current ? this.topicsRef.current.offsetHeight + 14 : 0;
+        this.setState({freeOpen:true, freeSpace:h});
+        this.nils(['Schreiben Sie einfach mit Ihren eigenen Worten, was nicht klappt. Ganz egal wie – ich verstehe Sie.']);
+      },
+      onCloseFree: () => this.setState({freeOpen:false}),
+      onFreeText: (e) => { const el = e.target; el.style.height = 'auto'; el.style.height = el.scrollHeight + 4 + 'px'; this.setState({freeText:el.value}); },
+      onFreeSend: () => this.sendFree(),
+      showAnswers: askable,
+      showIntake: s.stage === 'intake' && !!s.step,
+      intakeOpts: s.stage === 'intake' && s.step ? INTAKE[s.step](s.topic).opts.map(o => ({label:o.label, hint:o.hint || '', pick: () => this.answerIntake(o)})) : [],
+      showOffer: s.stage === 'chat' && node && node.offer,
+      showDone: (s.stage === 'chat' && node && node.done) || s.stage === 'done',
+      showCity: s.stage === 'city',
+      showBooking: s.booking,
+      slots: SLOTS.map(x => ({id:x.id, day:x.day, time:x.time, kind:x.kind,
+        bg: s.slot === x.id ? th.soft : '#FFFFFF',
+        bd: s.slot === x.id ? th.accent : th.line,
+        pick: () => this.setState({slot:x.id})})),
+      phone: s.phone || '', onPhone: (e) => this.setState({phone:e.target.value}),
+      bookDisabled: s.slot === null || !s.pay || !this.phoneOk(),
+      bookBg: s.slot === null || !s.pay || !this.phoneOk() ? '#B9BDB6' : th.accent,
+      onYes: () => this.answer('yes'),
+      onNo: () => this.answer('no'),
+      onUnsure: () => this.answer('unsure'),
+      onSimpler: () => this.answer('simpler'),
+      onEscalate: () => this.escalate(),
+      onRestart: () => this.restart(),
+      onBye: () => this.bye(),
+      onCity: (e) => this.setState({city:e.target.value}),
+      onCitySubmit: () => this.submitCity(),
+      onBook: () => this.book(),
+      onCloseBooking: () => this.setState({booking:false, stage:'welcome', topic:null, confusion:0, step:null, info:{}})
+    };
+  }
+}
+</script>
+</body>
+</html>

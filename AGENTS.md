@@ -45,13 +45,15 @@ dieser Zielgruppe gemessen, nicht an technischer Eleganz.
 
 ## Nach jeder Änderung zu prüfen
 
+Seit dem 6. Oktober 2026 ist die Website das statische Neubau-Paket (`site/`,
+`gate/`, `Caddyfile`). Die Astro-Anwendung mit ihren Prüfskripten liegt in
+`_archiv/`. Stand und bekannte Abweichungen von `GEO-LLM.txt`: `PROJEKTSTAND.md`.
+
 ```bash
-./scripts/npm.sh run check      # TypeScript und Astro
-./scripts/npm.sh run kontrast   # WCAG-Kontrast aller Farbpaare
-./scripts/npm.sh test           # Vitest
 docker compose build && docker compose up -d
-curl -s http://127.0.0.1:3005/api/health
-./scripts/pruefe-auslieferung.sh   # Inline-Skripte, Kopfzeilen, §16-Freigabe
+docker compose ps                        # web muss "healthy" sein
+curl -s http://127.0.0.1:3005/health     # → ok
+curl -sI https://senioren-computer-helfer.de/   # Lockscreen, Sicherheitskopfzeilen
 ```
 
 Zusätzlich vor jeder Freigabe: getrennte SEO- und GEO-Prüfung über die Skills in

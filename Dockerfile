@@ -1,56 +1,20 @@
-# syntax=docker/dockerfile:1
+FROM caddy:2-alpine
 
-# Mehrstufiger Build nach GEO-LLM.txt §14. Die Bauwerkzeuge bleiben in den
-# frühen Stufen zurück; im Laufzeit-Image liegt am Ende nur, was der Server
-# tatsächlich ausführt.
+# Caddy schreibt nichts Dauerhaftes: keine Zertifikate (TLS macht der zentrale
+# Caddy), keine gespeicherte Konfiguration. Was doch anfällt, landet im tmpfs.
+ENV XDG_CONFIG_HOME=/tmp \
+    XDG_DATA_HOME=/tmp
 
-# ---------------------------------------------------------------------------
-# Stufe 1: alle Abhängigkeiten, reproduzierbar aus der Lockdatei.
-# ---------------------------------------------------------------------------
-FROM node:22-alpine AS abhaengigkeiten
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci --no-audit --no-fund
+# Das offizielle Image gibt Caddy das Recht, Ports unter 1024 zu öffnen. Auf
+# 3005 braucht es das nicht — und mit cap_drop: ALL würde der Start sonst
+# scheitern.
+RUN apk add --no-cache libcap \
+ && setcap -r /usr/bin/caddy \
+ && apk del libcap
 
-# ---------------------------------------------------------------------------
-# Stufe 2: Astro bauen.
-# ---------------------------------------------------------------------------
-FROM node:22-alpine AS bau
-WORKDIR /app
-ENV ASTRO_TELEMETRY_DISABLED=1
-COPY --from=abhaengigkeiten /app/node_modules ./node_modules
-COPY . .
-RUN npm run build
+COPY Caddyfile /etc/caddy/Caddyfile
+COPY site/ /srv/
 
-# ---------------------------------------------------------------------------
-# Stufe 3: nur die Produktionsabhängigkeiten. Getrennt von Stufe 1, damit
-# TypeScript, Vitest und Tailwind nicht im Laufzeit-Image landen.
-# ---------------------------------------------------------------------------
-FROM node:22-alpine AS produktionsabhaengigkeiten
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci --omit=dev --no-audit --no-fund
-
-# ---------------------------------------------------------------------------
-# Stufe 4: Laufzeit.
-# ---------------------------------------------------------------------------
-FROM node:22-alpine AS laufzeit
-WORKDIR /app
-
-# Der Container lauscht innerhalb des Netzes auf 0.0.0.0:3005 (§11). Nach außen
-# gibt ihn erst compose.yaml frei — und zwar ausschließlich an 127.0.0.1.
-ENV NODE_ENV=production \
-    HOST=0.0.0.0 \
-    PORT=3005 \
-    ASTRO_TELEMETRY_DISABLED=1
-
-COPY --from=produktionsabhaengigkeiten /app/node_modules ./node_modules
-COPY --from=bau /app/dist ./dist
-COPY package.json ./
-
-# Kein Root: Der Benutzer "node" ist im offiziellen Image bereits angelegt.
-USER node
+USER 65534:65534
 
 EXPOSE 3005
-
-CMD ["node", "dist/server/entry.mjs"]
