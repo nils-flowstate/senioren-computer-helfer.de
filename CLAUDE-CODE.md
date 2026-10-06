@@ -1,7 +1,7 @@
 # Übergabe an Claude Code: Nils-Website auf dem VPS (Docker + Caddy)
 
 ## Ziel
-Statische Website (3 Seiten) hinter einem Lockscreen. Caddy liefert aus und macht HTTPS. Ein kleiner Node-Dienst (`gate`) prüft Passwort, Botschutz und sperrt IPs nach 5 Fehlversuchen für 48 h.
+Statische Website (2 Seiten) hinter einem Lockscreen. Caddy liefert aus und macht HTTPS. Ein kleiner Node-Dienst (`gate`) prüft Passwort, Botschutz und sperrt IPs nach 5 Fehlversuchen für 48 h.
 
 ## Struktur
 ```
@@ -16,7 +16,7 @@ export/
 └─ site/
    ├─ lock.html         Lockscreen (Passwort + „Weiter zum Onboarding“)
    ├─ index.html        Computerhilfe / Chat mit Nils (= Onboarding-Ziel)
-   ├─ faq.html, vor-ort-hilfe.html
+   ├─ faq.html
    ├─ support.js        Laufzeit der Seiten (rendert die Templates im Browser)
    ├─ vendor/           React 18.3.1 lokal
    ├─ fonts/            Nunito + Source Sans 3 lokal
@@ -49,7 +49,7 @@ Keine Anfragen an Drittanbieter (keine Google Fonts, kein CDN, kein externer Cap
 - Schwierigkeit anpassen: Umgebungsvariable `GATE_POW_MAX` am `gate`-Service (Standard 50000; höher = langsamer für Bots und alte Handys).
 - IP manuell entsperren: `docker compose exec gate sh`, dann `/data/gate.json` bearbeiten, `docker compose restart gate`.
 - Passwort ändern: `printf %s 'NEU' | sha256sum` → `GATE_PASSWORD_SHA256` in `.env` → `docker compose up -d`.
-- `GATE_SECRET` ändern macht alle offenen Sitzungen ungültig.
+- `GATE_SECRET` oder das Passwort ändern macht alle offenen Sitzungen ungültig.
 - Hinweis: Eine IP kann mehrere Kunden betreffen (Mobilfunk/CGNAT). Für die Testphase akzeptabel.
 
 ## Technische Hinweise
@@ -60,10 +60,10 @@ Keine Anfragen an Drittanbieter (keine Google Fonts, kein CDN, kein externer Cap
 - `X-Robots-Tag: noindex` für den Frühzugang. Für den öffentlichen Start entfernen.
 
 ## Test-Checkliste
-- [ ] `/`, `/faq`, `/vor-ort-hilfe.html` ohne Cookie → Lockscreen; Punkt wird grün („Sicherheitsprüfung abgeschlossen“).
+- [ ] `/`, `/faq`, `/index.html` ohne Cookie → Lockscreen; Punkt wird grün („Sicherheitsprüfung abgeschlossen“).
 - [ ] `curl -s https://DOMAIN/gate/check` → 404 (nicht öffentlich).
 - [ ] Falsches Passwort → „noch 4 Versuche“ usw.
-- [ ] Richtiges Passwort → Chat mit Nils; Navigation zu FAQ und Vor-Ort-Hilfe.
+- [ ] Richtiges Passwort → Chat mit Nils; Navigation zur FAQ.
 - [ ] Browser komplett schließen → wieder Lockscreen.
 - [ ] 5× falsch → Sperrhinweis mit Datum; Neuladen zeigt weiter die Sperre. `/data/gate.json` enthält die IP. Danach entsperren.
 - [ ] `curl -X POST https://DOMAIN/gate/login -d '{"password":"x"}'` → 400 (ohne Rechenaufgabe kein Versuch).
@@ -73,5 +73,4 @@ Keine Anfragen an Drittanbieter (keine Google Fonts, kein CDN, kein externer Cap
 
 ## Offen vor öffentlichem Start
 - Impressum + Datenschutzerklärung anlegen und in `@public` aufnehmen (müssen ohne Passwort erreichbar sein). Gate-Speicherung der IP dort erwähnen.
-- Die Seite Vor-Ort-Hilfe ist noch eine interne Fassung.
 - Chat ist ein Prototyp; Anbindung an n8n (W1–W9) später über `handle /api/* { reverse_proxy n8n:5678 }`.
