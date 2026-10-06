@@ -47,14 +47,16 @@ function registerFail(ip) {
 }
 function newToken() {
   const p = (Date.now() + SESSION_MS) + '.' + crypto.randomBytes(12).toString('base64url');
-  return p + '.' + hmac('session:' + p);
+  // Der Passwort-Hash fließt in die Signatur ein: Ein neues Passwort beendet
+  // damit sofort alle offenen Sitzungen, ohne GATE_SECRET wechseln zu müssen.
+  return p + '.' + hmac('session:' + PW_HASH + ':' + p);
 }
 function validToken(cookie) {
   const m = /(?:^|;\s*)nils_session=([^;]+)/.exec(cookie || '');
   if (!m) return false;
   const [exp, rnd, sig] = m[1].split('.');
   if (!exp || !rnd || !sig) return false;
-  return eq(sig, hmac('session:' + exp + '.' + rnd)) && Number(exp) > Date.now();
+  return eq(sig, hmac('session:' + PW_HASH + ':' + exp + '.' + rnd)) && Number(exp) > Date.now();
 }
 function send(res, code, obj, headers) {
   res.writeHead(code, Object.assign({ 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' }, headers || {}));

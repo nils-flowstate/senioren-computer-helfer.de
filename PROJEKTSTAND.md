@@ -8,9 +8,9 @@ steht in `_archiv/PROJEKTSTAND.md`.
 ## 1. Was läuft
 
 - Die Website ist durch das Neubau-Paket ersetzt (`neubau/Nils Computerhilfe
-  Farbkonzepte.zip`): drei statische Seiten (Chat-Prototyp, FAQ,
-  Vor-Ort-Hilfe) hinter einem Lockscreen. Die Preisseite und die
-  Platzhalter-Telefonnummer sind am 6. Oktober 2026 entfernt worden.
+  Farbkonzepte.zip`): zwei statische Seiten (Chat-Prototyp, FAQ) hinter einem
+  Lockscreen. Preisseite, Vor-Ort-Hilfe-Seite und die Platzhalter-
+  Telefonnummer sind am 6. Oktober 2026 entfernt worden.
 - Container `senioren-computer-helfer` (Caddy, `healthy`, 127.0.0.1:3005, Netz
   `proxy`) und `senioren-computer-helfer-gate` (Node, nur intern).
 - Die Basic-Auth im zentralen Caddy ist entfernt. Einziges Schloss ist der
@@ -29,6 +29,9 @@ steht in `_archiv/PROJEKTSTAND.md`.
 | Gespeicherte Adresse | echte Besucheradresse, nicht Cloudflare |
 | Direkter Aufruf am Cloudflare-Schutz vorbei mit gefälschtem `CF-Connecting-IP` | gefälschter Wert ignoriert |
 | Login (mit befristetem Testpasswort) | Cookie `HttpOnly; SameSite=Strict; Secure`, alle Seiten 200 |
+| Über 100 Umgehungsversuche (Pfad-Tricks, Kodierung, Methoden, gefälschte Köpfe und Cookies), öffentlich und direkt | kein Inhalt außer Lockscreen |
+| Gate gestoppt | 404, kein Inhalt |
+| Passwort geändert | alte Sitzungen sofort ungültig |
 | Chromium bei 390 px | kein seitliches Scrollen, keine fremden Domains, keine Skriptfehler |
 
 Der Login mit dem echten Passwort ist ebenfalls geprüft (siehe unten).
@@ -51,8 +54,7 @@ Der Login mit dem echten Passwort ist ebenfalls geprüft (siehe unten).
 
 1. Impressum und Datenschutzerklärung anlegen und ohne Passwort erreichbar
    machen (`@public` im `Caddyfile`). Die IP-Speicherung des Gates dort nennen.
-2. Die Vor-Ort-Hilfe ist als interne Fassung gekennzeichnet.
-3. Der Chat ist ein Prototyp ohne KI-Anbindung. Später über
+2. Der Chat ist ein Prototyp ohne KI-Anbindung. Später über
    `handle /api/* { reverse_proxy … }` im `Caddyfile`.
 
 ### Abweichungen von GEO-LLM.txt und AGENTS.md
@@ -60,8 +62,9 @@ Der Login mit dem echten Passwort ist ebenfalls geprüft (siehe unten).
 Das Paket wurde auf ausdrücklichen Wunsch unverändert übernommen. Es weicht
 von den bisherigen Vorgaben ab. Diese Punkte müssen bewusst entschieden werden:
 
-- Köln und die Vor-Ort-Hilfe erscheinen in eigenen Seiten und Navigation, nicht
-  nur als Eskalation (Regel 5, §16).
+- Köln und der Hausbesuch erscheinen im Chat-Prototyp (Stadtfrage,
+  Buchungsdialog) und in der FAQ. Ob nur als Eskalation nach drei
+  Fehlversuchen (Regel 5, §16), ist nicht geprüft.
 - React im Browser statt „wenig Client-JavaScript, keine Frameworks“ (Regel 9).
 - Anmeldung vor der Nutzung (§6 „Keine Anmeldung“) — für den Frühzugang gewollt.
 - Keine Content-Security-Policy: `support.js` erzeugt Code zur Laufzeit

@@ -1,6 +1,6 @@
 # Nils – Computerhilfe (senioren-computer-helfer.de)
 
-Statische Website mit drei Seiten hinter einem Lockscreen (Frühzugang für
+Statische Website mit zwei Seiten (Chat und FAQ) hinter einem Lockscreen (Frühzugang für
 Testerinnen und Tester). Die Inhalte stammen aus dem Neubau-Paket
 `neubau/Nils Computerhilfe Farbkonzepte.zip`. Die frühere Astro-Anwendung liegt
 unverändert in `_archiv/`.
@@ -48,7 +48,17 @@ curl -s http://127.0.0.1:3005/health # lokale Funktionskontrolle → ok
 `docker compose up -d --build`.
 
 **Passwort ändern:** `printf %s 'NEU' | sha256sum` → Wert als
-`GATE_PASSWORD_SHA256` in `.env` → `docker compose up -d`.
+`GATE_PASSWORD_SHA256` in `.env` → `docker compose up -d`. Alle offenen
+Sitzungen enden damit sofort, weil der Passwort-Hash in die Sitzungssignatur
+eingeht.
+
+**Was ohne Passwort erreichbar ist:** nur der Lockscreen (unter jeder Adresse),
+was er zum Anzeigen braucht (`/lock.html`, `/support.js`, `/nils.webp`,
+`/fonts/*`, `/vendor/*`), die Gate-Schnittstelle `/gate/challenge` und
+`/gate/login`, `/robots.txt` (verbietet alles) und `/health`. Fällt das Gate
+aus, bleibt die Website zu (404 statt Inhalt). Cloudflare speichert nur diese
+öffentlichen Dateien bis zu 4 Stunden zwischen; Inhaltsseiten tragen
+`Cache-Control: no-store`.
 
 **IP entsperren:**
 

@@ -55,6 +55,15 @@
 	vars @ueber_cloudflare besucher_ip {header.CF-Connecting-IP}
 	vars @direkt besucher_ip {client_ip}
 
+	# Außer dem Lockscreen das Einzige, was Bots ohne Passwort zu sehen bekommen.
+	handle /robots.txt {
+		header Content-Type "text/plain; charset=utf-8"
+		respond <<TEXT
+			User-agent: *
+			Disallow: /
+			TEXT 200
+	}
+
 	# Für den Healthcheck des Containers, ohne Gate.
 	handle /health {
 		respond "ok" 200
