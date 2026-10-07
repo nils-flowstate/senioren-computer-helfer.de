@@ -22,6 +22,10 @@ steht in `_archiv/PROJEKTSTAND.md`.
   unter dem Login-Knopf, mit Hinweis-Dialog und eigenem Botschutz. Die Nummer
   (`PHONE_NUMBER`) gibt das Gate erst nach gelöster Rechenaufgabe heraus.
   Geprüft mit dem Skill `zugangsschutz` (Außenprüfung + Browsertest).
+- Seit 7. Oktober 2026, abends: Sicherheitsprüfung mit Ladekreis, der in einen
+  Haken übergeht („Sicherheitsprüfung wird durchgeführt“ → „… abgeschlossen“),
+  direkt unter dem Login-Knopf und im Dialog. Hinweis-Dialog auf einen Satz
+  gekürzt (Vorgabe des Skills `zugangsschutz`).
 
 ## 2. Geprüft am 6. Oktober 2026 (über https://senioren-computer-helfer.de)
 

@@ -35,7 +35,7 @@ Keine Anfragen an Drittanbieter (keine Google Fonts, kein CDN, kein externer Cap
 
 ## Ablauf Lockscreen
 1. Aufruf einer beliebigen Seite → Caddy fragt `gate:3000/gate/check`. Kein gültiges Cookie → 401 → Caddy liefert `lock.html` unter derselben URL.
-2. `lock.html` holt beim Laden sofort `GET /gate/challenge` und löst die Rechenaufgabe im Hintergrund (Proof-of-Work, SHA-256, Standard bis 50 000 Versuche, typ. < 1 s). Senioren sehen nur „Sicherheitsprüfung läuft automatisch …“ – kein Bilderrätsel.
+2. `lock.html` holt beim Laden sofort `GET /gate/challenge` und löst die Rechenaufgabe im Hintergrund (Proof-of-Work, SHA-256, Standard bis 50 000 Versuche, typ. < 1 s). Senioren sehen nur einen Ladekreis „Sicherheitsprüfung wird durchgeführt“, der zum Haken wird – kein Bilderrätsel.
 3. Absenden → `POST /gate/login` mit Passwort, Lösung und Honeypot-Feld `website` (unsichtbar; Bots füllen es aus).
 4. Gate prüft: IP gesperrt? → Signatur, Ablauf (10 min) und Einmaligkeit der Aufgabe → Passwort (SHA-256, zeitkonstanter Vergleich).
 5. Richtig → Cookie `nils_session` (HttpOnly, SameSite=Strict, Secure, **ohne Ablaufdatum = Session-Cookie**, serverseitig max. 12 h gültig) → Seite lädt neu.
@@ -60,7 +60,7 @@ Keine Anfragen an Drittanbieter (keine Google Fonts, kein CDN, kein externer Cap
 - `X-Robots-Tag: noindex` für den Frühzugang. Für den öffentlichen Start entfernen.
 
 ## Test-Checkliste
-- [ ] `/`, `/faq`, `/index.html` ohne Cookie → Lockscreen; Punkt wird grün („Sicherheitsprüfung abgeschlossen“).
+- [ ] `/`, `/faq`, `/index.html` ohne Cookie → Lockscreen; Ladekreis wird zum grünen Haken („Sicherheitsprüfung abgeschlossen“).
 - [ ] `curl -s https://DOMAIN/gate/check` → 404 (nicht öffentlich).
 - [ ] Falsches Passwort → „noch 4 Versuche“ usw.
 - [ ] Richtiges Passwort → Chat mit Nils; Navigation zur FAQ.

@@ -12,7 +12,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#4F7A5B">
 <link href="/fonts/fonts.css" rel="stylesheet">
-<style>html{-webkit-text-size-adjust:100%}body{margin:0;background:#F4F1E9;font-family:'Source Sans 3',system-ui,sans-serif;color:#1E241F}a{color:#4F7A5B}a:hover{color:#274536}</style>
+<style>html{-webkit-text-size-adjust:100%}body{margin:0;background:#F4F1E9;font-family:'Source Sans 3',system-ui,sans-serif;color:#1E241F}a{color:#4F7A5B}a:hover{color:#274536}@keyframes fsdreh{to{transform:rotate(360deg)}}@keyframes fsring{from{stroke-dashoffset:42}to{stroke-dashoffset:0}}@keyframes fshaken{from{stroke-dashoffset:14}to{stroke-dashoffset:0}}@keyframes fspop{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}@keyframes fsein{from{opacity:.35}to{opacity:1}}@media (prefers-reduced-motion:reduce){[data-bewegung]{animation-duration:.01ms!important;animation-delay:0s!important;animation-iteration-count:1!important}}</style>
 </helmet>
 <div style="min-height:100vh; min-height:100dvh; box-sizing:border-box; display:flex; align-items:center; justify-content:center; padding:clamp(16px,5vw,40px); background:#F4F1E9">
   <form onSubmit="{{ onSubmit }}" style="width:100%; max-width:480px; background:#fff; border:1px solid #DFDACE; border-radius:28px; box-shadow:0 10px 30px rgba(20,40,25,.08); overflow:hidden">
@@ -48,15 +48,13 @@
       <button type="submit" style="min-height:72px; border:none; border-radius:18px; background:#274536; color:#fff; font:700 22px 'Nunito',sans-serif; cursor:pointer" style-hover="background:#335A46">{{ submitText }}</button>
       </div>
       </sc-if>
+      <!-- Sicherheitsprüfung (Botschutz): Ladekreis → Haken, direkt unter dem Login-Knopf -->
+      <span role="status" style="display:flex; align-items:center; justify-content:center; gap:10px; min-height:26px; font-size:17px; font-weight:600; line-height:1.5;color:{{ checkColor }}"><sc-if value="{{ checkPending }}" hint-placeholder-val="{{ true }}"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" data-bewegung="1" style="flex:none;animation:fsdreh .8s linear infinite"><circle cx="12" cy="12" r="9" fill="none" stroke="rgba(30,36,31,.14)" stroke-width="2.5"></circle><circle cx="12" cy="12" r="9" fill="none" stroke="#277523" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="56.55" stroke-dashoffset="42"></circle></svg></sc-if><sc-if value="{{ checkOk }}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" data-pruefung="ok" data-bewegung="1" style="flex:none;animation:fspop .4s .38s ease-out both"><circle cx="12" cy="12" r="9" fill="none" stroke="#277523" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="56.55" data-bewegung="1" style="transform:rotate(-90deg);transform-origin:12px 12px;animation:fsring .4s ease-out both"></circle><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#277523" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="14" data-bewegung="1" style="animation:fshaken .3s .36s ease-out both"></path></svg></sc-if><sc-if value="{{ checkOffline }}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8A6A1E" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" style="flex:none"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5v5.5M12 16.5v.01"></path></svg></sc-if><span data-bewegung="1" style="animation:{{ checkAnim }}">{{ checkText }}</span></span>
       <!-- Zugang anfragen (WhatsApp) — öffnet erst den Hinweis-Dialog, die Nummer kommt nach dem Botschutz vom Gate -->
       <button type="button" onClick="{{ openWa }}" style="align-self:center; display:inline-flex; align-items:center; justify-content:center; gap:12px; min-height:56px; padding:0 28px; border:none; border-radius:100px; background:#277523; color:#fff; font:700 20px 'Nunito',sans-serif; cursor:pointer" style-hover="background:#2E8A29">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"></path></svg>
         Zugang anfragen
       </button>
-      <div style="display:flex; align-items:center; gap:10px; font-size:17px; line-height:1.5; color:#6B7268">
-        <span style="flex:none; width:10px; height:10px; border-radius:50%; background:{{ checkDot }}"></span>
-        <span>{{ checkText }}</span>
-      </div>
       <div style="font-size:17px; line-height:1.5; color:#6B7268">Ihr Zugang gilt nur, solange dieses Browserfenster geöffnet ist.</div>
     </div>
   </form>
@@ -68,12 +66,8 @@
           <span style="flex:none; width:52px; height:52px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:#277523; color:#fff"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"></path></svg></span>
           <h2 id="wa-titel" style="margin:0; font:800 clamp(24px,6.5vw,28px)/1.15 'Nunito',sans-serif; color:#274536">Weiter zu WhatsApp?</h2>
         </div>
-        <p id="wa-text" style="margin:0; font-size:20px; line-height:1.5; color:#1E241F">Wenn Sie auf „Weiter zu WhatsApp“ tippen, verlassen Sie diese Seite und werden zu <strong>WhatsApp Business</strong> weitergeleitet. Dort können Sie Nils um einen Zugang bitten.</p>
-        <p style="margin:0; font-size:17px; line-height:1.5; color:#4A524B">WhatsApp ist ein Dienst der WhatsApp Ireland Ltd. (Meta). Dort gelten deren Datenschutzbestimmungen; WhatsApp erfährt dabei unter anderem Ihre Telefonnummer. Erst mit Ihrem Tippen entsteht eine Verbindung zu WhatsApp.</p>
-        <div role="status" style="display:flex; align-items:center; gap:10px; font-size:17px; line-height:1.5; color:#6B7268">
-          <span style="flex:none; width:10px; height:10px; border-radius:50%; background:{{ waDot }}"></span>
-          <span>{{ waStatus }}</span>
-        </div>
+        <p id="wa-text" style="margin:0; font-size:20px; line-height:1.5; color:#1E241F">Wenn Sie weiterklicken, erklären Sie sich einverstanden, an <strong>WhatsApp Business</strong> weitergeleitet zu werden.</p>
+        <span role="status" style="display:flex; align-items:center; gap:10px; min-height:26px; font-size:17px; font-weight:600; line-height:1.5;color:{{ waColor }}"><sc-if value="{{ waWaiting }}" hint-placeholder-val="{{ true }}"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" data-bewegung="1" style="flex:none;animation:fsdreh .8s linear infinite"><circle cx="12" cy="12" r="9" fill="none" stroke="rgba(30,36,31,.14)" stroke-width="2.5"></circle><circle cx="12" cy="12" r="9" fill="none" stroke="#277523" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="56.55" stroke-dashoffset="42"></circle></svg></sc-if><sc-if value="{{ waReady }}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" data-pruefung="ok" data-bewegung="1" style="flex:none;animation:fspop .4s .38s ease-out both"><circle cx="12" cy="12" r="9" fill="none" stroke="#277523" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="56.55" data-bewegung="1" style="transform:rotate(-90deg);transform-origin:12px 12px;animation:fsring .4s ease-out both"></circle><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#277523" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="14" data-bewegung="1" style="animation:fshaken .3s .36s ease-out both"></path></svg></sc-if><sc-if value="{{ waFailed }}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8A2E1E" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" style="flex:none"><circle cx="12" cy="12" r="9"></circle><path d="M9 9l6 6M15 9l-6 6"></path></svg></sc-if><span data-bewegung="1" style="animation:{{ waAnim }}">{{ waStatus }}</span></span>
         <div style="display:flex; flex-direction:column; gap:12px; margin-top:4px">
           <sc-if value="{{ waReady }}" hint-placeholder-val="{{ false }}">
             <a href="{{ waUrl }}" target="_blank" rel="noopener noreferrer" onClick="{{ waGo }}" style="min-height:64px; display:flex; align-items:center; justify-content:center; gap:12px; border-radius:18px; background:#277523; color:#fff; font:700 21px 'Nunito',sans-serif; text-decoration:none" style-hover="background:#2E8A29; color:#fff"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"></path></svg>Weiter zu WhatsApp</a>
@@ -107,6 +101,8 @@ async function solvePow(c){
   }
   throw new Error('pow');
 }
+// Ladekreis mindestens so lange zeigen, dass man ihn sieht — sonst springt er sofort zum Haken.
+const mindestens = (p, ms) => Promise.all([p, new Promise(r => setTimeout(r, ms))]).then(x => x[0]);
 class Component extends DCLogic {
   state = { pw: '', hp: '', show: false, error: '', busy: false, blockedUntil: 0, check: 'pending', wa: null, waUrl: '' };
   componentDidMount(){
@@ -118,9 +114,9 @@ class Component extends DCLogic {
   // „Zugang anfragen“: Dialog öffnen, eigene Rechenaufgabe lösen, dann den WhatsApp-Link vom Gate holen.
   openWa(){
     this.setState({ wa: 'pending', waUrl: '' });
-    fetch('/gate/challenge?fuer=anfrage', { cache: 'no-store', credentials: 'same-origin' })
+    mindestens(fetch('/gate/challenge?fuer=anfrage', { cache: 'no-store', credentials: 'same-origin' })
       .then(r => { if (!r.ok) throw new Error('offline'); return r.json(); })
-      .then(solvePow)
+      .then(solvePow), 700)
       .then(solution => fetch('/gate/whatsapp', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ website: this.state.hp, solution }) }))
       .then(r => r.json())
       .then(j => { if (!j.url) throw new Error('wa'); if (this.state.wa) this.setState({ wa: 'ok', waUrl: j.url }); })
@@ -129,13 +125,13 @@ class Component extends DCLogic {
   closeWa(){ this.setState({ wa: null, waUrl: '' }); }
   prepare(){
     this.setState({ check: 'pending' });
-    this.pow = fetch('/gate/challenge', { cache: 'no-store', credentials: 'same-origin' })
+    this.pow = mindestens(fetch('/gate/challenge', { cache: 'no-store', credentials: 'same-origin' })
       .then(r => {
         if (r.status === 429) return r.json().then(j => { this.setState({ blockedUntil: j.until || Date.now() + 1728e5 }); throw new Error('blocked'); });
         if (!r.ok) throw new Error('offline');
         return r.json();
       })
-      .then(solvePow)
+      .then(solvePow), 700)
       .then(sol => { this.setState({ check: 'ok' }); return sol; })
       .catch(e => { this.setState({ check: e.message === 'blocked' ? 'ok' : 'offline' }); return null; });
   }
@@ -183,15 +179,18 @@ class Component extends DCLogic {
       errorText: s.error,
       borderColor: s.error ? '#B5483A' : '#DFDACE',
       submitText: s.busy ? (s.check === 'pending' ? 'Sicherheitsprüfung …' : 'Einen Moment …') : 'Weiter zum Onboarding',
-      checkDot: s.check === 'ok' ? '#5FAE7A' : s.check === 'offline' ? '#C9A24A' : '#C8C3B6',
-      checkText: s.check === 'ok' ? 'Sicherheitsprüfung abgeschlossen' : s.check === 'offline' ? 'Vorschau ohne Server' : 'Sicherheitsprüfung läuft automatisch …',
+      checkPending: s.check === 'pending', checkOk: s.check === 'ok', checkOffline: s.check === 'offline',
+      checkColor: s.check === 'ok' ? '#277523' : s.check === 'offline' ? '#8A6A1E' : '#6B7268',
+      checkAnim: s.check === 'ok' ? 'fsein .4s .3s ease both' : 'none',
+      checkText: s.check === 'ok' ? 'Sicherheitsprüfung abgeschlossen' : s.check === 'offline' ? 'Sicherheitsprüfung nicht erreichbar' : 'Sicherheitsprüfung wird durchgeführt',
       onPw: (e) => this.setState({ pw: e.target.value, error: '' }),
       onHp: (e) => this.setState({ hp: e.target.value }),
       onToggle: () => this.setState(x => ({ show: !x.show })),
       onSubmit: (e) => this.submit(e),
       waOpen: !!s.wa, waReady: s.wa === 'ok', waWaiting: s.wa === 'pending', waFailed: s.wa === 'failed', waUrl: s.waUrl || '#',
-      waDot: s.wa === 'ok' ? '#5FAE7A' : s.wa === 'failed' ? '#B5483A' : '#C8C3B6',
-      waStatus: s.wa === 'ok' ? 'Sicherheitsprüfung abgeschlossen' : s.wa === 'failed' ? 'Das hat nicht geklappt. Bitte versuchen Sie es noch einmal.' : 'Sicherheitsprüfung läuft automatisch …',
+      waColor: s.wa === 'ok' ? '#277523' : s.wa === 'failed' ? '#8A2E1E' : '#6B7268',
+      waAnim: s.wa === 'ok' ? 'fsein .4s .3s ease both' : 'none',
+      waStatus: s.wa === 'ok' ? 'Sicherheitsprüfung abgeschlossen' : s.wa === 'failed' ? 'Sicherheitsprüfung fehlgeschlagen. Bitte versuchen Sie es noch einmal.' : 'Sicherheitsprüfung wird durchgeführt',
       openWa: () => this.openWa(), retryWa: () => this.openWa(), closeWa: () => this.closeWa(),
       waBackdrop: (e) => { if (e.target === e.currentTarget) this.closeWa(); },
       waGo: () => setTimeout(() => this.closeWa(), 300)

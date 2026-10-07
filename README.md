@@ -73,7 +73,8 @@ docker compose start gate
 `cat` ansehen und gezielt bearbeiten.)
 
 **Zugang anfragen (WhatsApp):** grüner Knopf (#277523) unter dem Login-Knopf.
-Er öffnet einen Hinweis-Dialog (Weiterleitung zu WhatsApp Business, Meta). Der
+Er öffnet einen Hinweis-Dialog („Wenn Sie weiterklicken, erklären Sie sich
+einverstanden, an WhatsApp Business weitergeleitet zu werden.“). Der
 Dialog löst eine eigene Rechenaufgabe (`/gate/challenge?fuer=anfrage`, auch für
 gesperrte Adressen), erst dann gibt `/gate/whatsapp` den `wa.me`-Link heraus.
 Die Nummer steht nie im HTML. Nummer ändern: `PHONE_NUMBER` in `.env`, dann
