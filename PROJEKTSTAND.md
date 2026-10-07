@@ -1,6 +1,6 @@
 # Projektstand
 
-Stand: 6. Oktober 2026
+Stand: 7. Oktober 2026
 
 Wiedereinstiegspunkt. Der Stand der alten Astro-Anwendung (bis 24. August 2026)
 steht in `_archiv/PROJEKTSTAND.md`.
@@ -17,6 +17,11 @@ steht in `_archiv/PROJEKTSTAND.md`.
   Lockscreen. `noindex` bleibt (setzt der zentrale Caddy).
 - Die alte Anwendung liegt in `_archiv/`, ihr Image ist noch vorhanden
   (Rückweg in der README).
+
+- Seit 7. Oktober 2026: Knopf „Zugang anfragen“ (WhatsApp Business, #277523)
+  unter dem Login-Knopf, mit Hinweis-Dialog und eigenem Botschutz. Die Nummer
+  (`PHONE_NUMBER`) gibt das Gate erst nach gelöster Rechenaufgabe heraus.
+  Geprüft mit dem Skill `zugangsschutz` (Außenprüfung + Browsertest).
 
 ## 2. Geprüft am 6. Oktober 2026 (über https://senioren-computer-helfer.de)
 
@@ -67,6 +72,11 @@ von den bisherigen Vorgaben ab. Diese Punkte müssen bewusst entschieden werden:
   Fehlversuchen (Regel 5, §16), ist nicht geprüft.
 - React im Browser statt „wenig Client-JavaScript, keine Frameworks“ (Regel 9).
 - Anmeldung vor der Nutzung (§6 „Keine Anmeldung“) — für den Frühzugang gewollt.
+- WhatsApp-Kontakt im Lockscreen („Zugang anfragen“, 7. Oktober 2026, auf
+  ausdrücklichen Wunsch): Die Nummer wird damit nicht nur im Kölner
+  Eskalationsablauf (§16, AGENTS.md Regel 6) freigegeben, sondern jedem, der den
+  Botschutz löst. Technisch gilt Regel 6 weiter: nie im HTML, Freigabe
+  serverseitig.
 - Keine Content-Security-Policy: `support.js` erzeugt Code zur Laufzeit
   (`new Function`) und nutzt Inline-Styles.
 - Barrierefreiheit (Kontrast, Fokus, 200 % Zoom, Tastatur) ist für die neuen

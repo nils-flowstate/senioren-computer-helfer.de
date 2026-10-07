@@ -61,6 +61,8 @@ services:
     environment:
       GATE_SECRET: ${GATE_SECRET:?GATE_SECRET in .env setzen}
       GATE_PASSWORD_SHA256: ${GATE_PASSWORD_SHA256:?GATE_PASSWORD_SHA256 in .env setzen}
+      # WhatsApp-Nummer für „Zugang anfragen“ (geht erst nach dem Botschutz an den Browser)
+      PHONE_NUMBER: ${PHONE_NUMBER:?PHONE_NUMBER in .env setzen}
 
     # Einziger dauerhafter Speicher: Adresse → Zeitpunkte der Fehlversuche und
     # Sperren. Das Gate löscht abgelaufene Einträge selbst.

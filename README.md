@@ -22,7 +22,7 @@ Internet → Cloudflare → zentraler Caddy (/home/nils/caddy, TLS)
 | `Caddyfile` | Routing, `forward_auth` ans Gate, Sicherheitskopfzeilen, Besucher-IP |
 | `Dockerfile` | `caddy:2-alpine` mit `site/`, ohne Root, ohne Zusatzrechte |
 | `compose.yaml` | `web` + `gate`, Volume `gate_data`, Netz `proxy` |
-| `gate/` | Passwortprüfung, Rechenaufgabe, Sperre nach 5 Fehlversuchen (48 h) |
+| `gate/` | Passwortprüfung, Rechenaufgabe, Sperre nach 5 Fehlversuchen (48 h), WhatsApp-Link für „Zugang anfragen“ |
 | `site/` | Seiten, Laufzeit `support.js`, React lokal, Schriften lokal |
 
 **Besucher-IP:** Der zentrale Caddy vertraut Cloudflare nicht und reicht die
@@ -54,8 +54,8 @@ eingeht.
 
 **Was ohne Passwort erreichbar ist:** nur der Lockscreen (unter jeder Adresse),
 was er zum Anzeigen braucht (`/lock.html`, `/support.js`, `/nils.webp`,
-`/fonts/*`, `/vendor/*`), die Gate-Schnittstelle `/gate/challenge` und
-`/gate/login`, `/robots.txt` (verbietet alles) und `/health`. Fällt das Gate
+`/fonts/*`, `/vendor/*`), die Gate-Schnittstelle `/gate/challenge`,
+`/gate/login` und `/gate/whatsapp`, `/robots.txt` (verbietet alles) und `/health`. Fällt das Gate
 aus, bleibt die Website zu (404 statt Inhalt). Cloudflare speichert nur diese
 öffentlichen Dateien bis zu 4 Stunden zwischen; Inhaltsseiten tragen
 `Cache-Control: no-store`.
@@ -72,9 +72,21 @@ docker compose start gate
 (Das löscht alle Fehlversuche und Sperren. Einzelne Einträge: Datei vorher mit
 `cat` ansehen und gezielt bearbeiten.)
 
+**Zugang anfragen (WhatsApp):** grüner Knopf (#277523) unter dem Login-Knopf.
+Er öffnet einen Hinweis-Dialog (Weiterleitung zu WhatsApp Business, Meta). Der
+Dialog löst eine eigene Rechenaufgabe (`/gate/challenge?fuer=anfrage`, auch für
+gesperrte Adressen), erst dann gibt `/gate/whatsapp` den `wa.me`-Link heraus.
+Die Nummer steht nie im HTML. Nummer ändern: `PHONE_NUMBER` in `.env`, dann
+`docker compose up -d`.
+
+**Login-Dialog bleibt:** Wird ein neuer Export (Claude Design) eingespielt,
+bleibt `site/lock.html` samt Botschutz und WhatsApp-Knopf erhalten, außer es ist
+ausdrücklich ein neuer Login-Dialog gewünscht. Danach Skill `zugangsschutz`.
+
 ## Geheimnisse
 
-`.env` enthält `GATE_PASSWORD_SHA256` und `GATE_SECRET`. Sie gehört nicht nach
+`.env` enthält `GATE_PASSWORD_SHA256` (Passwort nur als Hash), `GATE_SECRET`
+und `PHONE_NUMBER`. Sie gehört nicht nach
 Git und nicht ins Image (`.dockerignore` lässt nur `Caddyfile` und `site/` in
 den Build-Kontext). Die übrigen Variablen in `.env` stammen von der alten
 Anwendung und werden von der neuen nicht gelesen. Sie bleiben für die spätere

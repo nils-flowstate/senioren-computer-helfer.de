@@ -1,5 +1,6 @@
 'use strict';
-// nils-gate: Passwort-Gate mit Botschutz (Proof-of-Work, ALTCHA-kompatibel) und IP-Sperre.
+// nils-gate: Passwort-Gate mit Botschutz (Proof-of-Work, ALTCHA-kompatibel) und IP-Sperre,
+// dazu der WhatsApp-Link für „Zugang anfragen“ (POST /gate/whatsapp, ebenfalls nur mit Botschutz).
 // Keine Abhängigkeiten, Node >= 20.
 const http = require('http'), crypto = require('crypto'), fs = require('fs');
 
@@ -16,6 +17,9 @@ const BAN_MS = 48 * 3600e3;          // → IP 48 h gesperrt
 const SESSION_MS = 12 * 3600e3;      // Server-seitige Höchstdauer einer Sitzung
 const CHALLENGE_MS = 10 * 60e3;      // Rechenaufgabe 10 min gültig
 const MAXNUMBER = Number(process.env.GATE_POW_MAX || 50000); // Schwierigkeit
+// WhatsApp-Nummer für „Zugang anfragen“, nur Ziffern. Erreicht den Browser erst nach gelöster Aufgabe.
+const WA_NUMMER = String(process.env.PHONE_NUMBER || '').replace(/\D/g, '');
+const WA_TEXT = process.env.WHATSAPP_TEXT || 'Hallo Nils, ich möchte gern Zugang zur Computerhilfe anfragen.';
 const DATA = '/data/gate.json';
 
 let db = { fails: {}, bans: {} };
@@ -58,6 +62,18 @@ function validToken(cookie) {
   if (!exp || !rnd || !sig) return false;
   return eq(sig, hmac('session:' + PW_HASH + ':' + exp + '.' + rnd)) && Number(exp) > Date.now();
 }
+// Höchstens 20 Anfragen pro Minute und Adresse an Aufgabe und WhatsApp-Link.
+const rate = new Map();
+const tooMany = (ip) => { const now = Date.now(), r = rate.get(ip) || { n: 0, at: now }; if (now - r.at > 60e3) { r.n = 0; r.at = now; } r.n++; rate.set(ip, r); return r.n > 20; };
+setInterval(() => { const now = Date.now(); for (const [k, r] of rate) if (now - r.at > 60e3) rate.delete(k); }, 60e3).unref();
+function powOk(s) {
+  s = s || {};
+  const exp = Number((/expires=(\d+)/.exec(String(s.salt)) || [])[1]) * 1000;
+  const ok = typeof s.challenge === 'string' && eq(s.signature, hmac(s.challenge)) && exp > Date.now()
+    && sha(String(s.salt) + String(s.number)) === s.challenge && !used.has(s.challenge);
+  if (ok) used.set(s.challenge, exp);                                      // jede Aufgabe nur einmal
+  return ok;
+}
 function send(res, code, obj, headers) {
   res.writeHead(code, Object.assign({ 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' }, headers || {}));
   res.end(JSON.stringify(obj));
@@ -90,7 +106,9 @@ http.createServer(async (req, res) => {
   }
 
   if (path === '/gate/challenge' && req.method === 'GET') {
-    const u = bannedUntil(ip);
+    if (tooMany(ip)) return send(res, 429, { error: 'rate' });
+    // ?fuer=anfrage: Aufgabe für „Zugang anfragen“ — auch gesperrte Adressen dürfen anfragen.
+    const u = new URL(req.url, 'http://gate').searchParams.get('fuer') === 'anfrage' ? 0 : bannedUntil(ip);
     if (u) return send(res, 429, { blocked: true, until: u });
     const salt = crypto.randomBytes(12).toString('hex') + '?expires=' + Math.floor((Date.now() + CHALLENGE_MS) / 1000);
     const challenge = sha(salt + crypto.randomInt(MAXNUMBER));
@@ -103,12 +121,7 @@ http.createServer(async (req, res) => {
     let b;
     try { b = await readJson(req); } catch { return send(res, 400, { error: 'bad_request' }); }
     if (b.website) return send(res, 400, { error: 'challenge' });          // Honeypot: Bots füllen es aus
-    const s = b.solution || {};
-    const exp = Number((/expires=(\d+)/.exec(String(s.salt)) || [])[1]) * 1000;
-    const powOk = typeof s.challenge === 'string' && eq(s.signature, hmac(s.challenge)) && exp > Date.now()
-      && sha(String(s.salt) + String(s.number)) === s.challenge && !used.has(s.challenge);
-    if (!powOk) return send(res, 400, { error: 'challenge' });
-    used.set(s.challenge, exp);                                              // jede Aufgabe nur einmal
+    if (!powOk(b.solution)) return send(res, 400, { error: 'challenge' });
     if (!eq(sha(String(b.password || '').trim()), PW_HASH)) {
       const left = registerFail(ip);
       return left === 0 ? send(res, 429, { blocked: true, until: db.bans[ip] }) : send(res, 401, { error: 'password', left });
@@ -117,6 +130,16 @@ http.createServer(async (req, res) => {
     const secure = req.headers['x-forwarded-proto'] === 'https' ? '; Secure' : '';
     // Session-Cookie: kein Max-Age/Expires → endet mit dem Browser. HttpOnly → für Skripte unsichtbar.
     return send(res, 200, { ok: true }, { 'Set-Cookie': 'nils_session=' + newToken() + '; Path=/; HttpOnly; SameSite=Strict' + secure });
+  }
+
+  // „Zugang anfragen“: wa.me-Link nur nach gelöster Aufgabe — die Nummer steht nie im HTML.
+  if (path === '/gate/whatsapp' && req.method === 'POST') {
+    if (tooMany(ip)) return send(res, 429, { error: 'rate' });
+    let b;
+    try { b = await readJson(req); } catch { return send(res, 400, { error: 'bad_request' }); }
+    if (b.website || !powOk(b.solution)) return send(res, 400, { error: 'challenge' });
+    if (!WA_NUMMER) return send(res, 503, { error: 'unavailable' });
+    return send(res, 200, { ok: true, url: 'https://wa.me/' + WA_NUMMER + '?text=' + encodeURIComponent(WA_TEXT) });
   }
 
   send(res, 404, { error: 'not_found' });
