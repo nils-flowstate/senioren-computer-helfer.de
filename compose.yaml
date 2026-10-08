@@ -23,6 +23,7 @@ services:
     restart: unless-stopped
     depends_on:
       - gate
+      - ki
 
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--spider", "http://127.0.0.1:3005/health"]
@@ -81,6 +82,54 @@ services:
         limits:
           cpus: "0.5"
           memory: 128M
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Nils schaut sich Fotos und Dokumente an (Claude). Nur "web" spricht ihn an,
+  # und zwar erst nach dem Gate. Kein Volume: Dateien bleiben im Arbeitsspeicher.
+  ki:
+    build: ./ki
+    image: senioren-computer-helfer-ki:aktuell
+    container_name: senioren-computer-helfer-ki
+    restart: unless-stopped
+
+    # Werte stehen in .env (nicht in Git, nicht im Image).
+    environment:
+      KI_ANBIETER: ${KI_ANBIETER:-anthropic}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:?ANTHROPIC_API_KEY in .env setzen}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-}
+      ANTHROPIC_AUFWAND: ${ANTHROPIC_AUFWAND:-medium}
+      MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-10}
+      RATE_LIMIT_PRO_MINUTE: ${RATE_LIMIT_PRO_MINUTE:-12}
+      MAX_NACHRICHTEN_PRO_SITZUNG: ${MAX_NACHRICHTEN_PRO_SITZUNG:-60}
+      TAGESBUDGET_ANFRAGEN: ${TAGESBUDGET_ANFRAGEN:-2000}
+    # kein Port nach außen – nur Caddy spricht mit dem Dienst
+
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--spider", "http://127.0.0.1:3000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          # Ein PDF bis 10 MB liegt als Base64 und als Puffer gleichzeitig im Speicher.
+          memory: 256M
 
     logging:
       driver: json-file

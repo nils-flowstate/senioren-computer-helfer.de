@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
 <script src="/support.js"></script>
 </head>
 <body>
@@ -15,155 +15,210 @@ html{-webkit-text-size-adjust:100%}body{margin:0;overflow-x:hidden;background:#E
 a{color:#4F7A5B}a:hover{color:#274536}
 @keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
 @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes bitte{0%,100%{box-shadow:0 0 0 0 rgba(79,122,91,.45)}50%{box-shadow:0 0 0 6px rgba(79,122,91,0)}}
+.app{height:100vh;height:100dvh;display:flex;flex-direction:column;max-width:760px;margin:0 auto;background:#fff}
+.verlauf{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.steuerung{flex:none;position:relative;padding:10px 12px calc(8px + env(safe-area-inset-bottom));border-top:1px solid #DFDACE;background:#FBF9F4}
+button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid #274536;outline-offset:2px}
+@media (max-height:560px){.app{height:auto;min-height:100vh}.verlauf{overflow:visible;flex:none}}
+/* Beim Tippen auf dem Handy ist der Chat genau so hoch wie der sichtbare Bereich über der Tastatur (Höhe setzt das Skript). Gilt auch unter 560 px, sonst rutscht das Eingabefeld unter die Tastatur. */
+html.tastatur .app{height:var(--sicht-h);min-height:0}html.tastatur .verlauf{overflow-y:auto;flex:1 1 auto}
+textarea::placeholder{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important}}
 </style>
 </helmet>
-<div style="min-height:100vh; background:#F4F1E9; color:#1E241F; padding:0 0 60px; --accent:#4F7A5B; --accentD:#274536; --bg:#F4F1E9; --bgSoft:#FBF9F4; --surface:#FFFFFF; --soft:#E4EDE4; --line:#DFDACE; --muted:#6B7268; --ink:#1E241F">
+<div style="background:#FBF9F4; color:#1E241F; --accent:#4F7A5B; --accentD:#274536; --bg:#F4F1E9; --bgSoft:#FBF9F4; --surface:#FFFFFF; --soft:#E4EDE4; --line:#DFDACE; --muted:#5F665C; --ink:#1E241F">
 
-  <div style="display:flex; flex-wrap:wrap; gap:clamp(14px,3vw,26px); justify-content:center; align-items:flex-start; padding:clamp(0px,3vw,26px) clamp(0px,3vw,22px)">
+  <div class="app">
 
-    <div style="flex:1 1 min(100%,640px); max-width:780px; min-width:0; background:var(--surface,#fff); border:1px solid var(--line,#DFDACE); border-radius:clamp(0px,3vw,26px); overflow:hidden; box-shadow:0 10px 30px rgba(20,40,25,.07)">
-
-      <div style="display:flex; align-items:center; gap:clamp(12px,3vw,20px); padding:clamp(14px,3.5vw,22px) clamp(14px,4vw,26px); background:var(--accent,#4F7A5B); color:#fff">
-        <div style="position:relative; flex:none">
-          <img src="nils.webp" alt="Nils" style="width:clamp(58px,15vw,82px); height:clamp(58px,15vw,82px); border-radius:50%; object-fit:cover; object-position:50% 18%; border:3px solid rgba(255,255,255,.85); display:block">
-          <span style="position:absolute; right:2px; bottom:4px; width:18px; height:18px; border-radius:50%; background:#5FD08A; border:3px solid var(--accent,#4F7A5B)"></span>
-        </div>
-        <div style="min-width:0">
-          <div style="font:800 clamp(24px,6vw,30px) 'Nunito',sans-serif; line-height:1.1">Nils</div>
-          <div style="font-size:20px; opacity:.92; margin-top:4px">Ihr persönlicher Computerhelfer · jetzt für Sie da</div>
-        </div>
-        <a href="faq.html" aria-label="Hilfe und häufige Fragen" title="Hilfe und häufige Fragen" style="margin-left:auto; flex:none; width:60px; height:60px; border-radius:50%; background:#fff; color:var(--accentD,#274536); display:flex; align-items:center; justify-content:center; font:800 clamp(24px,6vw,32px) 'Nunito',sans-serif; text-decoration:none" style-hover="background:var(--soft,#E4EDE4); color:var(--accentD,#274536)">?</a>
+    <header style="flex:none; display:flex; align-items:center; gap:10px; padding:8px 12px; background:var(--accent,#4F7A5B); color:#fff">
+      <div style="position:relative; flex:none">
+        <img src="nils.webp" alt="Nils" style="width:40px; height:40px; border-radius:50%; object-fit:cover; object-position:50% 18%; border:2px solid rgba(255,255,255,.85); display:block">
+        <span style="position:absolute; right:-1px; bottom:0; width:11px; height:11px; border-radius:50%; background:#5FD08A; border:2px solid var(--accent,#4F7A5B)"></span>
       </div>
-
-      <div style="padding:12px clamp(14px,4vw,26px); background:var(--soft,#E4EDE4); font-size:18px; color:var(--accentD,#274536); border-bottom:1px solid var(--line,#DFDACE)">
-        Sie können alles fragen. Es gibt keine dummen Fragen – wir gehen das in Ruhe zusammen durch.
+      <div style="min-width:0; flex:1 1 auto">
+        <div style="font:800 18px 'Nunito',sans-serif; line-height:1.15">Nils</div>
+        <div style="font-size:14px; opacity:.92; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">Ihr Computerhelfer · jetzt für Sie da</div>
       </div>
+      <a href="faq.html" aria-label="Hilfe und häufige Fragen" title="Hilfe und häufige Fragen" style="flex:none; width:44px; height:44px; border-radius:50%; background:#fff; color:var(--accentD,#274536); display:flex; align-items:center; justify-content:center; font:800 22px 'Nunito',sans-serif; text-decoration:none" style-hover="background:var(--soft,#E4EDE4)">?</a>
+    </header>
 
-      <div style="padding:26px; display:flex; flex-direction:column; gap:16px; min-height:{{ chatMinH }}px">
+    <div class="verlauf" ref="{{ verlaufRef }}" tabIndex="-1" role="log" aria-live="polite" aria-label="Gespräch mit Nils">
+      <div style="padding:14px 12px; display:flex; flex-direction:column; gap:10px">
         <sc-for list="{{ msgs }}" as="m" hint-placeholder-count="2">
-          <div style="display:flex; gap:12px; align-items:flex-end; justify-content:{{ m.justify }}; animation:rise .25s ease-out">
+          <div style="display:flex; gap:8px; align-items:flex-end; justify-content:{{ m.justify }}; animation:rise .25s ease-out">
             <sc-if value="{{ m.isNils }}" hint-placeholder-val="{{ true }}">
-              <img src="nils.webp" alt="" style="width:clamp(34px,9vw,44px); height:clamp(34px,9vw,44px); border-radius:50%; object-fit:cover; object-position:50% 18%; flex:none">
+              <img src="nils.webp" alt="" style="width:30px; height:30px; border-radius:50%; object-fit:cover; object-position:50% 18%; flex:none">
             </sc-if>
-            <div style="max-width:86%; padding:14px clamp(14px,3.5vw,22px); font-size:clamp(19px,4.8vw,22px); line-height:1.55; background:{{ m.bg }}; color:{{ m.fg }}; border:1px solid {{ m.bd }}; border-radius:{{ m.radius }}">{{ m.text }}</div>
+            <sc-if value="{{ m.hatText }}" hint-placeholder-val="{{ true }}">
+              <div style="max-width:84%; padding:9px 13px; font-size:clamp(16px,4.3vw,18px); line-height:1.45; background:{{ m.bg }}; color:{{ m.fg }}; border:1px solid {{ m.bd }}; border-radius:{{ m.radius }}">{{ m.text }}</div>
+            </sc-if>
+            <sc-if value="{{ m.istBild }}" hint-placeholder-val="{{ false }}">
+              <img ref="{{ m.bildSetzen }}" alt="{{ m.alt }}" style="display:block; max-width:70%; max-height:220px; object-fit:cover; border-radius:16px 16px 6px 16px; border:2px solid var(--accent,#4F7A5B)">
+            </sc-if>
+            <sc-if value="{{ m.istDok }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex; align-items:center; gap:10px; max-width:84%; padding:10px 13px; border-radius:16px 16px 6px 16px; background:#fff; border:2px solid var(--accent,#4F7A5B); color:var(--ink,#1E241F)">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#274536" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path></svg>
+                <span style="min-width:0"><span style="display:block; font:700 15px 'Nunito',sans-serif; overflow-wrap:anywhere">{{ m.name }}</span><span style="display:block; font-size:13px; color:var(--muted,#5F665C)">{{ m.groesse }}</span></span>
+              </div>
+            </sc-if>
           </div>
         </sc-for>
 
         <sc-if value="{{ typing }}" hint-placeholder-val="{{ false }}">
-          <div style="display:flex; gap:12px; align-items:center">
-            <img src="nils.webp" alt="" style="width:44px; height:44px; border-radius:50%; object-fit:cover; object-position:50% 18%">
-            <div style="display:flex; gap:6px; padding:18px 22px; background:var(--soft,#E4EDE4); border-radius:20px 20px 20px 6px">
-              <span style="width:10px; height:10px; border-radius:50%; background:var(--accent,#4F7A5B); animation:blink 1.2s infinite"></span>
-              <span style="width:10px; height:10px; border-radius:50%; background:var(--accent,#4F7A5B); animation:blink 1.2s infinite .2s"></span>
-              <span style="width:10px; height:10px; border-radius:50%; background:var(--accent,#4F7A5B); animation:blink 1.2s infinite .4s"></span>
+          <div style="display:flex; gap:8px; align-items:center" aria-label="Nils schreibt">
+            <img src="nils.webp" alt="" style="width:30px; height:30px; border-radius:50%; object-fit:cover; object-position:50% 18%">
+            <div style="display:flex; gap:5px; padding:13px 16px; background:var(--soft,#E4EDE4); border-radius:18px 18px 18px 6px">
+              <span style="width:8px; height:8px; border-radius:50%; background:var(--accent,#4F7A5B); animation:blink 1.2s infinite"></span>
+              <span style="width:8px; height:8px; border-radius:50%; background:var(--accent,#4F7A5B); animation:blink 1.2s infinite .2s"></span>
+              <span style="width:8px; height:8px; border-radius:50%; background:var(--accent,#4F7A5B); animation:blink 1.2s infinite .4s"></span>
             </div>
           </div>
         </sc-if>
       </div>
+    </div>
 
-      <div style="padding:clamp(14px,4vw,22px) clamp(12px,4vw,26px) clamp(18px,4vw,26px); border-top:1px solid var(--line,#DFDACE); background:var(--bgSoft,#FBF9F4)">
+    <div class="steuerung">
+      <input type="file" accept="image/*" ref="{{ bildRef }}" onChange="{{ onDatei }}" tabIndex="-1" aria-hidden="true" style="display:none">
+      <input type="file" accept=".pdf,.doc,.docx,.odt,.rtf,.txt,image/*" ref="{{ dokRef }}" onChange="{{ onDatei }}" tabIndex="-1" aria-hidden="true" style="display:none">
 
-        <sc-if value="{{ showTopics }}" hint-placeholder-val="{{ true }}">
-          <div>
-            <sc-if value="{{ notFreeOpen }}" hint-placeholder-val="{{ true }}">
-            <div ref="{{ topicsRef }}">
-            <div style="font-size:19px; color:var(--muted,#6B7268); margin-bottom:14px">Womit darf ich Ihnen helfen? Bitte tippen Sie auf einen Satz.</div>
-            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr)); gap:14px">
+      <sc-if value="{{ plusOffen }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ onPlusZu }}" style="position:fixed; inset:0; z-index:20"></div>
+        <div role="menu" aria-label="Hinzufügen" style="position:absolute; left:12px; right:12px; bottom:calc(100% - 4px); z-index:21; max-width:420px; background:#fff; border:1px solid var(--line,#DFDACE); border-radius:18px; padding:8px; box-shadow:0 12px 32px rgba(20,40,25,.18); display:flex; flex-direction:column; gap:6px">
+          <button role="menuitem" onClick="{{ onBildWaehlen }}" style="display:flex; align-items:center; gap:12px; min-height:56px; padding:8px 12px; border:none; border-radius:12px; background:transparent; cursor:pointer; text-align:left; font-family:'Source Sans 3',sans-serif" style-hover="background:var(--soft,#E4EDE4)">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#274536" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+            <span><span style="display:block; font:700 17px 'Nunito',sans-serif; color:var(--accentD,#274536)">Foto oder Bild</span><span style="display:block; font-size:14px; color:var(--muted,#5F665C)">Mit der Kamera oder aus Ihren Bildern</span></span>
+          </button>
+          <button role="menuitem" onClick="{{ onDokWaehlen }}" style="display:flex; align-items:center; gap:12px; min-height:56px; padding:8px 12px; border:none; border-radius:12px; background:transparent; cursor:pointer; text-align:left; font-family:'Source Sans 3',sans-serif" style-hover="background:var(--soft,#E4EDE4)">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#274536" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path></svg>
+            <span><span style="display:block; font:700 17px 'Nunito',sans-serif; color:var(--accentD,#274536)">Dokument</span><span style="display:block; font-size:14px; color:var(--muted,#5F665C)">Zum Beispiel ein Brief als PDF</span></span>
+          </button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ plusZeile }}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{ onPlus }}" aria-haspopup="menu" aria-expanded="{{ plusOffenText }}" style="display:flex; align-items:center; gap:10px; width:100%; min-height:44px; margin-bottom:8px; padding:0 6px 0 0; border:none; border-radius:24px; background:transparent; cursor:pointer; font:600 16px 'Source Sans 3',sans-serif; color:var(--accentD,#274536); text-align:left">
+          <span style="flex:none; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:{{ plusBg }}; border:2px solid {{ plusBd }}; animation:{{ plusAnim }}">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#274536" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+          </span>
+          {{ plusText }}
+        </button>
+      </sc-if>
+
+      <sc-if value="{{ showTopics }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <sc-if value="{{ notFreeOpen }}" hint-placeholder-val="{{ true }}">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px">
               <sc-for list="{{ topics }}" as="t" hint-placeholder-count="4">
-                <button onClick="{{ t.pick }}" style="text-align:left; cursor:pointer; padding:20px 22px; min-height:88px; border-radius:18px; background:#fff; border:2px solid var(--line,#DFDACE); font-family:'Source Sans 3',sans-serif" style-hover="border-color:var(--accent,#4F7A5B); background:var(--soft,#E4EDE4)">
-                  <div style="font:700 22px 'Nunito',sans-serif; color:var(--accentD,#274536)">{{ t.label }}</div>
-                  <div style="font-size:17px; color:var(--muted,#6B7268); margin-top:4px">{{ t.hint }}</div>
+                <button onClick="{{ t.pick }}" style="text-align:left; cursor:pointer; padding:9px 11px; min-height:64px; border-radius:14px; background:#fff; border:2px solid var(--line,#DFDACE); font-family:'Source Sans 3',sans-serif" style-hover="border-color:var(--accent,#4F7A5B); background:var(--soft,#E4EDE4)">
+                  <div style="font:700 16px 'Nunito',sans-serif; line-height:1.2; color:var(--accentD,#274536)">{{ t.label }}</div>
+                  <div style="font-size:13px; line-height:1.3; color:var(--muted,#5F665C); margin-top:3px">{{ t.hint }}</div>
                 </button>
               </sc-for>
             </div>
-            </div>
+            <button onClick="{{ onOpenFree }}" style="margin-top:8px; width:100%; cursor:pointer; min-height:48px; border-radius:14px; background:var(--accentD,#274536); border:none; color:#fff; font:700 17px 'Nunito',sans-serif" style-hover="background:#335A46">Etwas anderes</button>
+          </sc-if>
+        </div>
+      </sc-if>
 
-            <button onClick="{{ onOpenFree }}" style="margin-top:14px; width:100%; cursor:pointer; padding:20px; min-height:82px; border-radius:18px; background:var(--accentD,#274536); border:none; color:#fff; font:700 22px 'Nunito',sans-serif" style-hover="background:#335A46">Etwas anderes</button>
+      <sc-if value="{{ freeOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; align-items:flex-end; gap:8px">
+          <div style="flex:none; display:flex; flex-direction:column; gap:6px">
+            <sc-if value="{{ textLang }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ onGross }}" aria-label="{{ grossLabel }}" title="{{ grossLabel }}" aria-pressed="{{ grossText }}" aria-controls="frage" style="width:48px; height:48px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; background:#fff; border:2px solid var(--accent,#4F7A5B)" style-hover="background:var(--soft,#E4EDE4)">
+                <sc-if value="{{ textKlein }}" hint-placeholder-val="{{ true }}">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#274536" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6"></path><path d="M9 21H3v-6"></path><path d="M21 3l-7 7"></path><path d="M3 21l7-7"></path></svg>
+                </sc-if>
+                <sc-if value="{{ textGross }}" hint-placeholder-val="{{ false }}">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#274536" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14h6v6"></path><path d="M20 10h-6V4"></path><path d="M14 10l7-7"></path><path d="M3 21l7-7"></path></svg>
+                </sc-if>
+              </button>
             </sc-if>
-
-            <sc-if value="{{ freeOpen }}" hint-placeholder-val="{{ false }}">
-              <div style="display:flex; align-items:flex-end; gap:12px">
-                <textarea id="frage" aria-label="Ihr Problem in eigenen Worten" value="{{ freeText }}" onChange="{{ onFreeText }}" rows="1" autoFocus="{{ true }}" placeholder="Zum Beispiel: Mein Bildschirm ist plötzlich ganz dunkel." style="flex:1 1 auto; min-width:0; box-sizing:border-box; min-height:82px; padding:24px 20px; font-size:22px; line-height:1.5; font-family:'Source Sans 3',sans-serif; border:2px solid var(--accentD,#274536); border-radius:18px; background:#fff; color:var(--ink,#1E241F); resize:none; overflow:hidden"></textarea>
-                <button onClick="{{ onFreeSend }}" aria-label="Absenden" style="flex:0 0 clamp(64px,16vw,82px); width:clamp(64px,16vw,82px); height:clamp(64px,16vw,82px); cursor:pointer; border-radius:50%; border:none; background:var(--accentD,#274536); color:#fff; display:flex; align-items:center; justify-content:center" style-hover="background:#335A46">
-                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"></path><path d="M22 2 15 22l-4-9-9-4z"></path></svg>
-                </button>
-              </div>
-            </sc-if>
+            <button onClick="{{ onPlus }}" aria-label="Foto oder Dokument hinzufügen" aria-haspopup="menu" aria-expanded="{{ plusOffenText }}" style="width:48px; height:48px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; background:{{ plusBg }}; border:2px solid {{ plusBd }}; animation:{{ plusAnim }}">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#274536" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+            </button>
           </div>
-        </sc-if>
+          <textarea id="frage" aria-label="Ihr Problem in eigenen Worten" value="{{ freeText }}" onChange="{{ onFreeText }}" rows="1" autoFocus="{{ true }}" placeholder="{{ beispiel }}" style="flex:1 1 auto; min-width:0; box-sizing:border-box; min-height:48px; padding:11px 14px; font-size:17px; line-height:1.4; font-family:'Source Sans 3',sans-serif; border:2px solid var(--accentD,#274536); border-radius:16px; background:#fff; color:var(--ink,#1E241F); resize:none"></textarea>
+          <button onClick="{{ onFreeSend }}" aria-label="Absenden" style="flex:none; width:48px; height:48px; cursor:pointer; border-radius:50%; border:none; background:var(--accentD,#274536); color:#fff; display:flex; align-items:center; justify-content:center" style-hover="background:#335A46">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"></path><path d="M22 2 15 22l-4-9-9-4z"></path></svg>
+          </button>
+        </div>
+      </sc-if>
 
-        <sc-if value="{{ showIntake }}" hint-placeholder-val="{{ false }}">
-          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr)); gap:14px">
-            <sc-for list="{{ intakeOpts }}" as="o" hint-placeholder-count="4">
-              <button onClick="{{ o.pick }}" style="text-align:left; cursor:pointer; padding:20px 22px; min-height:82px; border-radius:18px; background:#fff; border:2px solid var(--line,#DFDACE); font-family:'Source Sans 3',sans-serif" style-hover="border-color:var(--accent,#4F7A5B); background:var(--soft,#E4EDE4)">
-                <div style="font:700 22px 'Nunito',sans-serif; color:var(--accentD,#274536)">{{ o.label }}</div>
-                <div style="font-size:17px; color:var(--muted,#6B7268); margin-top:4px">{{ o.hint }}</div>
+      <sc-if value="{{ showIntake }}" hint-placeholder-val="{{ false }}">
+        <div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px">
+          <sc-for list="{{ intakeOpts }}" as="o" hint-placeholder-count="4">
+            <button onClick="{{ o.pick }}" style="text-align:left; cursor:pointer; padding:8px 11px; min-height:56px; border-radius:14px; background:#fff; border:2px solid var(--line,#DFDACE); font-family:'Source Sans 3',sans-serif" style-hover="border-color:var(--accent,#4F7A5B); background:var(--soft,#E4EDE4)">
+              <div style="font:700 16px 'Nunito',sans-serif; line-height:1.2; color:var(--accentD,#274536)">{{ o.label }}</div>
+              <sc-if value="{{ o.hint }}" hint-placeholder-val="{{ true }}"><div style="font-size:13px; line-height:1.3; color:var(--muted,#5F665C); margin-top:3px">{{ o.hint }}</div></sc-if>
+            </button>
+          </sc-for>
+        </div>
+        <button onClick="{{ onSelbst }}" style="margin-top:8px; width:100%; cursor:pointer; min-height:48px; border-radius:14px; background:#fff; border:2px solid var(--accentD,#274536); color:var(--accentD,#274536); font:700 17px 'Nunito',sans-serif" style-hover="background:var(--soft,#E4EDE4)">Lass es mich selbst beschreiben</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ showAnswers }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px">
+            <button onClick="{{ onYes }}" style="cursor:pointer; min-height:52px; border-radius:14px; border:none; background:var(--accent,#4F7A5B); color:#fff; font:700 19px 'Nunito',sans-serif" style-hover="filter:brightness(1.08)">Ja</button>
+            <button onClick="{{ onNo }}" style="cursor:pointer; min-height:52px; border-radius:14px; border:2px solid var(--accent,#4F7A5B); background:#fff; color:var(--accentD,#274536); font:700 19px 'Nunito',sans-serif" style-hover="background:var(--soft,#E4EDE4)">Nein</button>
+            <button onClick="{{ onUnsure }}" style="cursor:pointer; min-height:52px; padding:4px 8px; border-radius:14px; border:2px solid var(--line,#DFDACE); background:#fff; color:var(--ink,#1E241F); font:600 16px 'Source Sans 3',sans-serif" style-hover="border-color:var(--accent,#4F7A5B)">Ich weiß es nicht</button>
+            <button onClick="{{ onSimpler }}" style="cursor:pointer; min-height:52px; padding:4px 8px; border-radius:14px; border:2px solid var(--line,#DFDACE); background:#fff; color:var(--ink,#1E241F); font:600 16px 'Source Sans 3',sans-serif" style-hover="border-color:var(--accent,#4F7A5B)">Bitte einfacher erklären</button>
+          </div>
+          <button onClick="{{ onSelbst }}" style="margin-top:8px; width:100%; cursor:pointer; min-height:48px; border-radius:14px; background:#fff; border:2px solid var(--accentD,#274536); color:var(--accentD,#274536); font:700 17px 'Nunito',sans-serif" style-hover="background:var(--soft,#E4EDE4)">Lass es mich selbst beschreiben</button>
+          <button onClick="{{ onEscalate }}" style="margin-top:4px; width:100%; min-height:40px; cursor:pointer; padding:6px; border:none; background:transparent; color:var(--muted,#5F665C); font:600 15px 'Source Sans 3',sans-serif; text-decoration:underline" style-hover="color:var(--accentD,#274536)">Ich möchte lieber, dass jemand vorbeikommt</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ showOffer }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px">
+          <button onClick="{{ onEscalate }}" style="cursor:pointer; min-height:52px; padding:4px 8px; border-radius:14px; border:none; background:var(--accent,#4F7A5B); color:#fff; font:700 16px 'Nunito',sans-serif" style-hover="filter:brightness(1.08)">Ja, gerne einen Termin</button>
+          <button onClick="{{ onRestart }}" style="cursor:pointer; min-height:52px; padding:4px 8px; border-radius:14px; border:2px solid var(--line,#DFDACE); background:#fff; color:var(--ink,#1E241F); font:600 16px 'Source Sans 3',sans-serif" style-hover="border-color:var(--accent,#4F7A5B)">Nein, ich versuche es weiter</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ showDone }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px">
+          <button onClick="{{ onRestart }}" style="cursor:pointer; min-height:52px; padding:4px 8px; border-radius:14px; border:none; background:var(--accent,#4F7A5B); color:#fff; font:700 16px 'Nunito',sans-serif" style-hover="filter:brightness(1.08)">Ich habe noch eine Frage</button>
+          <button onClick="{{ onBye }}" style="cursor:pointer; min-height:52px; padding:4px 8px; border-radius:14px; border:2px solid var(--line,#DFDACE); background:#fff; color:var(--ink,#1E241F); font:600 16px 'Source Sans 3',sans-serif" style-hover="border-color:var(--accent,#4F7A5B)">Vielen Dank, das war alles</button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ showBild }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px">
+            <sc-for list="{{ bildOpts }}" as="o" hint-placeholder-count="2">
+              <button onClick="{{ o.pick }}" style="text-align:left; cursor:pointer; padding:8px 11px; min-height:56px; border-radius:14px; background:#fff; border:2px solid var(--line,#DFDACE); font-family:'Source Sans 3',sans-serif" style-hover="border-color:var(--accent,#4F7A5B); background:var(--soft,#E4EDE4)">
+                <div style="font:700 16px 'Nunito',sans-serif; line-height:1.2; color:var(--accentD,#274536)">{{ o.label }}</div>
               </button>
             </sc-for>
           </div>
-        </sc-if>
-
-        <sc-if value="{{ showAnswers }}" hint-placeholder-val="{{ false }}">
-          <div>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px">
-              <button onClick="{{ onYes }}" style="cursor:pointer; min-height:82px; border-radius:18px; border:none; background:var(--accent,#4F7A5B); color:#fff; font:700 26px 'Nunito',sans-serif" style-hover="filter:brightness(1.08)">Ja</button>
-              <button onClick="{{ onNo }}" style="cursor:pointer; min-height:82px; border-radius:18px; border:2px solid var(--accent,#4F7A5B); background:#fff; color:var(--accentD,#274536); font:700 26px 'Nunito',sans-serif" style-hover="background:var(--soft,#E4EDE4)">Nein</button>
-              <button onClick="{{ onUnsure }}" style="cursor:pointer; min-height:82px; border-radius:18px; border:2px solid var(--line,#DFDACE); background:#fff; color:var(--ink,#1E241F); font:600 22px 'Source Sans 3',sans-serif" style-hover="border-color:var(--accent,#4F7A5B)">Ich weiß es nicht</button>
-              <button onClick="{{ onSimpler }}" style="cursor:pointer; min-height:82px; border-radius:18px; border:2px solid var(--line,#DFDACE); background:#fff; color:var(--ink,#1E241F); font:600 22px 'Source Sans 3',sans-serif" style-hover="border-color:var(--accent,#4F7A5B)">Bitte einfacher erklären</button>
-            </div>
-            <button onClick="{{ onEscalate }}" style="margin-top:14px; width:100%; cursor:pointer; padding:14px; border-radius:14px; border:none; background:transparent; color:var(--muted,#6B7268); font:600 18px 'Source Sans 3',sans-serif; text-decoration:underline" style-hover="color:var(--accentD,#274536)">Ich möchte lieber, dass jemand vorbeikommt</button>
-          </div>
-        </sc-if>
-
-        <sc-if value="{{ showOffer }}" hint-placeholder-val="{{ false }}">
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px">
-            <button onClick="{{ onEscalate }}" style="cursor:pointer; min-height:82px; border-radius:18px; border:none; background:var(--accent,#4F7A5B); color:#fff; font:700 24px 'Nunito',sans-serif" style-hover="filter:brightness(1.08)">Ja, gerne einen Termin</button>
-            <button onClick="{{ onRestart }}" style="cursor:pointer; min-height:82px; border-radius:18px; border:2px solid var(--line,#DFDACE); background:#fff; color:var(--ink,#1E241F); font:600 22px 'Source Sans 3',sans-serif" style-hover="border-color:var(--accent,#4F7A5B)">Nein, ich versuche es weiter</button>
-          </div>
-        </sc-if>
-
-        <sc-if value="{{ showDone }}" hint-placeholder-val="{{ false }}">
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px">
-            <button onClick="{{ onRestart }}" style="cursor:pointer; min-height:82px; border-radius:18px; border:none; background:var(--accent,#4F7A5B); color:#fff; font:700 24px 'Nunito',sans-serif" style-hover="filter:brightness(1.08)">Ich habe noch eine Frage</button>
-            <button onClick="{{ onBye }}" style="cursor:pointer; min-height:82px; border-radius:18px; border:2px solid var(--line,#DFDACE); background:#fff; color:var(--ink,#1E241F); font:600 22px 'Source Sans 3',sans-serif" style-hover="border-color:var(--accent,#4F7A5B)">Vielen Dank, das war alles</button>
-          </div>
-        </sc-if>
-
-        <sc-if value="{{ showCity }}" hint-placeholder-val="{{ false }}">
-          <div>
-            <label for="city" style="display:block; font-size:20px; color:var(--muted,#6B7268); margin-bottom:10px">In welcher Stadt wohnen Sie?</label>
-            <div style="display:flex; flex-wrap:wrap; gap:12px">
-              <input id="city" value="{{ city }}" onChange="{{ onCity }}" placeholder="zum Beispiel: Köln" style="flex:1 1 260px; min-width:0; padding:18px 20px; font-size:24px; font-family:'Source Sans 3',sans-serif; border:2px solid var(--line,#DFDACE); border-radius:16px; background:#fff; color:var(--ink,#1E241F)">
-              <button onClick="{{ onCitySubmit }}" style="cursor:pointer; padding:0 30px; min-height:70px; border-radius:16px; border:none; background:var(--accent,#4F7A5B); color:#fff; font:700 24px 'Nunito',sans-serif" style-hover="filter:brightness(1.08)">Weiter</button>
-            </div>
-          </div>
-        </sc-if>
-      </div>
-    </div>
-
-    <div style="flex:1 1 300px; max-width:780px; min-width:0; padding:0 clamp(12px,3vw,0px); box-sizing:border-box; display:flex; flex-direction:column; gap:18px">
-      <div style="background:var(--surface,#fff); border:1px solid var(--line,#DFDACE); border-radius:22px; padding:22px">
-        <div style="font:800 21px 'Nunito',sans-serif; color:var(--accentD,#274536)">Nils merkt sich das</div>
-        <div style="font-size:16px; color:var(--muted,#6B7268); margin-top:6px; line-height:1.45">Beim nächsten Mal weiß ich schon Bescheid – Sie müssen nichts wiederholen.</div>
-        <div style="display:flex; flex-direction:column; gap:10px; margin-top:16px">
-          <sc-for list="{{ memory }}" as="k" hint-placeholder-count="2">
-            <div style="display:flex; gap:10px; align-items:flex-start; padding:12px 14px; border-radius:14px; background:var(--soft,#E4EDE4); font-size:17px; line-height:1.4; color:var(--accentD,#274536)">
-              <span style="flex:none; width:9px; height:9px; margin-top:7px; border-radius:50%; background:var(--accent,#4F7A5B)"></span>
-              {{ k.text }}
-            </div>
-          </sc-for>
-          <sc-if value="{{ memoryEmpty }}" hint-placeholder-val="{{ true }}">
-            <div style="font-size:17px; color:var(--muted,#6B7268); font-style:italic">Noch nichts – wir fangen gerade erst an.</div>
+          <sc-if value="{{ bildSelbst }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ onSelbst }}" style="margin-top:8px; width:100%; cursor:pointer; min-height:48px; border-radius:14px; background:#fff; border:2px solid var(--accentD,#274536); color:var(--accentD,#274536); font:700 17px 'Nunito',sans-serif" style-hover="background:var(--soft,#E4EDE4)">Lass es mich selbst beschreiben</button>
           </sc-if>
         </div>
-      </div>
+      </sc-if>
 
-      <div style="background:var(--surface,#fff); border:1px solid var(--line,#DFDACE); border-radius:22px; padding:22px">
-        <div style="font:800 21px 'Nunito',sans-serif; color:var(--accentD,#274536)">Schutz vor Betrug</div>
-        <div style="font-size:18px; color:var(--ink,#1E241F); margin-top:8px; line-height:1.45">So erkennen Sie falsche Anrufe und Nachrichten.</div>
-        <a href="faq.html" style="display:block; margin-top:12px; font:700 19px 'Nunito',sans-serif">Mehr erfahren</a>
-      </div>
+      <sc-if value="{{ showCity }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <label for="city" style="display:block; font-size:16px; color:var(--muted,#5F665C); margin-bottom:6px">In welcher Stadt wohnen Sie?</label>
+          <div style="display:flex; gap:8px">
+            <input id="city" value="{{ city }}" onChange="{{ onCity }}" placeholder="zum Beispiel: Köln" style="flex:1 1 auto; min-width:0; min-height:48px; box-sizing:border-box; padding:8px 14px; font-size:17px; font-family:'Source Sans 3',sans-serif; border:2px solid var(--line,#DFDACE); border-radius:14px; background:#fff; color:var(--ink,#1E241F)">
+            <button onClick="{{ onCitySubmit }}" style="flex:none; cursor:pointer; padding:0 20px; min-height:48px; border-radius:14px; border:none; background:var(--accent,#4F7A5B); color:#fff; font:700 17px 'Nunito',sans-serif" style-hover="filter:brightness(1.08)">Weiter</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <div style="margin-top:6px; font-size:13px; line-height:1.3; color:var(--muted,#5F665C); text-align:center">Bitte geben Sie keine Passwörter, PINs oder TANs ein.</div>
     </div>
+  </div>
+
+  <div style="max-width:760px; margin:0 auto; padding:18px 12px 40px; box-sizing:border-box">
+    <div style="font:800 17px 'Nunito',sans-serif; color:var(--accentD,#274536)">Schutz vor Betrug</div>
+    <div style="font-size:16px; line-height:1.45; margin-top:4px">So erkennen Sie falsche Anrufe und Nachrichten. <a href="faq.html" style="font-weight:700">Mehr erfahren</a></div>
+    <button onClick="{{ onNeuerChat }}" style="margin-top:14px; cursor:pointer; min-height:48px; padding:0 22px; border-radius:14px; background:#fff; border:2px solid var(--accentD,#274536); color:var(--accentD,#274536); font:700 17px 'Nunito',sans-serif" style-hover="background:var(--soft,#E4EDE4)">Neuer Chat</button>
   </div>
 
   <sc-if value="{{ showBooking }}" hint-placeholder-val="{{ false }}">
@@ -229,7 +284,7 @@ const TOPICS = [
 
 const FLOWS = {
   drucker: [
-    {t:'Schauen wir uns das ganz in Ruhe zusammen an. Gehen Sie bitte zum Drucker: Leuchtet dort irgendwo ein kleines Licht?',
+    {t:'Schauen wir uns das ganz in Ruhe zusammen an. Gehen Sie bitte zum Drucker: Leuchtet dort irgendwo ein kleines Licht?', bild:'foto',
      simple:'Ganz einfach gesagt: Stehen Sie vor dem Drucker. Brennt dort ein kleines Lämpchen? Ja oder nein – mehr brauche ich nicht.',
      unsure:'Das ist überhaupt kein Problem. Die Lämpchen sind meist vorne am Gerät, ganz klein, oft grün oder blau. Schauen Sie in Ruhe nach, ich warte hier auf Sie.', yes:1, no:4},
     {t:'Sehr gut, dann hat der Drucker Strom. Liegt Papier im Fach unten am Drucker?',
@@ -248,10 +303,10 @@ const FLOWS = {
     {t:'Damit möchte ich Sie nicht allein lassen. Ich schaue mir das gern persönlich bei Ihnen an – ganz in Ruhe und ohne Eile.', offer:true}
   ],
   internet: [
-    {t:'Das bekommen wir hin. Bei Ihnen steht ein kleiner Kasten mit Lämpchen, meist vom Telefonanbieter. Leuchten dort Lichter?',
+    {t:'Das bekommen wir hin. Bei Ihnen steht ein kleiner Kasten mit Lämpchen, meist vom Telefonanbieter. Leuchten dort Lichter?', bild:'foto',
      simple:'Suchen Sie den kleinen Kasten mit den Lämpchen. Brennt dort Licht?',
      unsure:'Der Kasten steht oft im Flur oder neben dem Telefon, ist weiß oder grau und hat mehrere kleine Lichter. Schauen Sie ruhig nach.', yes:1, no:2},
-    {t:'Gut. Sehen Sie auf Ihrem Bildschirm unten rechts das kleine Zeichen für WLAN – die kleinen Bögen übereinander?',
+    {t:'Gut. Sehen Sie auf Ihrem Bildschirm unten rechts das kleine Zeichen für WLAN – die kleinen Bögen übereinander?', bild:'screen',
      simple:'Schauen Sie unten rechts am Bildschirm. Sehen Sie dort ein Zeichen wie kleine Wellen?',
      unsure:'Es ist ganz klein, neben der Uhrzeit unten rechts. Sie dürfen ruhig ganz nah an den Bildschirm gehen.', yes:3, no:4},
     {t:'Dann ziehen Sie bitte den Stecker dieses Kastens aus der Steckdose, warten eine Minute und stecken ihn wieder ein. Leuchten nach zwei Minuten wieder Lichter?',
@@ -267,7 +322,7 @@ const FLOWS = {
     {t:'Sehr schön, Sie sind wieder online! Das haben Sie gut gemacht.', done:true}
   ],
   email: [
-    {t:'Wenn Sie Ihre E-Mails öffnen: Erscheint dann eine Meldung in einem kleinen Kästchen?',
+    {t:'Wenn Sie Ihre E-Mails öffnen: Erscheint dann eine Meldung in einem kleinen Kästchen?', bild:'screen',
      simple:'Kommt beim Öffnen ein Fenster mit Text darin?',
      unsure:'Ein solches Kästchen erscheint mitten auf dem Bildschirm und hat meist einen Knopf mit "OK". Schauen Sie einmal nach.', yes:1, no:2},
     {t:'Steht in dieser Meldung irgendwo das Wort "Passwort"?',
@@ -292,7 +347,7 @@ const FLOWS = {
     {t:'Dann starten wir ihn einmal neu: unten links auf das Startzeichen, dann auf "Ein/Aus", dann auf "Neu starten". Läuft er danach besser?',
      simple:'Unten links klicken. "Ein/Aus" klicken. "Neu starten" klicken. Warten. Ist er schneller?',
      unsure:'Das Startzeichen ist ganz unten in der linken Ecke. Es sieht aus wie ein kleines Fenster aus vier Teilen.', yes:4, no:2},
-    {t:'Haben Sie gerade viele Fenster gleichzeitig offen, zum Beispiel mehrere Internetseiten?',
+    {t:'Haben Sie gerade viele Fenster gleichzeitig offen, zum Beispiel mehrere Internetseiten?', bild:'screen',
      simple:'Sind viele Fenster gleichzeitig auf dem Bildschirm offen?',
      unsure:'Schauen Sie unten in der Leiste: Je mehr kleine Bilder dort stehen, desto mehr ist offen.', yes:3, no:5},
     {t:'Dann schließen wir die meisten davon: Klicken Sie bei jedem Fenster oben rechts auf das kleine Kreuz, bis nur noch eines übrig ist. Ist er jetzt flotter?',
@@ -310,7 +365,7 @@ FLOWS.sonstiges = [
   {t:'Danke. Dann probieren wir zuerst das Einfachste, das erstaunlich oft hilft: Schalten Sie das Gerät ganz aus, warten Sie eine Minute und schalten Sie es wieder ein. Ist es danach besser?',
    simple:'Gerät aus. Eine Minute warten. Gerät wieder an. Ist es jetzt besser?',
    unsure:'Sie können dabei nichts kaputt machen. Lassen Sie sich Zeit, ich bleibe hier.', yes:3, no:4},
-  {t:'Gut zu wissen. Erscheint dabei ein Text oder ein kleines Fenster auf dem Bildschirm?',
+  {t:'Gut zu wissen. Erscheint dabei ein Text oder ein kleines Fenster auf dem Bildschirm?', bild:'screen',
    simple:'Steht irgendwo auf dem Bildschirm eine Meldung?',
    unsure:'Schauen Sie einfach in die Mitte des Bildschirms. Steht dort etwas, das vorher nicht da war?', yes:4, no:1},
   {t:'Wunderbar, dann ist es gelöst. Sie haben das sehr gut gemacht.', done:true},
@@ -363,6 +418,72 @@ const INTAKE = {
                   opts:[{val:'yes', label:'Ja, da war etwas', hint:''}, {val:'no', label:'Nein, nichts', hint:''}, UNSURE]})
 };
 
+// Bitte um ein Bild – Nils fragt danach, wo er etwas sehen müsste.
+const BILD_BITTE = {
+  foto: 'Falls es Ihnen möglich ist, machen Sie gern ein Foto davon. Tippen Sie dazu unten auf das Plus.',
+  screen: 'Senden Sie mir gern ein Bildschirmfoto (Screenshot), dann schaue ich es mir an. Sie können den Bildschirm auch einfach mit dem Handy fotografieren. Tippen Sie dazu unten auf das Plus.'
+};
+// Die Vorschau im Chat bleibt im Browser (Objekt-Adresse). Erst wenn die Person
+// „Ja, bitte ansehen“ wählt, gehen Fotos und Dokumente an den Dienst „ki“ und
+// von dort an Claude. Gespeichert wird dabei nichts (PROJEKTSTAND).
+const MAX_MB = 10;
+const DOK_ENDUNG = /\.(pdf|docx?|odt|rtf|txt)$/i;
+// Nur diese Dokumente kann Nils lesen. Word, ODT und RTF bitte als Foto.
+const LESBAR = /\.(pdf|txt)$/i;
+const MAX_ANSEHEN = 3;
+// Handyfotos haben oft mehrere MB. Claude sieht ohnehin nur etwa 1568 Pixel an
+// der langen Kante – verkleinert geht es schneller und spart Datenvolumen.
+const KANTE = 1568;
+const lesen = (d, art) => new Promise((ok, no) => {
+  const r = new FileReader();
+  r.onload = () => ok(art === 'text' ? String(r.result) : String(r.result).split(',')[1] || '');
+  r.onerror = () => no(new Error('lesen'));
+  if (art === 'text') r.readAsText(d); else r.readAsDataURL(d);
+});
+const verkleinern = d => new Promise((ok, no) => {
+  const url = URL.createObjectURL(d), img = new Image();
+  img.onload = () => {
+    URL.revokeObjectURL(url);
+    const f = Math.min(1, KANTE / Math.max(img.naturalWidth, img.naturalHeight));
+    const c = document.createElement('canvas');
+    c.width = Math.max(1, Math.round(img.naturalWidth * f));
+    c.height = Math.max(1, Math.round(img.naturalHeight * f));
+    const g = c.getContext('2d');
+    g.fillStyle = '#fff';  // durchsichtige Bildschirmfotos sonst schwarz
+    g.fillRect(0, 0, c.width, c.height);
+    g.drawImage(img, 0, 0, c.width, c.height);
+    ok(c.toDataURL('image/jpeg', .85).split(',')[1]);
+  };
+  img.onerror = () => { URL.revokeObjectURL(url); no(new Error('bild')); };
+  img.src = url;
+});
+const vorbereiten = async d => /^image\//.test(d.type) ? {art:'bild', typ:'image/jpeg', daten:await verkleinern(d)}
+  : /\.pdf$/i.test(d.name) ? {art:'pdf', typ:'application/pdf', daten:await lesen(d, 'pdf')}
+  : {art:'text', typ:'text/plain', daten:await lesen(d, 'text')};
+// Fehlermeldungen des Dienstes in Alltagssprache. „nochmal“: Ein zweiter Versuch kann klappen.
+const KI_FEHLER = {
+  rate:{t:'Ich brauche gerade eine kleine Pause. Versuchen Sie es bitte in ein paar Minuten noch einmal.', nochmal:true},
+  budget:{t:'Heute kann ich mir leider keine Fotos mehr ansehen. Beschreiben Sie mir das Problem gern mit eigenen Worten.'},
+  sitzung:{t:'Für heute habe ich mir schon viele Fotos angesehen. Beschreiben Sie mir das Problem gern mit eigenen Worten.'},
+  datei:{t:'Diese Datei kann ich mir leider nicht ansehen. Machen Sie gern ein Foto davon, dann versuche ich es noch einmal.'},
+  bild:{t:'Dieses Bild kann ich leider nicht öffnen. Machen Sie gern ein neues Foto, dann versuche ich es noch einmal.'},
+  gross:{t:'Diese Datei ist leider zu groß. Machen Sie gern ein Foto davon, dann versuche ich es noch einmal.'},
+  abgelehnt:{t:'Dazu kann ich Ihnen leider nichts sagen. Beschreiben Sie mir das Problem gern mit eigenen Worten.'},
+  aus:{t:'Das Ansehen von Fotos ist gerade ausgeschaltet. Beschreiben Sie mir das Problem gern mit eigenen Worten.'},
+  anmeldung:{t:'Sie sind nicht mehr angemeldet. Bitte laden Sie die Seite neu und melden Sie sich wieder an.'},
+  sonst:{t:'Das hat leider gerade nicht geklappt. Das liegt nicht an Ihnen.', nochmal:true}
+};
+const mb = n => n < 1048576 ? Math.max(1, Math.round(n / 1024)) + ' KB' : (n / 1048576).toFixed(1).replace('.', ',') + ' MB';
+
+// Eingabefeld: bis zu dieser Höhe wächst es von selbst. Ist der Text länger,
+// erscheint über dem Plus der Knopf, der das Feld groß macht (zweiter Zustand).
+const FELD_MAX = 132;
+// Beispiel im leeren Eingabefeld: muss auf einem 360 px breiten Handy in eine Zeile passen.
+const BEISPIEL = 'Mein Drucker geht nicht.';
+const ANFANG = () => ({pay:null, stage:'welcome', topic:null, node:0, msgs:[], typing:false,
+           confusion:0, city:'', slot:null, booking:false, uid:0, plusOffen:false, bildBitte:false,
+           freeOpen:false, freeText:'', step:null, info:{}, phone:'', textLang:false, gross:false, bild:null});
+
 const SLOTS = [
   {id:0, day:'Dienstag, 13. Oktober', time:'10:00', kind:'Hausbesuch bei Ihnen'},
   {id:1, day:'Donnerstag, 15. Oktober', time:'14:30', kind:'Hausbesuch bei Ihnen'},
@@ -370,19 +491,73 @@ const SLOTS = [
 ];
 
 class Component extends DCLogic {
-  state = {pay:null, stage:'welcome', topic:null, node:0, msgs:[], typing:false,
-           confusion:0, memory:[], city:'', slot:null, booking:false, uid:0};
+  state = ANFANG();
 
   componentDidMount(){
-    this.nils(['Guten Tag, schön dass Sie da sind. Ich bin Nils.',
-               'Erzählen Sie mir einfach, was gerade nicht klappt. Wir gehen das Schritt für Schritt zusammen durch – ganz ohne Eile.']);
+    this.begruessen();
+    this._esc = e => { if (e.key === 'Escape' && this.state.plusOffen) this.setState({plusOffen:false}); };
+    document.addEventListener('keydown', this._esc);
+    // Handy-Tastatur: iOS (und Android ohne interactive-widget) verkleinert beim
+    // Tippen nur den sichtbaren Ausschnitt, nicht die Seite. Ohne Hilfe schiebt
+    // der Browser dann die ganze Seite hoch, Kopfzeile und Verlauf verschwinden
+    // und der Verlauf lässt sich nicht mehr scrollen. Deshalb bekommt der Chat
+    // genau die sichtbare Höhe: Eingabefeld direkt über der Tastatur, Verlauf
+    // darüber scrollbar.
+    const vv = window.visualViewport;
+    const tippbar = window.matchMedia && matchMedia('(pointer:coarse)').matches;
+    this._sicht = () => {
+      const html = document.documentElement, el = document.activeElement;
+      const tippt = !!(vv && tippbar && el && el.matches && el.matches('.steuerung textarea, .steuerung input:not([type=file])'));
+      const vorher = html.classList.contains('tastatur');
+      html.classList.toggle('tastatur', tippt);
+      if (tippt){
+        const h = Math.round(vv.height) + 'px';
+        if (html.style.getPropertyValue('--sicht-h') !== h || !vorher){
+          html.style.setProperty('--sicht-h', h);
+          const app = el.closest('.app'), v = this.verlaufRef && this.verlaufRef.current;
+          if (app) window.scrollTo(0, app.offsetTop);
+          if (v) v.scrollTop = v.scrollHeight;
+        }
+      }
+      if (this.state.gross) this.hoehe();
+    };
+    // Bei focusout steht das neue Element erst danach fest.
+    this._sichtBald = () => setTimeout(this._sicht, 0);
+    document.addEventListener('focusin', this._sichtBald);
+    document.addEventListener('focusout', this._sichtBald);
+    if (vv){ vv.addEventListener('resize', this._sicht); vv.addEventListener('scroll', this._sicht); }
   }
-  componentWillUnmount(){ (this._t||[]).forEach(clearTimeout); }
+  begruessen(){
+    this.nils(['Guten Tag, schön dass Sie da sind. Ich bin Nils.',
+               'Was klappt gerade nicht? Tippen Sie unten auf einen Satz – oder auf „Etwas anderes“. Wir gehen das ganz in Ruhe zusammen durch.']);
+  }
+  componentDidUpdate(){
+    // Neue Nachricht oder Tipp-Anzeige: Verlauf nach unten, damit die letzte
+    // Frage direkt über den Knöpfen steht.
+    const marke = this.state.msgs.length + (this.state.typing ? 'x' : '');
+    const el = this.verlaufRef && this.verlaufRef.current;
+    if (el && marke !== this._marke){
+      this._marke = marke;
+      const ruhig = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      el.scrollTo({top:el.scrollHeight, behavior: ruhig ? 'auto' : 'smooth'});
+    }
+  }
+  componentWillUnmount(){
+    (this._t||[]).forEach(clearTimeout);
+    document.removeEventListener('keydown', this._esc);
+    document.removeEventListener('focusin', this._sichtBald);
+    document.removeEventListener('focusout', this._sichtBald);
+    const vv = window.visualViewport;
+    if (vv){ vv.removeEventListener('resize', this._sicht); vv.removeEventListener('scroll', this._sicht); }
+    document.documentElement.classList.remove('tastatur');
+    this.state.msgs.forEach(m => m.url && URL.revokeObjectURL(m.url));
+    this.abbrechen();
+  }
 
   later(fn, ms){ this._t = this._t || []; this._t.push(setTimeout(fn, ms)); }
 
-  push(from, text){
-    this.setState(s => ({uid:s.uid+1, msgs:s.msgs.concat([{id:s.uid+1, from, text}])}));
+  push(from, text, datei){
+    this.setState(s => ({uid:s.uid+1, msgs:s.msgs.concat([Object.assign({id:s.uid+1, from, text}, datei || {})])}));
   }
   nils(list){
     const arr = [].concat(list);
@@ -391,14 +566,11 @@ class Component extends DCLogic {
       delay += i === 0 ? 450 : 900;
       this.setState({typing:true});
       this.later(() => {
-        this.push('nils', text);
+        if (typeof text === 'string') this.push('nils', text);
+        else this.push('nils', text.text, {warnung:!!text.warnung});
         if (i === arr.length - 1) this.setState({typing:false});
       }, delay);
     });
-  }
-  remember(text){
-    this.setState(s => s.memory.some(m => m.text === text) ? null
-      : ({memory:s.memory.concat([{id:text, text}])}));
   }
   nodes(){ return this.state.topic ? FLOWS[this.state.topic] : null; }
   cur(){ const n = this.nodes(); return n ? n[this.state.node] : null; }
@@ -414,7 +586,6 @@ class Component extends DCLogic {
   }
   pickTopic(t){
     this.push('user', t.label);
-    this.remember('Thema: ' + t.label);
     this.startIntake(t.id, []);
   }
   answerIntake(o){
@@ -423,23 +594,18 @@ class Component extends DCLogic {
     this.push('user', o.label);
     if (s.step === 'device'){
       if (o.val === 'unknown') next = 'apple';
-      else { info.plat = o.val; this.remember('Gerät: ' + o.name); }
+      else { info.plat = o.val; }
     } else if (s.step === 'apple'){
       info.apple = o.val; next = 'kind';
     } else if (s.step === 'kind'){
       const mob = o.val === 'mobile';
       info.plat = info.apple === 'yes' ? (mob ? 'ios' : 'mac') : info.apple === 'no' ? (mob ? 'android' : 'win') : (mob ? 'mobile' : 'computer');
-      const d = DEVICES.find(x => x.val === info.plat);
-      this.remember('Gerät: ' + (d ? d.name : (mob ? 'Handy oder Tablet' : 'Computer')));
     } else if (s.step === 'conn'){
       info.conn = o.val;
-      if (o.val !== '?') this.remember('Drucker: ' + (o.val === 'cable' ? 'mit Kabel' : 'über WLAN'));
     } else if (s.step === 'since'){
       info.since = o.val;
-      if (o.val !== '?') this.remember('Seit: ' + o.label.replace(/^Seit /, '').replace(/^Schon /, ''));
     } else if (s.step === 'change'){
       info.change = o.val;
-      if (o.val === 'yes') this.remember('Kurz vorher hat sich etwas verändert');
     }
     if (!next){
       const order = s.topic === 'drucker' ? ['device','apple','kind','conn','since','change'] : ['device','apple','kind','since','change'];
@@ -451,7 +617,9 @@ class Component extends DCLogic {
       this.nils([INTAKE[next](s.topic).q]);
     } else {
       this.setState({info, step:null, stage:'chat', node:0}, () =>
-        this.nils(['Danke, das hilft mir sehr. Jetzt kann ich Ihnen viel genauer helfen.', this.say('t', 0)]));
+        this.nils(['Danke, das hilft mir sehr. Jetzt kann ich Ihnen viel genauer helfen.', this.say('t', 0)]
+          .concat(FLOWS[s.topic][0].bild ? [BILD_BITTE[FLOWS[s.topic][0].bild]] : [])));
+      this.setState({bildBitte:!!FLOWS[s.topic][0].bild});
     }
   }
   confAdj(){
@@ -461,21 +629,58 @@ class Component extends DCLogic {
     return a;
   }
   sendFree(){
-    const text = (this.state.freeText || '').trim();
+    const s = this.state, text = (s.freeText || '').trim();
     if (!text) return;
     this.push('user', text);
-    this.remember('Eigene Frage: ' + (text.length > 40 ? text.slice(0, 40) + '…' : text));
-    this.setState({freeOpen:false, freeText:''});
-    this.startIntake('sonstiges', ['Das habe ich gelesen, vielen Dank. Wir schauen uns das gemeinsam an.']);
+    this.setState({freeOpen:false, freeText:'', textLang:false, gross:false});
+    if (s.bild && s.bild.schritt === 'kontext') return this.ansehen(text);
+    if (s.bild && s.bild.schritt === 'ki') return this.bildAntwort(text);
+    if (s.stage === 'intake' && s.step){
+      // Mitten im Gespräch: Ohne KI-Anbindung kann Nils den Text noch nicht
+      // auswerten. Er bedankt sich und stellt die offene Frage noch einmal.
+      return this.nils(['Danke, dass Sie mir das so genau beschreiben. Das hilft mir weiter.', INTAKE[s.step](s.topic).q]);
+    }
+    if (s.stage === 'chat' && this.cur()){
+      return this.nils(['Danke, dass Sie mir das so genau beschreiben. Das hilft mir weiter.', this.say('t')]);
+    }
+    this.setState({bildBitte:true});
+    this.startIntake('sonstiges', ['Das habe ich gelesen, vielen Dank. Wir schauen uns das gemeinsam an.', BILD_BITTE.foto]);
+  }
+  // Passt die Höhe des Eingabefelds an den Text an. Klein wächst es bis
+  // FELD_MAX, groß bis gut die Hälfte des Chats. Ab FELD_MAX gibt es den Knopf
+  // zum Umschalten.
+  hoehe(el){
+    el = el || document.getElementById('frage');
+    if (!el) return;
+    const app = el.closest('.app');
+    const max = this.state.gross && app ? Math.max(FELD_MAX, Math.round(app.clientHeight * .6)) : FELD_MAX;
+    el.style.height = 'auto';
+    const voll = el.scrollHeight + 4;  // + Rahmen oben und unten
+    el.style.maxHeight = max + 'px';
+    el.style.height = Math.min(voll, max) + 'px';
+    const lang = voll > FELD_MAX;
+    if (lang !== this.state.textLang) this.setState({textLang:lang, gross:lang && this.state.gross});
+  }
+  neuStart(){
+    (this._t || []).forEach(clearTimeout);
+    this._t = [];
+    this.state.msgs.forEach(m => m.url && URL.revokeObjectURL(m.url));
+    this.abbrechen();
+    this._marke = null;
+    this.setState(ANFANG(), () => {
+      const ruhig = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({top:0, behavior: ruhig ? 'auto' : 'smooth'});
+      // Fokus zurück in den Chat, sonst bliebe er auf dem Knopf unter dem Chat.
+      const v = this.verlaufRef && this.verlaufRef.current;
+      if (v) v.focus({preventScroll:true});
+      this.begruessen();
+    });
   }
   go(i){
     const node = FLOWS[this.state.topic][i];
     this.setState({node:i});
-    if (node.done){
-      const t = TOPICS.find(x => x.id === this.state.topic);
-      this.remember('Gelöst: ' + (t ? t.label : 'Ihre eigene Frage'));
-    }
-    this.nils([this.say('t', i)]);
+    this.setState({bildBitte:!!node.bild});
+    this.nils([this.say('t', i)].concat(node.bild ? [BILD_BITTE[node.bild]] : []));
   }
   answer(kind){
     const node = this.cur();
@@ -493,7 +698,6 @@ class Component extends DCLogic {
       this.nils([this.say('unsure') || 'Das ist gar nicht schlimm. Wir schauen gemeinsam noch einmal hin.']);
     } else {
       this.push('user', 'Bitte einfacher erklären');
-      this.remember('Erklärungen bitte in ganz einfacher Sprache');
       if (c >= 3) return this.later(() => this.escalate(), 400);
       this.nils([this.say('simple') || this.say('t')]);
     }
@@ -507,7 +711,6 @@ class Component extends DCLogic {
     const city = (this.state.city || '').trim();
     if (!city) return;
     this.push('user', city);
-    this.remember('Wohnort: ' + city);
     this.setState({stage:'chat', booking:true});
     this.nils(['Sehr gut, in ' + city + ' haben wir Helfer in Ihrer Nähe. Bitte suchen Sie sich aus, was Ihnen passt.']);
   }
@@ -515,15 +718,152 @@ class Component extends DCLogic {
     const slot = SLOTS.find(s => s.id === this.state.slot);
     const p = this.price();
     if (!slot || !this.state.pay || !this.phoneOk()) return;
-    this.remember('Telefon: ' + this.state.phone.trim());
     const payText = this.state.pay === 'fixed' ? 'Festpreis ' + p.fixed + ' €' : 'nach Zeit, höchstens ' + p.cap + ' €';
     this.setState({booking:false, stage:'done', confusion:0});
-    this.remember('Termin: ' + slot.day + ', ' + slot.time + ' (' + payText + ')');
     this.nils(['Vielen Dank. Ich habe Ihren Wunsch notiert: ' + slot.day + ' um ' + slot.time + ' Uhr, ' + payText + '.',
                'Gleich ruft Sie Nils unter Ihrer Nummer an und fragt nach Ihrer Adresse. Danach bekommen Sie einen Brief mit einer Zahl. Wenn Sie uns die Zahl am Telefon sagen, ist der Termin fest.']);
   }
+  datei(e){
+    const dateien = Array.from(e.target.files || []).slice(0, 5);
+    e.target.value = '';  // dieselbe Datei darf noch einmal gewählt werden
+    this.setState({plusOffen:false});
+    const angekommen = [];
+    dateien.forEach(d => {
+      const bild = /^image\//.test(d.type);
+      if (!bild && !DOK_ENDUNG.test(d.name)){
+        this.push('user', 'Datei: ' + d.name);
+        return this.nils(['Diese Datei kann ich leider nicht öffnen. Bitte senden Sie mir ein Foto oder ein Dokument, zum Beispiel als PDF.']);
+      }
+      if (d.size > MAX_MB * 1048576){
+        this.push('user', (bild ? 'Bild: ' : 'Dokument: ') + d.name);
+        return this.nils(['Diese Datei ist leider zu groß. Bitte wählen Sie eine kleinere Datei oder machen Sie ein neues Foto.']);
+      }
+      this.push('user', '', bild ? {bild:true, url:URL.createObjectURL(d), name:d.name}
+                                : {dok:true, name:d.name, groesse:mb(d.size)});
+      angekommen.push(d);
+    });
+    if (angekommen.length){
+      const nurBilder = angekommen.every(d => /^image\//.test(d.type));
+      const dank = nurBilder ? (angekommen.length > 1 ? 'Danke, die Bilder sind angekommen.' : 'Danke, das Bild ist angekommen.')
+                             : 'Danke, das ist angekommen.';
+      const lesbar = angekommen.filter(d => /^image\//.test(d.type) || LESBAR.test(d.name)).slice(0, MAX_ANSEHEN);
+      this.setState({bildBitte:false});
+      if (!lesbar.length)
+        return this.nils([dank, 'Dieses Dokument kann ich mir hier leider nicht ansehen. Machen Sie gern ein Foto davon, dann schaue ich es mir an.']);
+      this.abbrechen();
+      this._ansehen = lesbar;
+      this.setState({freeOpen:false, bild:{schritt:'frage', kontext:'', verlauf:[], fragen:[], idx:0, runde:1, hausbesuch:false}});
+      const was = !nurBilder ? 'das' : lesbar.length > 1 ? 'die Bilder' : 'das Bild';
+      this.nils([dank, 'Soll ich mir ' + was + ' genauer ansehen?']);
+    }
+  }
+
+  // --- Nils sieht sich Fotos und Dokumente an (Dienst „ki“, Claude) ----------
+  // Ablauf: fragen, ob er es ansehen soll → Kontext anbieten → Einschätzung mit
+  // Rückfragen zum Antippen → nächster Schritt → „Hat das geholfen?“.
+  setBild(teil, fertig){ this.setState(s => ({bild:Object.assign({}, s.bild, teil)}), fertig); }
+  abbrechen(){
+    this._lauf = (this._lauf || 0) + 1;
+    if (this._abbruch) this._abbruch.abort();
+    this._abbruch = null;
+  }
+  async ansehen(kontext){
+    const b = this.state.bild;
+    if (!b || !this._ansehen) return;
+    const lauf = this._lauf = (this._lauf || 0) + 1;
+    if (kontext === undefined) kontext = b.kontext;
+    this.setBild({schritt:'laeuft', kontext});
+    this.nils([b.runde === 1 ? 'Einen Moment bitte, ich schaue es mir genau an.' : 'Danke. Einen Moment bitte.']);
+    try {
+      if (!this._daten) this._daten = await Promise.all(this._ansehen.map(vorbereiten));
+      if (lauf !== this._lauf) return;
+      const s = this.state, ab = this._abbruch = new AbortController();
+      const r = await fetch('api/ki/ansehen', {method:'POST', credentials:'same-origin', signal:ab.signal,
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({dateien:this._daten, kontext, thema:s.topic || '', geraet:(s.info && s.info.plat) || '',
+                             verlauf:b.verlauf, runde:b.runde})});
+      const j = await r.json().catch(() => ({}));
+      if (lauf !== this._lauf) return;
+      if (!r.ok) return this.bildFehler(r.status === 401 ? 'anmeldung' : j.error);
+      this.bildErgebnis(j);
+    } catch (e){
+      if (lauf !== this._lauf) return;
+      this.bildFehler(e && e.message === 'bild' ? 'bild' : 'sonst');
+    }
+  }
+  bildFehler(art){
+    const f = KI_FEHLER[art] || KI_FEHLER.sonst;
+    if (f.nochmal){
+      this.setBild({schritt:'fehler'});
+      return this.nils([f.t, 'Soll ich es noch einmal versuchen?']);
+    }
+    this.weiter([f.t]);
+  }
+  bildErgebnis(j){
+    const texte = (j.warnung ? [{text:j.warnung, warnung:true}] : []).concat(j.nachricht ? [j.nachricht] : []);
+    if (j.neues_foto){
+      this._ansehen = this._daten = null;
+      this.setState({bild:null, bildBitte:true});
+      return this.nils(texte.concat(['Tippen Sie unten auf das Plus, wenn Sie so weit sind.']));
+    }
+    const fragen = Array.isArray(j.fragen) ? j.fragen : [];
+    if (fragen.length){
+      this.setBild({schritt:'ki', fragen, idx:0, hausbesuch:!!j.hausbesuch});
+      return this.nils(texte.concat([fragen[0].frage]));
+    }
+    this.setBild({schritt:'ende', hausbesuch:!!j.hausbesuch});
+    this.nils(texte.concat([j.hausbesuch ? 'Möchten Sie, dass sich ein Helfer von Nils das bei Ihnen zu Hause ansieht?'
+                                         : 'Hat Ihnen das weitergeholfen?']));
+  }
+  // getippt: Antwort kam über einen Knopf. Freier Text steht schon im Verlauf (sendFree).
+  bildAntwort(antwort, getippt){
+    const b = this.state.bild, f = b && b.fragen[b.idx];
+    if (!f) return;
+    if (getippt) this.push('user', antwort);
+    const verlauf = b.verlauf.concat([{frage:f.frage, antwort}]);
+    if (b.idx + 1 < b.fragen.length){
+      this.setBild({verlauf, idx:b.idx + 1});
+      return this.nils([b.fragen[b.idx + 1].frage]);
+    }
+    this.setBild({verlauf, runde:b.runde + 1}, () => this.ansehen());
+  }
+  bildEnde(geholfen){
+    const b = this.state.bild;
+    if (b.hausbesuch){
+      this.push('user', geholfen ? 'Ja, gerne' : 'Nein, danke');
+      if (geholfen){ this._ansehen = this._daten = null; this.setState({bild:null}); return this.escalate(); }
+      return this.weiter(['Gut. Wenn Sie es sich anders überlegen, sagen Sie einfach Bescheid.']);
+    }
+    this.push('user', geholfen ? 'Ja, das hat geholfen' : 'Nein, noch nicht');
+    if (geholfen){
+      this._ansehen = this._daten = null;
+      this.setState({bild:null, stage:'done', topic:null, confusion:0});
+      return this.nils(['Das freut mich sehr! Sie haben das gut gemacht. Wenn wieder etwas ist, bin ich hier.']);
+    }
+    // Zählt wie ein erfolgloser Versuch: Nach dem dritten kommt die Vor-Ort-Hilfe (GEO-LLM.txt §6).
+    const c = this.state.confusion + 1;
+    this.setState({confusion:c});
+    if (c >= 3){ this._ansehen = this._daten = null; this.setState({bild:null}); return this.escalate(); }
+    this.weiter(['Schade. Dann versuchen wir es anders. Sie können mir auch gern ein weiteres Foto schicken.']);
+  }
+  // Zurück in das Gespräch, das vor dem Foto lief: offene Frage noch einmal stellen.
+  weiter(lead){
+    const s = this.state, node = this.cur();
+    this.abbrechen();
+    this._ansehen = this._daten = null;
+    this.setState({bild:null});
+    if (s.stage === 'intake' && s.step) return this.nils(lead.concat([INTAKE[s.step](s.topic).q]));
+    if (s.stage === 'chat' && node && !node.done && !node.offer) return this.nils(lead.concat([this.say('t')]));
+    if (s.stage === 'welcome') return this.nils(lead.concat(['Was klappt gerade nicht? Tippen Sie unten auf einen Satz – oder auf „Etwas anderes“.']));
+    this.nils(lead);
+  }
+  waehlen(art){
+    const r = art === 'bild' ? this.bildRef : this.dokRef;
+    this.setState({plusOffen:false});
+    if (r && r.current) r.current.click();
+  }
   restart(){
-    this.setState({stage:'welcome', topic:null, node:0, confusion:0, freeOpen:false, freeText:'', step:null, info:{}});
+    this.setState({stage:'welcome', topic:null, node:0, confusion:0, freeOpen:false, freeText:'', step:null, info:{}, bildBitte:false});
     this.nils(['Sehr gern. Womit darf ich Ihnen noch helfen?']);
   }
   bye(){
@@ -546,19 +886,35 @@ class Component extends DCLogic {
 
     const msgs = s.msgs.map(m => {
       const nils = m.from === 'nils';
-      return {id:m.id, text:m.text, isNils:nils,
+      return {id:m.id, text:m.text, isNils:nils, hatText:!!m.text,
+        istBild:!!m.bild, istDok:!!m.dok, url:m.url || '', name:m.name || '', groesse:m.groesse || '',
+        alt:'Ihr Bild' + (m.name ? ': ' + m.name : ''),
+        bildSetzen: el => { if (el && m.url && el.src !== m.url) el.src = m.url; },
         justify: nils ? 'flex-start' : 'flex-end',
-        bg: nils ? th.soft : th.accent,
-        fg: nils ? '#1E241F' : '#FFFFFF',
-        bd: nils ? th.line : th.accent,
+        bg: m.warnung ? '#FFF4E8' : nils ? th.soft : th.accent,
+        fg: m.warnung ? '#8A3B12' : nils ? '#1E241F' : '#FFFFFF',
+        bd: m.warnung ? '#8A3B12' : nils ? th.line : th.accent,
         radius: nils ? '22px 22px 22px 6px' : '22px 22px 6px 22px'};
     });
 
     const askable = s.stage === 'chat' && node && !node.done && !node.offer;
+    const b = s.bild, kiFrage = b && b.schritt === 'ki' && b.fragen[b.idx];
+    const knopf = (label, fn) => ({label, pick:fn});
+    const bildOpts = !b ? []
+      : b.schritt === 'frage' ? [knopf('Ja, bitte ansehen', () => { this.push('user', 'Ja, bitte ansehen'); this.setBild({schritt:'kontext'});
+                                   this.nils(['Möchten Sie mir noch etwas dazu schreiben? Zum Beispiel, was Sie gerade tun wollten.']); }),
+                                 knopf('Nein, danke', () => { this.push('user', 'Nein, danke'); this.weiter(['Gut, dann machen wir so weiter.']); })]
+      : b.schritt === 'kontext' ? [knopf('Ja, ich schreibe etwas dazu', () => { this.push('user', 'Ja, ich schreibe etwas dazu'); this.setState({freeOpen:true}); }),
+                                   knopf('Nein, einfach ansehen', () => { this.push('user', 'Nein, einfach ansehen'); this.ansehen(); })]
+      : kiFrage ? kiFrage.antworten.concat(['Ich weiß es nicht']).map(a => knopf(a, () => this.bildAntwort(a, true)))
+      : b.schritt === 'ende' ? (b.hausbesuch ? [knopf('Ja, gerne', () => this.bildEnde(true)), knopf('Nein, danke', () => this.bildEnde(false))]
+                                             : [knopf('Ja, das hat geholfen', () => this.bildEnde(true)), knopf('Nein, noch nicht', () => this.bildEnde(false))])
+      : b.schritt === 'fehler' ? [knopf('Ja, noch einmal', () => { this.push('user', 'Ja, noch einmal'); this.ansehen(); }),
+                                  knopf('Nein, danke', () => { this.push('user', 'Nein, danke'); this.weiter(['Gut, dann machen wir so weiter.']); })]
+      : [];
 
     return {
-      msgs, typing:s.typing, city:s.city,
-      memory:s.memory, memoryEmpty:s.memory.length === 0,
+      msgs, typing:s.typing || (!!b && b.schritt === 'laeuft'), city:s.city,
       cap: p.cap,
       fixedLabel: p.fixed ? p.fixed + ' € fest' : 'Noch nicht möglich',
       fixedNote: p.fixed ? 'Egal wie lange es dauert. Sie wissen vorher genau, was es kostet.' : 'Dafür muss ich Ihr Problem noch genauer kennen. Der Helfer nennt Ihnen vor Ort einen Preis.',
@@ -568,25 +924,47 @@ class Component extends DCLogic {
       pickHourly: () => this.setState({pay:'hourly'}),
       pickFixed: () => p.fixed && this.setState({pay:'fixed'}),
       topics: TOPICS.map(t => ({id:t.id, label:t.label, hint:t.hint, pick: () => this.pickTopic(t)})),
-      showTopics: s.stage === 'welcome',
+      showTopics: s.stage === 'welcome' && !b,
       freeOpen: !!s.freeOpen, freeText: s.freeText || '',
       sendBg: (s.freeText || '').trim() ? th.accent : '#B9BDB6',
       notFreeOpen: !s.freeOpen,
-      topicsRef: this.topicsRef || (this.topicsRef = React.createRef()),
-      chatMinH: 340 + (s.freeOpen ? (s.freeSpace || 0) : 0),
+      verlaufRef: this.verlaufRef || (this.verlaufRef = React.createRef()),
+      bildRef: this.bildRef || (this.bildRef = React.createRef()),
+      dokRef: this.dokRef || (this.dokRef = React.createRef()),
+      plusOffen: s.plusOffen, plusOffenText: s.plusOffen ? 'true' : 'false',
+      // Plus-Zeile über jedem Knopf-Raster; beim Schreiben sitzt das Plus links im Eingabefeld.
+      plusZeile: !b && !s.freeOpen && !s.booking && s.stage !== 'city' && (s.stage === 'welcome' || (s.stage === 'intake' && !!s.step) || askable),
+      plusText: s.bildBitte ? 'Foto oder Bildschirmfoto senden' : 'Foto oder Dokument hinzufügen',
+      plusBg: s.bildBitte || s.plusOffen ? th.soft : '#FFFFFF',
+      plusBd: s.bildBitte || s.plusOffen ? th.accent : th.line,
+      plusAnim: s.bildBitte && !s.plusOffen ? 'bitte 1.8s ease-in-out infinite' : 'none',
+      onPlus: () => this.setState({plusOffen:!s.plusOffen}),
+      onPlusZu: () => this.setState({plusOffen:false}),
+      onBildWaehlen: () => this.waehlen('bild'),
+      onDokWaehlen: () => this.waehlen('dok'),
+      onDatei: (e) => this.datei(e),
       onOpenFree: () => {
-        const h = this.topicsRef && this.topicsRef.current ? this.topicsRef.current.offsetHeight + 14 : 0;
-        this.setState({freeOpen:true, freeSpace:h});
+        this.setState({freeOpen:true});
         this.nils(['Schreiben Sie einfach mit Ihren eigenen Worten, was nicht klappt. Ganz egal wie – ich verstehe Sie.']);
       },
       onCloseFree: () => this.setState({freeOpen:false}),
-      onFreeText: (e) => { const el = e.target; el.style.height = 'auto'; el.style.height = el.scrollHeight + 4 + 'px'; this.setState({freeText:el.value}); },
+      onFreeText: (e) => { this.hoehe(e.target); this.setState({freeText:e.target.value}); },
+      beispiel: b && b.schritt === 'kontext' ? 'Was wollten Sie gerade tun?' : BEISPIEL,
+      textLang: !!s.textLang, textGross: !!s.gross, textKlein: !s.gross, grossText: s.gross ? 'true' : 'false',
+      grossLabel: s.gross ? 'Eingabefeld wieder klein machen' : 'Ganzen Text anzeigen',
+      onGross: () => this.setState({gross:!s.gross}, () => { this.hoehe(); const f = document.getElementById('frage'); if (f) f.focus(); }),
+      onSelbst: () => {
+        this.setState({freeOpen:true});
+        this.nils(['Gern. Beschreiben Sie es mir einfach mit Ihren eigenen Worten.']);
+      },
+      onNeuerChat: () => this.neuStart(),
       onFreeSend: () => this.sendFree(),
-      showAnswers: askable,
-      showIntake: s.stage === 'intake' && !!s.step,
+      showAnswers: askable && !s.freeOpen && !b,
+      showIntake: s.stage === 'intake' && !!s.step && !s.freeOpen && !b,
+      showBild: bildOpts.length > 0 && !s.freeOpen, bildOpts, bildSelbst: !!kiFrage,
       intakeOpts: s.stage === 'intake' && s.step ? INTAKE[s.step](s.topic).opts.map(o => ({label:o.label, hint:o.hint || '', pick: () => this.answerIntake(o)})) : [],
-      showOffer: s.stage === 'chat' && node && node.offer,
-      showDone: (s.stage === 'chat' && node && node.done) || s.stage === 'done',
+      showOffer: s.stage === 'chat' && node && node.offer && !b,
+      showDone: ((s.stage === 'chat' && node && node.done) || s.stage === 'done') && !b,
       showCity: s.stage === 'city',
       showBooking: s.booking,
       slots: SLOTS.map(x => ({id:x.id, day:x.day, time:x.time, kind:x.kind,
