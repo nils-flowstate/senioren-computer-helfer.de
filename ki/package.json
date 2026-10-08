@@ -1,0 +1,12 @@
+{
+  "name": "nils-ki",
+  "private": true,
+  "description": "Bild- und Dokumentanalyse für den Chat von Nils (Claude)",
+  "main": "server.js",
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "0.132.1"
+  }
+}

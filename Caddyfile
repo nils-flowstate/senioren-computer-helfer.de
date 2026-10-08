@@ -78,6 +78,26 @@
 		}
 	}
 
+	# Nils schaut sich Fotos und Dokumente an. Nur mit Anmeldung: Ohne gültige
+	# Sitzung gibt das Gate 401 zurück, und das geht so an den Browser.
+	handle /api/ki/* {
+		forward_auth gate:3000 {
+			uri /gate/check
+			header_up X-Forwarded-For {vars.besucher_ip}
+		}
+		# Fotos verkleinert der Browser; PDF-Dokumente bis 10 MB wachsen als Base64 um ein Drittel.
+		request_body {
+			max_size 30MB
+		}
+		header Cache-Control "no-store"
+		reverse_proxy ki:3000 {
+			header_up X-Forwarded-For {vars.besucher_ip}
+			transport http {
+				response_header_timeout 120s
+			}
+		}
+	}
+
 	# Ohne Anmeldung erreichbar: nur was der Lockscreen braucht
 	@public path /lock.html /support.js /nils.webp /fonts/* /vendor/*
 	handle @public {
